@@ -221,6 +221,7 @@ class Woocommerce_Stripe extends WC_Payment_Gateway {
 					if ( $data['chosen_card'] == 'new' ) {
 						$card = $customer->cards->create( array( 'card' => $data['token'] ) );
 						$customer->default_card = $card->id;
+						$customer->save();
 
 						add_user_meta( $this->current_user_id, '_stripe_customer_info', array(
 							'customer_id'	=> $customer->id,
