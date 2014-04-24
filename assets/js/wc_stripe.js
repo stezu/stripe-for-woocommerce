@@ -23,7 +23,6 @@ jQuery(function ($) {
     // Both Forms
     $form.on('change', '#wc_stripe-card-number, #wc_stripe-card-expiry, #wc_stripe-card-cvc, input[name="wc_stripe_card"]', function () {
         $('.woocommerce_error, .woocommerce-error, .woocommerce-message, .woocommerce_message, .stripe_token').remove();
-        $('.stripe_token').remove();
     });
 
     // Toggle new card form
