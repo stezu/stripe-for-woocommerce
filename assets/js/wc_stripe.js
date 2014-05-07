@@ -11,7 +11,7 @@ jQuery(function ($) {
     }
 
     // Checkout Form
-    $('form.checkout').on('checkout_place_order_wc_stripe', function () {
+    $('form.checkout').on('checkout_place_order', function () {
         return stripeFormHandler();
     });
 
