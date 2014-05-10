@@ -217,35 +217,50 @@ class Woocommerce_Stripe extends WC_Payment_Gateway {
 			<?php
 
 			$cc_number = woocommerce_form_field( 'card-number', array(
-				'label'			=> 'Card Number',
-				'placeholder'	=> '•••• •••• •••• ••••',
-				'maxlength'		=> 20,
-				'required'		=> true,
-				'input_class'	=> array( 'wc_stripe-card-number' ),
-				'return'		=> true
+				'label'				=> 'Card Number',
+				'placeholder'		=> '•••• •••• •••• ••••',
+				'maxlength'			=> 20,
+				'required'			=> true,
+				'input_class'		=> array( 'wc_stripe-card-number' ),
+				'return'			=> true,
+				'custom_attributes'	=> array(
+					'autocomplete'	=> 'off',
+					'pattern'		=> '\d*',
+					'novalidate'	=> 'novalidate'
+				)
 			) );
 			$cc_number = preg_replace( '/name=".*?\"/i', '', $cc_number );
 			echo $cc_number;
 
 			$cc_expiry = woocommerce_form_field( 'card-expiry', array(
-				'label'			=> 'Expiry (MM/YY)',
-				'placeholder'	=> 'MM / YY',
-				'required'		=> true,
-				'class'			=> array( 'form-row-first' ),
-				'input_class'	=> array( 'wc_stripe-card-expiry' ),
-				'return'		=> true
+				'label'				=> 'Expiry (MM/YY)',
+				'placeholder'		=> 'MM / YY',
+				'required'			=> true,
+				'class'				=> array( 'form-row-first' ),
+				'input_class'		=> array( 'wc_stripe-card-expiry' ),
+				'return'			=> true,
+				'custom_attributes'	=> array(
+					'autocomplete'	=> 'off',
+					'pattern'		=> '\d*',
+					'novalidate'	=> 'novalidate'
+				)
 			) );
 			$cc_expiry = preg_replace( '/name=".*?\"/i', '', $cc_expiry );
 			echo $cc_expiry;
 
 			$cc_cvc = woocommerce_form_field( 'card-cvc', array(
 				'label'			=> 'Card Code',
-				'placeholder'	=> 'CVC',
-				'required'		=> true,
-				'class'			=> array( 'form-row-last' ),
-				'input_class'	=> array( 'wc_stripe-card-cvc' ),
-				'return'		=> true,
-				'clear'			=> true
+				'placeholder'		=> 'CVC',
+				'required'			=> true,
+				'class'				=> array( 'form-row-last' ),
+				'input_class'		=> array( 'wc_stripe-card-cvc' ),
+				'return'			=> true,
+				'clear'				=> true,
+				'custom_attributes'	=> array(
+					'autocomplete'	=> 'off',
+					'pattern'		=> '\d*',
+					'novalidate'	=> 'novalidate'
+				)
 			) );
 			$cc_cvc = preg_replace( '/name=".*?\"/i', '', $cc_cvc );
 			echo $cc_cvc;
