@@ -20,6 +20,7 @@ class Woocommerce_Stripe extends WC_Payment_Gateway {
 		$this->description				= $this->settings['description'];
 		$this->testmode					= $this->settings['testmode'];
 		$this->capture					= $this->settings['capture'];
+		$this->additional_fields		= $this->settings['additional_fields'];
 
 		// Get API Keys
 		$this->publishable_key			= $this->testmode == 'yes' ? $this->settings['test_publishable_key'] : $this->settings['live_publishable_key'];
@@ -125,6 +126,13 @@ class Woocommerce_Stripe extends WC_Payment_Gateway {
 				'description'	=> __( 'This controls the description which the user sees during checkout.', 'woothemes' ),
 				'default'		=> __( '', 'woothemes' )
 			),
+			'additional_fields' => array(
+				'type'			=> 'checkbox',
+				'title'			=> __( 'Additional Fields', 'woothemes' ),
+				'description'	=> __( 'This enables the use of a Billing ZIP and a Name on Card for Stripe authentication purposes. This is only neccessary if you check the "Only ship to the users billing address" box on WooCommerce Shipping settings.', 'woothemes' ),
+				'label'			=> __( 'Use Additional Fields', 'woothemes' ),
+				'default'		=> 'no'
+			),
 			'test_secret_key'	=> array(
 				'type'			=> 'text',
 				'title'			=> __( 'Stripe API Test Secret key', 'woothemes' ),
@@ -174,21 +182,74 @@ class Woocommerce_Stripe extends WC_Payment_Gateway {
 	}
 
 	public function payment_fields() {
-		if( is_user_logged_in() && $this->stripe_customer_info ) {
+		if( is_user_logged_in() && $this->stripe_customer_info ) :
 
 			// Add option to use a saved card
-			foreach ( $this->stripe_customer_info as $i => $credit_card ) :
-				echo '<input type="radio" id="stripe_card_' . $i . '" name="wc_stripe_card" value="' . $i . '" checked>';
-				echo '<label for="stripe_card_' . $i . '">Card ending with ' . $credit_card['last4'] . ' (' . $credit_card['exp_month'] . '/' . $credit_card['exp_year'] . ')</label><br>';
-			endforeach;
+			foreach ( $this->stripe_customer_info as $i => $credit_card ) : ?>
 
-			// Add option to use a new card
-			echo '<input type="radio" id="new_card" name="wc_stripe_card" value="new">';
-			echo '<label for="new_card">Use a new credit card</label>';
-		}
+				<input type="radio" id="stripe_card_<?php echo $i; ?>" name="wc_stripe_card" value="<?php echo $i; ?>" checked>
+				<label for="stripe_card_<?php echo $i; ?>">Card ending with <?php echo $credit_card['last4']; ?> (<?php echo $credit_card['exp_month']; ?>/<?php echo $credit_card['exp_year']; ?>)</label><br>
 
-		// Use WooCommerce built-in credit card form bundled with 2.1.0
-		$this->credit_card_form( array( 'fields_have_names' => false ) );
+			<?php endforeach; ?>
+
+			<input type="radio" id="new_card" name="wc_stripe_card" value="new">
+			<label for="new_card">Use a new credit card</label>
+
+		<?php endif; ?>
+
+		<div id="wc_stripe-creditcard-form">
+
+			<?php if ( $this->additional_fields == 'yes' ) : ?>
+				<p class="form-row form-row-first address-field validate-required" id="wc_stripe_name_field">
+					<label for="wc_stripe-billing-name">Name on Card <abbr class="required">*</abbr></label>
+					<input type="text" class="input-text" name="wc_stripe-billing-name" id="wc_stripe-billing-name">
+				</p>
+
+				<p class="form-row form-row-last address-field validate-required validate-postcode" id="wc_stripe_postcode_field">
+					<label for="wc_stripe-billing-zip">Billing Zip <abbr class="required">*</abbr></label>
+					<input type="text" class="input-text" name="wc_stripe-billing-zip" id="wc_stripe-billing-zip" placeholder="Postcode / Zip">
+				</p>
+			<?php endif; ?>
+
+			<?php
+
+			$cc_number = woocommerce_form_field( 'card-number', array(
+				'label'			=> 'Card Number',
+				'placeholder'	=> '•••• •••• •••• ••••',
+				'maxlength'		=> 20,
+				'required'		=> true,
+				'input_class'	=> array( 'wc_stripe-card-number' ),
+				'return'		=> true
+			) );
+			$cc_number = preg_replace( '/name=".*?\"/i', '', $cc_number );
+			echo $cc_number;
+
+			$cc_expiry = woocommerce_form_field( 'card-expiry', array(
+				'label'			=> 'Expiry (MM/YY)',
+				'placeholder'	=> 'MM / YY',
+				'required'		=> true,
+				'class'			=> array( 'form-row-first' ),
+				'input_class'	=> array( 'wc_stripe-card-expiry' ),
+				'return'		=> true
+			) );
+			$cc_expiry = preg_replace( '/name=".*?\"/i', '', $cc_expiry );
+			echo $cc_expiry;
+
+			$cc_cvc = woocommerce_form_field( 'card-cvc', array(
+				'label'			=> 'Card Code',
+				'placeholder'	=> 'CVC',
+				'required'		=> true,
+				'class'			=> array( 'form-row-last' ),
+				'input_class'	=> array( 'wc_stripe-card-cvc' ),
+				'return'		=> true,
+				'clear'			=> true
+			) );
+			$cc_cvc = preg_replace( '/name=".*?\"/i', '', $cc_cvc );
+			echo $cc_cvc;
+
+			?>
+		</div>
+		<?php
 	}
 
 	protected function send_to_stripe() {
