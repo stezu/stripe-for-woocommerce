@@ -170,8 +170,11 @@ class Woocommerce_Stripe extends WC_Payment_Gateway {
 		// Main stripe js
 		wp_enqueue_script( 'stripe', 'https://js.stripe.com/v2/', '', '1.0', true );
 
+		// jQuery Payment
+		wp_enqueue_script( 'paymentjs', plugins_url( 'assets/js/jquery.payment.min.js', dirname( __FILE__ ) ), array( 'jquery' ), '1.4.0', true );
+
 		// Plugin js
-		wp_enqueue_script( 'wc_stripe_js', plugins_url( 'assets/js/wc_stripe.js', dirname( __FILE__ ) ), array( 'stripe' ), '1.0', true );
+		wp_enqueue_script( 'wc_stripe_js', plugins_url( 'assets/js/wc_stripe.min.js', dirname( __FILE__ ) ), array( 'stripe', 'paymentjs' ), '1.0', true );
 
 		$wc_stripe_info = array(
 			'publishableKey'	=> $this->publishable_key,

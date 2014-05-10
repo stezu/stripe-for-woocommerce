@@ -90,3 +90,16 @@ jQuery(function ($) {
         }
     }
 });
+
+jQuery( function( $ ) {
+    $( '.wc_stripe-card-number' ).payment( 'formatCardNumber' );
+    $( '.wc_stripe-card-expiry' ).payment( 'formatCardExpiry' );
+    $( '.wc_stripe-card-cvc' ).payment( 'formatCardCVC' );
+
+    $( 'body' )
+        .on( 'updated_checkout', function() {
+            $( '.wc_stripe-card-number' ).payment( 'formatCardNumber' );
+            $( '.wc_stripe-card-expiry' ).payment( 'formatCardExpiry' );
+            $( '.wc_stripe-card-cvc' ).payment( 'formatCardCVC' );
+        });
+} );
