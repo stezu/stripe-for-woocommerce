@@ -39,13 +39,13 @@ jQuery(function ($) {
         if ( $('#payment_method_wc_stripe').is(':checked') && ( ! $('input[name="wc_stripe_card"]').length || $('input[name="wc_stripe_card"]:checked').val() === 'new' ) ) {
 
             if ( ! $( 'input.stripe_token' ).length ) {
-                var cardExpiry = $('#wc_stripe-card-expiry').payment('cardExpiryVal'),
-                    billingName = $('#wc_stripe-billing-name') || $('#billing_first_name').val() + ' ' + $('#billing_last_name').val(),
-                    billingZip = $('#wc_stripe-billing-zip') || $('#billing_postcode').val();
+                var billingName = ($('#wc_stripe-billing-name').length) ? $('#wc_stripe-billing-name').val() : $('#billing_first_name').val() + ' ' + $('#billing_last_name').val(),
+                    billingZip = ($('#wc_stripe-billing-zip').length) ? $('#wc_stripe-billing-zip').val() : $('#billing_postcode').val(),
+                    cardExpiry = $('.wc_stripe-card-expiry').payment('cardExpiryVal');
 
                 var stripeData = {
-                    number          : $('#wc_stripe-card-number').val(),
-                    cvc             : $('#wc_stripe-card-cvc').val(),
+                    number          : $('.wc_stripe-card-number').val(),
+                    cvc             : $('.wc_stripe-card-cvc').val(),
                     exp_month       : cardExpiry.month,
                     exp_year        : cardExpiry.year,
                     name            : billingName,
@@ -56,10 +56,12 @@ jQuery(function ($) {
                     address_country : $('#billing_country').val()
                 };
 
-                $form.block({
+                console.log(stripeData);
+
+                $form.parent().block({
                     message: null,
                     overlayCSS: {
-                        background: '#fff url(' + woocommerce_params.plugin_url + '/assets/images/ajax-loader.gif) no-repeat center',
+                        background: '#fff url(' + woocommerce_params.ajax_loader_url + ') no-repeat center',
                         opacity: 0.6
                     }
                 });
@@ -81,7 +83,7 @@ jQuery(function ($) {
             // show the errors on the form
             $('.payment-errors, .stripe_token').remove();
             $ccForm.before( '<span class="payment-errors required">' + response.error.message + '</span>' );
-            $form.unblock();
+            $form.parent().unblock();
 
         } else {
             // insert the token into the form so it gets submitted to the server
