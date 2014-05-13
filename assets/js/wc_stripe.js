@@ -56,8 +56,6 @@ jQuery(function ($) {
                     address_country : $('#billing_country').val()
                 };
 
-                console.log(stripeData);
-
                 $form.parent().block({
                     message: null,
                     overlayCSS: {
