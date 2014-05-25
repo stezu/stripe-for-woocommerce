@@ -39,8 +39,8 @@ jQuery(function ($) {
         if ( $('#payment_method_wc_stripe').is(':checked') && ( ! $('input[name="wc_stripe_card"]').length || $('input[name="wc_stripe_card"]:checked').val() === 'new' ) ) {
 
             if ( ! $( 'input.stripe_token' ).length ) {
-                var billingName = ($('#wc_stripe-billing-name').length) ? $('#wc_stripe-billing-name').val() : $('#billing_first_name').val() + ' ' + $('#billing_last_name').val(),
-                    billingZip = ($('#wc_stripe-billing-zip').length) ? $('#wc_stripe-billing-zip').val() : $('#billing_postcode').val(),
+                var billingName = ($('.wc_stripe-billing-name').length) ? $('.wc_stripe-billing-name').val() : $('#billing_first_name').val() + ' ' + $('#billing_last_name').val(),
+                    billingZip = ($('.wc_stripe-billing-zip').length) ? $('.wc_stripe-billing-zip').val() : $('#billing_postcode').val(),
                     cardExpiry = $('.wc_stripe-card-expiry').payment('cardExpiryVal');
 
                 var stripeData = {

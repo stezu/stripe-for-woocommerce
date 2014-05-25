@@ -263,19 +263,37 @@ class Woocommerce_Stripe extends WC_Payment_Gateway {
 
 		<div id="wc_stripe-creditcard-form">
 
-			<?php if ( $this->additional_fields == 'yes' ) : ?>
-				<p class="form-row form-row-first address-field validate-required" id="wc_stripe_name_field">
-					<label for="wc_stripe-billing-name">Name on Card <abbr class="required">*</abbr></label>
-					<input type="text" class="input-text" name="wc_stripe-billing-name" id="wc_stripe-billing-name">
-				</p>
+		<?php
+			if ( $this->additional_fields == 'yes' ) : 
 
-				<p class="form-row form-row-last address-field validate-required validate-postcode" id="wc_stripe_postcode_field">
-					<label for="wc_stripe-billing-zip">Billing Zip <abbr class="required">*</abbr></label>
-					<input type="text" class="input-text" name="wc_stripe-billing-zip" id="wc_stripe-billing-zip" placeholder="Postcode / Zip">
-				</p>
-			<?php endif; ?>
+				$billing_name = woocommerce_form_field( 'billing-name', array(
+					'label'				=> 'Name on Card',
+					'required'			=> true,
+					'class'				=> array( 'form-row-first' ),
+					'input_class'		=> array( 'wc_stripe-billing-name' ),
+					'return'			=> true,
+					'custom_attributes'	=> array(
+						'autocomplete'	=> 'off',
+						'novalidate'	=> 'novalidate'
+					)
+				) );
+				echo $billing_name;
 
-			<?php
+				$billing_zip = woocommerce_form_field( 'billing-zip', array(
+					'label'				=> 'Billing Zip',
+					'required'			=> true,
+					'class'				=> array( 'form-row-last' ),
+					'input_class'		=> array( 'wc_stripe-billing-zip' ),
+					'return'			=> true,
+					'clear'				=> true,
+					'custom_attributes'	=> array(
+						'autocomplete'	=> 'off',
+						'novalidate'	=> 'novalidate'
+					)
+				) );
+				echo $billing_zip;
+
+			endif;
 
 			$cc_number = woocommerce_form_field( 'card-number', array(
 				'label'				=> 'Card Number',
