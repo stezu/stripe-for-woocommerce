@@ -1,10 +1,30 @@
 <?php
+
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+
+/**
+ * Stripe Gateway
+ *
+ * Provides a Stripe Payment Gateway.
+ *
+ * @class 		Woocommerce_Stripe
+ * @extends		WC_Payment_Gateway
+ * @version		0.1.0
+ * @package		WooCommerce/Classes/Payment
+ * @author 		Stephen Zuniga
+ */
 class Woocommerce_Stripe extends WC_Payment_Gateway {
 	protected $GATEWAY_NAME				= 'wc_stripe';
 	protected $order					= null;
 	protected $transactionId			= null;
 	protected $transactionErrorMessage	= null;
 
+	/**
+	 * Constructor for the gateway.
+	 *
+	 * @access public
+	 * @return void
+	 */
 	public function __construct() {
 		$this->id						= 'wc_stripe';
 		$this->method_title				= 'WooCommerce Stripe';
@@ -41,33 +61,46 @@ class Woocommerce_Stripe extends WC_Payment_Gateway {
 		Stripe::setApiKey( $this->secret_key );
 	}
 
+	/**
+	 * Check if this gateway is enabled and all dependencies are fine.
+	 * Warn the user if any of the requirements fail.
+	 *
+	 * @access public
+	 * @return bool
+	 */
 	public function perform_checks() {
 		global $woocommerce;
 
 		if ( $this->enabled == 'no') {
-			return;
+			return false;
 		}
 
 		// We're using the credit card field bundles with WC 2.1.0, and this entire plugin won't work without it
 		if ( $woocommerce->version < '2.1.0' ) {
 			echo '<div class="error"><p>Stripe for WooCommerce uses some advanced features introduced in WooCommerce 2.1.0. Please update WooCommerce to continue using Stripe for WooCommerce.</p></div>';
-			return;
+			return false;
 		}
 
 		// Check for API Keys
 		if ( ! $this->publishable_key && ! $this->secret_key ) {
 			echo '<div class="error"><p>Stripe needs API Keys to work, please find your secret and publishable keys in the <a href="https://manage.stripe.com/account/apikeys" target="_blank">Stripe accounts section</a>.</p></div>';
-			return;
+			return false;
 		}
 
 		// Force SSL on production
 		if ( $this->testmode == 'no' && get_option( 'woocommerce_force_ssl_checkout' ) == 'no' ) {
 			echo '<div class="error"><p>Stripe needs SSL in order to be secure. Read mode about forcing SSL on checkout in <a href="http://docs.woothemes.com/document/ssl-and-https/" target="_blank">the WooCommerce docs</a>.</p></div>';
-			return;
+			return false;
 		}
 	}
 
-	// Disable plugin if checks fail
+	/**
+	 * Check if this gateway is enabled and all dependencies are fine.
+	 * Disable the plugin if dependencies fail.
+	 *
+	 * @access public
+	 * @return bool
+	 */
 	public function is_available() {
 		global $woocommerce;
 
@@ -86,13 +119,19 @@ class Woocommerce_Stripe extends WC_Payment_Gateway {
 		}
 
 		// Disable plugin if we don't use ssl
-		if ( is_ssl() && $this->testmode == 'no' ) {
+		if ( ! is_ssl() && $this->testmode == 'no' ) {
 			return false;
 		}
 
 		return true;
 	}
 
+	/**
+	 * Initialise Gateway Settings Form Fields
+	 *
+	 * @access public
+	 * @return void
+	 */
 	public function init_form_fields() {
 		$this->form_fields = array(
 			'enabled' => array(
@@ -156,16 +195,32 @@ class Woocommerce_Stripe extends WC_Payment_Gateway {
 		);
 	}
 
+	/**
+	 * Admin Panel Options
+	 * - Options for bits like 'title' and availability on a country-by-country basis
+	 *
+	 * @access public
+	 * @return void
+	 */
 	public function admin_options() {
 		?>
-		<h3>Credit Card Payment</h3>
-		<p>Allows Credit Card payments.</p>
+		<h3>Stripe Payment</h3>
+		<p>Allows Credit Card payments through <a href="https://stripe.com/">Stripe</a>.</p>
 		<table class="form-table">
 			<?php $this->generate_settings_html(); ?>
 		</table>
 		<?php
 	}
 
+	/**
+	 * Load dependent scripts
+	 * - stripe.js from the stripe servers
+	 * - jquery.payment.js for styling the form fields
+	 * - wc_stripe.js for handling the data to submit to stripe
+	 *
+	 * @access public
+	 * @return void
+	 */
 	public function load_scripts() {
 		// Main stripe js
 		wp_enqueue_script( 'stripe', 'https://js.stripe.com/v2/', '', '1.0', true );
@@ -184,6 +239,12 @@ class Woocommerce_Stripe extends WC_Payment_Gateway {
 		wp_localize_script( 'wc_stripe_js', 'wc_stripe_info', $wc_stripe_info );
 	}
 
+	/**
+	 * Payment fields
+	 *
+	 * @access public
+	 * @return void
+	 */
 	public function payment_fields() {
 		if( is_user_logged_in() && $this->stripe_customer_info ) :
 
@@ -270,6 +331,13 @@ class Woocommerce_Stripe extends WC_Payment_Gateway {
 		<?php
 	}
 
+	/**
+	 * Send form data to Stripe
+	 * Handles sending the charge to an existing customer, a new customer (that's logged in), or a guest
+	 *
+	 * @access public
+	 * @return void
+	 */
 	protected function send_to_stripe() {
 		global $woocommerce;
 
@@ -350,11 +418,19 @@ class Woocommerce_Stripe extends WC_Payment_Gateway {
 		}
 	}
 
-	protected function create_customer( $data, $customer_description ) {
+	/**
+	 * Create customer on stripe servers
+	 *
+	 * @access protected
+	 * @param array $form_data
+	 * @param string $customer_description
+	 * @return array
+	 */
+	protected function create_customer( $form_data, $customer_description ) {
 
 		$customer = Stripe_Customer::create( array(
 			'description'	=> $customer_description,
-			'card'			=> $data['token'],
+			'card'			=> $form_data['token'],
 		));
 		$card = $customer->cards->retrieve( $customer->default_card );
 
@@ -371,15 +447,22 @@ class Woocommerce_Stripe extends WC_Payment_Gateway {
 		return $customer;
 	}
 
-	public static function delete_card( $position ) {
-		$user_meta = get_user_meta( get_current_user_id(), '_stripe_customer_info', $position );
-		$customer = Stripe_Customer::retrieve( $user_meta['customer_id'] );
-		$current_card = $user_meta['card_id'];
+	// public static function delete_card( $position ) {
+	// 	$user_meta = get_user_meta( get_current_user_id(), '_stripe_customer_info', $position );
+	// 	$customer = Stripe_Customer::retrieve( $user_meta['customer_id'] );
+	// 	$current_card = $user_meta['card_id'];
 
-		$customer->cards->retrieve( $current_card )->delete();
-		delete_user_meta( get_current_user_id(), '_stripe_customer_info', $position );
-	}
+	// 	$customer->cards->retrieve( $current_card )->delete();
+	// 	delete_user_meta( get_current_user_id(), '_stripe_customer_info', $position );
+	// }
 
+	/**
+	 * Process the payment and return the result
+	 *
+	 * @access public
+	 * @param int $order_id
+	 * @return array
+	 */
 	public function process_payment( $order_id ) {
 		global $woocommerce;
 
@@ -391,6 +474,7 @@ class Woocommerce_Stripe extends WC_Payment_Gateway {
 				'result' => 'success',
 				'redirect' => $this->get_return_url( $this->order )
 			);
+
 			return $result;
 		} else {
 			$this->payment_failed();
@@ -398,6 +482,12 @@ class Woocommerce_Stripe extends WC_Payment_Gateway {
 		}
 	}
 
+	/**
+	 * Mark the payment as failed in the order notes
+	 *
+	 * @access protected
+	 * @return void
+	 */
 	protected function payment_failed() {
 		$this->order->add_order_note(
 			sprintf(
@@ -408,6 +498,12 @@ class Woocommerce_Stripe extends WC_Payment_Gateway {
 		);
 	}
 
+	/**
+	 * Mark the payment as completed in the order notes
+	 *
+	 * @access protected
+	 * @return void
+	 */
 	protected function order_complete() {
 		global $woocommerce;
 
@@ -429,10 +525,14 @@ class Woocommerce_Stripe extends WC_Payment_Gateway {
 		unset($_SESSION['order_awaiting_payment']);
 	}
 
-
-	protected function get_form_data()
-	{
-		if ($this->order && $this->order != null) {
+	/**
+	 * Retrieve the form fields
+	 *
+	 * @access protected
+	 * @return mixed
+	 */
+	protected function get_form_data() {
+		if ( $this->order && $this->order != null ) {
 			return array(
 				'amount'		=> (float) $this->order->get_total() * 100,
 				'currency'		=> strtolower(get_woocommerce_currency()),
@@ -450,6 +550,7 @@ class Woocommerce_Stripe extends WC_Payment_Gateway {
 				)
 			);
 		}
+
 		return false;
 	}
 }
