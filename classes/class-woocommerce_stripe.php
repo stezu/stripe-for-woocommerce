@@ -49,7 +49,8 @@ class Woocommerce_Stripe extends WC_Payment_Gateway {
 		// Get current user information
 		$this->current_user				= wp_get_current_user();
 		$this->current_user_id			= get_current_user_id();
-		$this->stripe_customer_info		= get_user_meta( $this->current_user_id, '_stripe_customer_info' );
+		$this->stripe_db_location		= $this->testmode == 'yes' ? '_stripe_test_customer_info' : '_stripe_live_customer_info';
+		$this->stripe_customer_info		= get_user_meta( $this->current_user_id, $this->stripe_db_location );
 
 		// Hooks
 		add_action( 'woocommerce_update_options_payment_gateways', array( $this, 'process_admin_options' ) );
@@ -375,7 +376,7 @@ class Woocommerce_Stripe extends WC_Payment_Gateway {
 		try {
 
 			// Make sure we only create customers if a user is logged in
-			if( is_user_logged_in() ) {
+			if ( is_user_logged_in() ) {
 
 				if ( ! $this->stripe_customer_info ) {
 					$customer = $this->create_customer( $data, $customer_description );
@@ -388,7 +389,7 @@ class Woocommerce_Stripe extends WC_Payment_Gateway {
 						$customer->default_card = $card->id;
 						$customer->save();
 
-						add_user_meta( $this->current_user_id, '_stripe_customer_info', array(
+						add_user_meta( $this->current_user_id, $this->stripe_db_location, array(
 							'customer_id'	=> $customer->id,
 							'card_id'		=> $card->id,
 							'type'			=> $card->type,
@@ -399,7 +400,7 @@ class Woocommerce_Stripe extends WC_Payment_Gateway {
 
 						$stripe_charge_data['card'] = $card->id;
 					} else {
-						$stripe_charge_data['card'] = $this->stripe_customer_info[$data['chosen_card']]['card_id'];
+						$stripe_charge_data['card'] = $this->stripe_customer_info[ $data['chosen_card'] ]['card_id'];
 					}
 				}
 
@@ -431,7 +432,7 @@ class Woocommerce_Stripe extends WC_Payment_Gateway {
 			$err  = $body['error'];
 			error_log( 'Stripe Error:' . $err['message'] . '\n' );
 
-			wc_add_notice( __( 'Payment error:', 'woothemes' ) . $err['message'], 'error' );
+			wc_add_notice( __( 'Payment error: ', 'woothemes' ) . $err['message'], 'error' );
 			return false;
 		}
 	}
@@ -453,7 +454,7 @@ class Woocommerce_Stripe extends WC_Payment_Gateway {
 		$card = $customer->cards->retrieve( $customer->default_card );
 
 		// Save users customer information for later use
-		add_user_meta( $this->current_user_id, '_stripe_customer_info', array(
+		add_user_meta( $this->current_user_id, $this->stripe_db_location, array(
 			'customer_id'	=> $customer->id,
 			'card_id'		=> $card->id,
 			'type'			=> $card->type,
@@ -466,12 +467,12 @@ class Woocommerce_Stripe extends WC_Payment_Gateway {
 	}
 
 	// public static function delete_card( $position ) {
-	// 	$user_meta = get_user_meta( get_current_user_id(), '_stripe_customer_info', $position );
+	// 	$user_meta = get_user_meta( get_current_user_id(), $this->stripe_db_location, $position );
 	// 	$customer = Stripe_Customer::retrieve( $user_meta['customer_id'] );
 	// 	$current_card = $user_meta['card_id'];
 
 	// 	$customer->cards->retrieve( $current_card )->delete();
-	// 	delete_user_meta( get_current_user_id(), '_stripe_customer_info', $position );
+	// 	delete_user_meta( get_current_user_id(), $this->stripe_db_location, $position );
 	// }
 
 	/**
@@ -525,7 +526,7 @@ class Woocommerce_Stripe extends WC_Payment_Gateway {
 	protected function order_complete() {
 		global $woocommerce;
 
-		if ($this->order->status == 'completed') {
+		if ( $this->order->status == 'completed' ) {
 			return;
 		}
 
@@ -540,7 +541,7 @@ class Woocommerce_Stripe extends WC_Payment_Gateway {
 			)
 		);
 
-		unset($_SESSION['order_awaiting_payment']);
+		unset( $_SESSION['order_awaiting_payment'] );
 	}
 
 	/**
@@ -553,7 +554,7 @@ class Woocommerce_Stripe extends WC_Payment_Gateway {
 		if ( $this->order && $this->order != null ) {
 			return array(
 				'amount'		=> (float) $this->order->get_total() * 100,
-				'currency'		=> strtolower(get_woocommerce_currency()),
+				'currency'		=> strtolower( get_woocommerce_currency() ),
 				'token'			=> isset( $_POST['stripe_token'] ) ? $_POST['stripe_token'] : '',
 				'description'	=> 'Charge for %s' . $this->order->billing_email,
 				'chosen_card'	=> isset( $_POST['wc_stripe_card'] ) ? $_POST['wc_stripe_card'] : '',
