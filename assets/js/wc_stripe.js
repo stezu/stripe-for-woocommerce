@@ -42,24 +42,22 @@ jQuery(function ($) {
         if ( $('#payment_method_wc_stripe').is(':checked') && ( ! $('input[name="wc_stripe_card"]').length || $('input[name="wc_stripe_card"]:checked').val() === 'new' ) ) {
 
             if ( ! $( 'input.stripe_token' ).length ) {
-                var billingName = ($('.wc_stripe-billing-name').length) ? $('.wc_stripe-billing-name').val() : $('#billing_first_name').val() + ' ' + $('#billing_last_name').val(),
-                    billingZip = ($('.wc_stripe-billing-zip').length) ? $('.wc_stripe-billing-zip').val() : $('#billing_postcode').val(),
-                    cardExpiry = $('.wc_stripe-card-expiry').payment('cardExpiryVal');
+                var cardExpiry = $('.wc_stripe-card-expiry').payment('cardExpiryVal');
 
                 var stripeData = {
                     number          : $('.wc_stripe-card-number').val(),
                     cvc             : $('.wc_stripe-card-cvc').val(),
                     exp_month       : cardExpiry.month,
                     exp_year        : cardExpiry.year,
-                    name            : billingName,
+                    name            : $('.wc_stripe-billing-name').val() || $('#billing_first_name').val() + ' ' + $('#billing_last_name').val(),
                     address_line1   : $('#billing_address_1').val(),
                     address_line2   : $('#billing_address_2').val(),
                     address_state   : $('#billing_state').val(),
-                    address_zip     : billingZip,
+                    address_zip     : $('.wc_stripe-billing-zip').val() || $('#billing_postcode').val(),
                     address_country : $('#billing_country').val()
                 };
 
-                $form.parent().block({
+                $form.block({
                     message: null,
                     overlayCSS: {
                         background: '#fff url(' + woocommerce_params.ajax_loader_url + ') no-repeat center',
@@ -84,7 +82,7 @@ jQuery(function ($) {
             // show the errors on the form
             $('.payment-errors, .stripe_token').remove();
             $ccForm.before( '<span class="payment-errors required">' + response.error.message + '</span>' );
-            $form.parent().unblock();
+            $form.unblock();
 
         } else {
             // insert the token into the form so it gets submitted to the server
