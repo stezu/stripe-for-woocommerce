@@ -21,9 +21,9 @@ function wc_stripe_init() {
 	}
 
 	// Require Stripe Library
-	if ( ! class_exists( 'Stripe' ) ) {
-		require_once( 'lib/stripe-php/lib/Stripe.php' );
-	}
+	// if ( ! class_exists( 'Stripe' ) ) {
+	// 	require_once( 'lib/stripe-php/lib/Stripe.php' );
+	// }
 
 	include_once('classes/class-woocommerce_stripe.php');
 
