@@ -441,7 +441,7 @@ class Woocommerce_Stripe extends WC_Payment_Gateway {
 			return true;
 
 		} catch ( Exception $e ) {
-			$woocommerce->add_error( __('Error:', 'woothemes') . ' "' . $e->getMessage() . '"' );
+			wc_add_notice( __( 'Error: ', 'woothemes' ) . ' "' . $e->getMessage() . '"', 'error' );
 
 			return false;
 		}
