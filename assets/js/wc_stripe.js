@@ -59,7 +59,7 @@ jQuery(function ($) {
                     address_country : $('#billing_country').val()
                 };
 
-                $form.parent().block({
+                $form.block({
                     message: null,
                     overlayCSS: {
                         background: '#fff url(' + woocommerce_params.ajax_loader_url + ') no-repeat center',
@@ -84,7 +84,7 @@ jQuery(function ($) {
             // show the errors on the form
             $('.payment-errors, .stripe_token').remove();
             $ccForm.before( '<span class="payment-errors required">' + response.error.message + '</span>' );
-            $form.parent().unblock();
+            $form.unblock();
 
         } else {
             // insert the token into the form so it gets submitted to the server
