@@ -232,6 +232,9 @@ class Woocommerce_Stripe extends WC_Payment_Gateway {
 		// Plugin js
 		wp_enqueue_script( 'wc_stripe_js', plugins_url( 'assets/js/wc_stripe.min.js', dirname( __FILE__ ) ), array( 'stripe', 'paymentjs' ), '1.0', true );
 
+		// Plugin css
+		wp_enqueue_style( 'wc_stripe_css', plugins_url( 'assets/css/wc_stripe.css', dirname( __FILE__ ) ), false, '1.0');
+
 		$wc_stripe_info = array(
 			'publishableKey'	=> $this->publishable_key,
 			'hasCard'			=> $this->stripe_customer_info ? true : false

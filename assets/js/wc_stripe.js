@@ -5,6 +5,9 @@ jQuery(function ($) {
     var $form = $('form.checkout, form#order_review'),
         $ccForm = $('#wc_stripe-creditcard-form');
 
+    // Add container for card image
+    $( '.wc_stripe-card-number' ).after( '<span class="wc_stripe-card-image"></span>' );
+
     // Hide the CC form if the user has a saved card.
     if ( wc_stripe_info.hasCard ) {
         $ccForm.hide();
@@ -96,10 +99,13 @@ jQuery( function( $ ) {
     $( '.wc_stripe-card-expiry' ).payment( 'formatCardExpiry' );
     $( '.wc_stripe-card-cvc' ).payment( 'formatCardCVC' );
 
-    $( 'body' )
-        .on( 'updated_checkout', function() {
-            $( '.wc_stripe-card-number' ).payment( 'formatCardNumber' );
-            $( '.wc_stripe-card-expiry' ).payment( 'formatCardExpiry' );
-            $( '.wc_stripe-card-cvc' ).payment( 'formatCardCVC' );
-        });
-} );
+    $( 'body' ).on( 'updated_checkout', function() {
+        $( '.wc_stripe-card-number' ).payment( 'formatCardNumber' );
+        $( '.wc_stripe-card-expiry' ).payment( 'formatCardExpiry' );
+        $( '.wc_stripe-card-cvc' ).payment( 'formatCardCVC' );
+    });
+
+    $( '.wc_stripe-card-cvc' ).on( 'focus blur', function () {
+        $( '.wc_stripe-card-number' ).toggleClass( 'cvc' );
+    });
+});
