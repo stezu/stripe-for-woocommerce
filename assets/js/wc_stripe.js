@@ -88,7 +88,7 @@ jQuery(function ($) {
 
         } else {
             // insert the token into the form so it gets submitted to the server
-            $form.append( '<input type="hidden" class="stripe_token" name="stripe_token" value="' + response.id + '"/>' );
+            $ccForm.append( '<input type="hidden" class="stripe_token" name="stripe_token" value="' + response.id + '"/>' );
             $form.submit();
         }
     }
