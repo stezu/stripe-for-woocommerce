@@ -58,9 +58,6 @@ class Woocommerce_Stripe extends WC_Payment_Gateway {
 		add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array( $this, 'process_admin_options' ) );
 		add_action( 'admin_notices', array( $this, 'perform_checks' ) );
 		add_action( 'wp_enqueue_scripts', array( &$this, 'load_scripts' ) );
-
-		// Set Stripe secret key
-		// Stripe::setApiKey( $this->secret_key );
 	}
 
 	/**
@@ -790,26 +787,6 @@ function wc_stripe_order_status_completed($order_id = null) {
 			error_log('Stripe Error:' . $err['message'] . '\n');
 			wc_add_notice(__('Payment error:', 'wc_stripe') . $err['message'], 'error');
 
-			return null;
-		}
-
-
-		Stripe::setApiKey( get_post_meta( $order_id, 'key', true ) );
-
-		try {
-			$tid = get_post_meta( $order_id, 'transaction_id', true );
-			$ch = Stripe_Charge::retrieve( $tid );
-
-			if( $total < $ch->amount ) {
-				$params['amount'] = $total;
-			}
-			$ch->capture( $params );
-		} catch( Stripe_Error $e ) {
-			// There was an error
-			$body = $e->getJsonBody();
-			$err  = $body['error'];
-			error_log('Stripe Error:' . $err['message'] . '\n');
-			wc_add_notice(__('Payment error:', 'wc_stripe') . $err['message'], 'error');
 			return null;
 		}
 

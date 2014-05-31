@@ -20,11 +20,6 @@ function wc_stripe_init() {
 		return;
 	}
 
-	// Require Stripe Library
-	// if ( ! class_exists( 'Stripe' ) ) {
-	// 	require_once( 'lib/stripe-php/lib/Stripe.php' );
-	// }
-
 	include_once('classes/class-woocommerce_stripe.php');
 
 	function wc_stripe_account_saved_cards() {
