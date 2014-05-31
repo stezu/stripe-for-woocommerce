@@ -472,20 +472,20 @@ class Woocommerce_Stripe extends WC_Payment_Gateway {
 		) );
 
 		if ( is_wp_error( $customer_response ) ) {
-			return new WP_Error( 'stripe_error', __('There was a problem connecting to the payment gateway.', 'woothemes') );
+			throw new Exception( __( 'There was a problem connecting to the payment gateway.', 'woothemes' ) );
 		}
 
 		if( empty( $customer_response['body'] ) ) {
-			return new WP_Error( 'stripe_error', __('Empty response.', 'woothemes') );
+			throw new Exception( __( 'Empty response.', 'woothemes' ) );
 		}
 
 		$customer = json_decode( $customer_response['body'] );
 
 		// Handle response
 		if ( ! empty( $customer->error ) ) {
-			return new WP_Error( 'stripe_error', $customer->error->message );
+			throw new Exception( __( $customer->error->message, 'woothemes' ) );
 		} elseif ( empty( $customer->id ) ) {
-			return new WP_Error( 'stripe_error', __('Invalid response.', 'woothemes') );
+			throw new Exception( __( 'Invalid response.', 'woothemes' ) );
 		}
 
 		// Save users customer information for later use
@@ -520,20 +520,20 @@ class Woocommerce_Stripe extends WC_Payment_Gateway {
 		) );
 
 		if ( is_wp_error( $customer_response ) ) {
-			return new WP_Error( 'stripe_error', __('There was a problem connecting to the payment gateway.', 'woothemes') );
+			throw new Exception( __( 'There was a problem connecting to the payment gateway.', 'woothemes' ) );
 		}
 
 		if( empty( $customer_response['body'] ) ) {
-			return new WP_Error( 'stripe_error', __('Empty response.', 'woothemes') );
+			throw new Exception( __( 'Empty response.', 'woothemes' ) );
 		}
 
 		$customer = json_decode( $customer_response['body'] );
 
 		// Handle response
 		if ( ! empty( $customer->error ) ) {
-			return new WP_Error( 'stripe_error', $customer->error->message );
+			throw new Exception( __( $customer->error->message, 'woothemes' ) );
 		} elseif ( empty( $customer->id ) ) {
-			return new WP_Error( 'stripe_error', __('Invalid response.', 'woothemes') );
+			throw new Exception( __( 'Invalid response.', 'woothemes' ) );
 		}
 
 		return $customer;
@@ -561,20 +561,20 @@ class Woocommerce_Stripe extends WC_Payment_Gateway {
 		) );
 
 		if ( is_wp_error( $customer_response ) ) {
-			return new WP_Error( 'stripe_error', __('There was a problem connecting to the payment gateway.', 'woothemes') );
+			throw new Exception( __( 'There was a problem connecting to the payment gateway.', 'woothemes' ) );
 		}
 
 		if( empty( $customer_response['body'] ) ) {
-			return new WP_Error( 'stripe_error', __('Empty response.', 'woothemes') );
+			throw new Exception( __( 'Empty response.', 'woothemes' ) );
 		}
 
 		$customer = json_decode( $customer_response['body'] );
 
 		// Handle response
 		if ( ! empty( $customer->error ) ) {
-			return new WP_Error( 'stripe_error', $customer->error->message );
+			throw new Exception( __( $customer->error->message, 'woothemes' ) );
 		} elseif ( empty( $customer->id ) ) {
-			return new WP_Error( 'stripe_error', __('Invalid response.', 'woothemes') );
+			throw new Exception( __( 'Invalid response.', 'woothemes' ) );
 		}
 
 		return $customer;
@@ -601,24 +601,20 @@ class Woocommerce_Stripe extends WC_Payment_Gateway {
 		) );
 
 		if ( is_wp_error( $charge_response ) ) {
-			$this->order->add_order_note( __('There was a problem connecting to the payment gateway.', 'woothemes') );
-			return new WP_Error( 'stripe_error', __('There was a problem connecting to the payment gateway.', 'woothemes') );
+			throw new Exception( __( 'There was a problem connecting to the payment gateway.', 'woothemes' ) );
 		}
 
 		if( empty( $charge_response['body'] ) ) {
-			$this->order->add_order_note( __('Empty response.', 'woothemes') );
-			return new WP_Error( 'stripe_error', __('Empty response.', 'woothemes') );
+			throw new Exception( __( 'Empty response.', 'woothemes' ) );
 		}
 
 		$charge = json_decode( $charge_response['body'] );
 
 		// Handle response
 		if ( ! empty( $charge->error ) ) {
-			$this->order->add_order_note( __($charge->error->message, 'woothemes') );
-			throw new Exception( $charge->error->message );
+			throw new Exception( __( $charge->error->message, 'woothemes' ) );
 		} elseif ( empty( $charge->id ) ) {
-			$this->order->add_order_note( __('Invalid response.', 'woothemes') );
-			return new WP_Error( 'stripe_error', __('Invalid response.', 'woothemes') );
+			throw new Exception( __( 'Invalid response.', 'woothemes' ) );
 		}
 
 		return $charge;
@@ -771,20 +767,20 @@ function wc_stripe_order_status_completed($order_id = null) {
 			) );
 
 			if ( is_wp_error( $charge_response ) ) {
-				return new WP_Error( 'stripe_error', __('There was a problem connecting to the payment gateway.', 'woothemes') );
+				throw new Exception( __( 'There was a problem connecting to the payment gateway.', 'woothemes' ) );
 			}
 
 			if( empty( $charge_response['body'] ) ) {
-				return new WP_Error( 'stripe_error', __('Empty response.', 'woothemes') );
+				throw new Exception( __( 'Empty response.', 'woothemes' ) );
 			}
 
 			$charge = json_decode( $charge_response['body'] );
 
 			// Handle response
 			if ( ! empty( $charge->error ) ) {
-				return new WP_Error( 'stripe_error', $charge->error->message );
+				throw new Exception( __( $charge->error->message, 'woothemes' ) );
 			} elseif ( empty( $charge->id ) ) {
-				return new WP_Error( 'stripe_error', __('Invalid response.', 'woothemes') );
+				throw new Exception( __( 'Invalid response.', 'woothemes' ) );
 			}
 		} catch ( Exception $e ) {
 			// There was an error
