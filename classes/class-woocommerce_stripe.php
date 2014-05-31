@@ -371,7 +371,7 @@ class Woocommerce_Stripe extends WC_Payment_Gateway {
 		if ( is_user_logged_in() ) {
 			$customer_description = $this->current_user->user_login . ' (#' . $this->current_user_id . ' - ' . $this->current_user->user_email . ') ' . $data['card']['name']; // username (user_id - user_email) Full Name
 		} else {
-			$customer_description = 'Guest (' . $this->order->billing_email . ')' . $data['card']['name']; // Guest (user_email) Full Name
+			$customer_description = 'Guest (' . $this->order->billing_email . ') ' . $data['card']['name']; // Guest (user_email) Full Name
 		}
 		$stripe_charge_data = array(
 			'amount'		=> $data['amount'], // amount in cents
@@ -615,7 +615,7 @@ class Woocommerce_Stripe extends WC_Payment_Gateway {
 		// Handle response
 		if ( ! empty( $charge->error ) ) {
 			$this->order->add_order_note( __($charge->error->message, 'woothemes') );
-			return new WP_Error( 'stripe_error', $charge->error->message );
+			throw new Exception( $charge->error->message );
 		} elseif ( empty( $charge->id ) ) {
 			$this->order->add_order_note( __('Invalid response.', 'woothemes') );
 			return new WP_Error( 'stripe_error', __('Invalid response.', 'woothemes') );
