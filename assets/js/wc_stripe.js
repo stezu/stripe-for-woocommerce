@@ -65,8 +65,9 @@ jQuery(function ($) {
                     }
                 });
 
-                // Send data to stripe
-                Stripe.createToken( stripeData, stripeResponseHandler );
+                // Add in validation checks, then use ajax to add wc_add_notice
+                // Create token if all is well.
+                stripeFormValidator( stripeData );
 
                 // Prevent form from submitting
                 return false;
@@ -90,6 +91,88 @@ jQuery(function ($) {
             $form.submit();
         }
     }
+
+    function stripeFormValidator ( stripeData ) {
+        var message = {
+            'action': 'stripe_form_validation',
+            'errors': []
+        };
+
+        // Card number validation
+        if ( ! stripeData.number ) {
+            message.errors.push({
+                'field': 'number',
+                'type': 'undefined'
+            });
+        } else if ( ! $.payment.validateCardNumber( stripeData.number ) ) {
+            message.errors.push({
+                'field': 'number',
+                'type': 'invalid'
+            });
+        }
+
+        // Card expiration validation
+        if ( ! stripeData.exp_month || ! stripeData.exp_year ) {
+            message.errors.push({
+                'field': 'expiration',
+                'type': 'undefined'
+            });
+        } else if ( ! $.payment.validateCardExpiry( stripeData.exp_month, stripeData.exp_year ) ) {
+            message.errors.push({
+                'field': 'expiration',
+                'type': 'invalid'
+            });
+        }
+
+        // Card CVC validation
+        if ( ! stripeData.cvc ) {
+            message.errors.push({
+                'field': 'cvc',
+                'type': 'undefined'
+            });
+        } else if ( ! $.payment.validateCardCVC( stripeData.cvc, $.payment.cardType( stripeData.number ) ) ) {
+            message.errors.push({
+                'field': 'cvc',
+                'type': 'invalid'
+            });
+        }
+
+        // If there are errors, display them using wc_add_notice on the backend
+        if ( message.errors.length ) {
+            $.post( wc_stripe_info.ajaxurl, message, function ( code ) {
+                if ( code.indexOf( '<!--WC_STRIPE_START-->' ) >= 0 ) {
+                    code = code.split( '<!--WC_STRIPE_START-->' )[1]; // Strip off anything before WC_STRIPE_START
+                }
+                if ( code.indexOf( '<!--WC_STRIPE_END-->' ) >= 0 ) {
+                    code = code.split( '<!--WC_STRIPE_END-->' )[0]; // Strip off anything after WC_STRIPE_END
+                }
+                var result = $.parseJSON( code );
+
+                // Clear out event handlers to make sure we only fire once.
+                $( 'body' ).off( '.wc_stripe' );
+
+                // Add new errors if errors already exist
+                $( 'body' ).on( 'checkout_error.wc_stripe', function () {
+                    if ( result.messages.indexOf( '<ul class="woocommerce-error">' ) >= 0 ) {
+                        result.messages = result.messages.split( '<ul class="woocommerce-error">' )[1]; // Strip off anything before ul.woocommerce-error
+                    }
+                    if ( result.messages.indexOf( '</ul>' ) >= 0 ) {
+                        result.messages = result.messages.split( '</ul>' )[0]; // Strip off anything after ul.woocommerce-error
+                    }
+
+                    $form.find( '.woocommerce-error' ).append( result.messages );
+                });
+                $form.prepend( result.messages );
+            });
+
+            $( '.stripe_token' ).remove();
+            $form.unblock();
+        }
+        // Create the token if we don't have any errors
+        else {
+            Stripe.createToken( stripeData, stripeResponseHandler );
+        }
+    }
 });
 
 jQuery( function( $ ) {
@@ -103,7 +186,11 @@ jQuery( function( $ ) {
         $( '.wc_stripe-card-cvc' ).payment( 'formatCardCVC' );
     });
 
-    $( '.wc_stripe-card-cvc' ).on( 'focus blur', function () {
-        $( '.wc_stripe-card-number' ).toggleClass( 'cvc' );
-    });
+    $( '.wc_stripe-card-cvc' )
+        .focus( function () {
+            $( '.wc_stripe-card-number' ).addClass( 'cvc' );
+        })
+        .blur( function () {
+            $( '.wc_stripe-card-number' ).removeClass( 'cvc' );
+        });
 });

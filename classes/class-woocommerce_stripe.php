@@ -234,6 +234,7 @@ class Woocommerce_Stripe extends WC_Payment_Gateway {
 		wp_enqueue_style( 'wc_stripe_css', plugins_url( 'assets/css/wc_stripe.css', dirname( __FILE__ ) ), false, '1.0');
 
 		$wc_stripe_info = array(
+			'ajaxurl'			=> admin_url( 'admin-ajax.php' ),
 			'publishableKey'	=> $this->publishable_key,
 			'hasCard'			=> $this->stripe_customer_info ? true : false
 		);
@@ -648,7 +649,7 @@ class Woocommerce_Stripe extends WC_Payment_Gateway {
 			return $result;
 		} else {
 			$this->payment_failed();
-			wc_add_notice( __( 'Transaction Error: Could not complete your payment', 'wc_stripe' ), 'error' );
+			wc_add_notice( __( 'Transaction Error: Could not complete your payment.', 'wc_stripe' ), 'error' );
 		}
 	}
 
@@ -732,7 +733,7 @@ class Woocommerce_Stripe extends WC_Payment_Gateway {
  * @param int $order_id
  * @return bool
  */
-function wc_stripe_order_status_completed($order_id = null) {
+function wc_stripe_order_status_completed( $order_id = null ) {
 	global $woocommerce;
 
 	if ( ! $order_id ) {
@@ -784,8 +785,8 @@ function wc_stripe_order_status_completed($order_id = null) {
 			$body = $e->getJsonBody();
 			$err  = $body['error'];
 
-			error_log('Stripe Error:' . $err['message'] . '\n');
-			wc_add_notice(__('Payment error:', 'wc_stripe') . $err['message'], 'error');
+			error_log( 'Stripe Error:' . $err['message'] . '\n' );
+			wc_add_notice( __( 'Payment error:', 'wc_stripe') . $err['message'], 'error' );
 
 			return null;
 		}
@@ -793,5 +794,65 @@ function wc_stripe_order_status_completed($order_id = null) {
 		return true;
 	}
 }
+add_action( 'woocommerce_order_status_processing_to_completed', 'wc_stripe_order_status_completed' );
 
-add_action('woocommerce_order_status_processing_to_completed', 'wc_stripe_order_status_completed' );
+/**
+ * Handles posting notifications to the user when their credit card information is invalid
+ *
+ * @access public
+ * @return void
+ */
+function validation_errors() {
+
+	foreach( $_POST['errors'] as $error ) {
+		$message = '';
+
+		$message .= '<strong>';
+		switch ( $error['field'] ) {
+			case 'number':
+				$message .= __( 'Credit Card Number', 'wc_stripe' );
+				break;
+			case 'expiration':
+				$message .= __( 'Credit Card Expiration', 'wc_stripe' );
+				break;
+			case 'cvc':
+				$message .= __( 'Credit Card CVC', 'wc_stripe' );
+				break;
+		}
+		$message .= '</strong>';
+
+		switch ( $error['type'] ) {
+			case 'undefined':
+				$message .= ' ' . __( 'is a required field', 'wc_stripe' );
+				break;
+			case 'invalid':
+				$message = __( 'Please enter a valid', 'wc_stripe' ) . ' ' . $message;
+				break;
+		}
+		$message .= '.';
+
+		wc_add_notice( $message, 'error' );
+	}
+
+	if ( is_ajax() ) {
+
+		ob_start();
+		wc_print_notices();
+		$messages = ob_get_clean();
+
+		echo '<!--WC_STRIPE_START-->' . json_encode(
+			array(
+				'result'	=> 'failure',
+				'messages' 	=> $messages,
+				'refresh' 	=> isset( WC()->session->refresh_totals ) ? 'true' : 'false',
+				'reload'    => isset( WC()->session->reload_checkout ) ? 'true' : 'false'
+			)
+		) . '<!--WC_STRIPE_END-->';
+
+		unset( WC()->session->refresh_totals, WC()->session->reload_checkout );
+		exit;
+	}
+	die();
+}
+add_action( 'wp_ajax_stripe_form_validation', 'validation_errors' );
+add_action( 'wp_ajax_nopriv_stripe_form_validation', 'validation_errors' );
