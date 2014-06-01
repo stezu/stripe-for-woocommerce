@@ -365,6 +365,11 @@ class Woocommerce_Stripe extends WC_Payment_Gateway {
 		// Get the credit card details submitted by the form
 		$data = $this->get_form_data();
 
+		// If there are errors on the form, don't bother sending to Stripe.
+		if ( $data['errors'] == 1 ) {
+			return;
+		}
+
 		// Set up basics for charging
 		if ( is_user_logged_in() ) {
 			$customer_description = $this->current_user->user_login . ' (#' . $this->current_user_id . ' - ' . $this->current_user->user_email . ') ' . $data['card']['name']; // username (user_id - user_email) Full Name
@@ -638,6 +643,7 @@ class Woocommerce_Stripe extends WC_Payment_Gateway {
 		global $woocommerce;
 
 		$this->order = new WC_Order( $order_id );
+
 		if ( $this->send_to_stripe() ) {
 			$this->order_complete();
 
@@ -718,7 +724,8 @@ class Woocommerce_Stripe extends WC_Payment_Gateway {
 					'address_zip'		=> $this->order->billing_postcode,
 					'address_state'		=> $this->order->billing_state,
 					'address_country'	=> $this->order->billing_country,
-				)
+				),
+				'errors'		=> isset( $_POST['form_errors'] ) ? $_POST['form_errors'] : ''
 			);
 		}
 

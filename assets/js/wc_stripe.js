@@ -25,7 +25,7 @@ jQuery(function ($) {
 
     // Both Forms
     $form.on('keyup change', '#card-number, #card-expiry, #card-cvc, input[name="wc_stripe_card"]', function () {
-        $('.woocommerce_error, .woocommerce-error, .woocommerce-message, .woocommerce_message, .stripe_token').remove();
+        $('.woocommerce_error, .woocommerce-error, .woocommerce-message, .woocommerce_message, .stripe_token, .form_errors').remove();
     });
 
     // Toggle new card form
@@ -81,7 +81,7 @@ jQuery(function ($) {
 
         if ( response.error ) {
             // show the errors on the form
-            $('.payment-errors, .stripe_token').remove();
+            $('.payment-errors, .stripe_token, .form_errors').remove();
             $ccForm.before( '<span class="payment-errors required">' + response.error.message + '</span>' );
             $form.unblock();
 
@@ -153,6 +153,7 @@ jQuery(function ($) {
 
                 // Add new errors if errors already exist
                 $( 'body' ).on( 'checkout_error.wc_stripe', function () {
+
                     if ( result.messages.indexOf( '<ul class="woocommerce-error">' ) >= 0 ) {
                         result.messages = result.messages.split( '<ul class="woocommerce-error">' )[1]; // Strip off anything before ul.woocommerce-error
                     }
@@ -162,11 +163,20 @@ jQuery(function ($) {
 
                     $form.find( '.woocommerce-error' ).append( result.messages );
                 });
+
+                // Add errors the normal way
+                $form.find( '.woocommerce-error' ).remove();
                 $form.prepend( result.messages );
+
+                $( 'html, body' ).animate({
+                    scrollTop: ( $( 'form.checkout' ).offset().top - 100 )
+                }, 1000 );
             });
 
-            $( '.stripe_token' ).remove();
+            $( '.stripe_token, .form_errors' ).remove();
             $form.unblock();
+
+            $ccForm.append( '<input type="hidden" class="form_errors" name="form_errors" value="1">' );
         }
         // Create the token if we don't have any errors
         else {
