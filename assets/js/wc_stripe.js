@@ -14,7 +14,7 @@ jQuery(function ($) {
     }
 
     // Checkout Form
-    $('form.checkout').on('checkout_place_order', function () {
+    $('form.checkout').on('checkout_place_order_wc_stripe', function () {
         return stripeFormHandler();
     });
 
@@ -65,12 +65,13 @@ jQuery(function ($) {
                     }
                 });
 
-                // Add in validation checks, then use ajax to add wc_add_notice
-                // Create token if all is well.
-                stripeFormValidator( stripeData );
+                // Validate form fields, create token if form is valid
+                if ( stripeFormValidator( stripeData ) ) {
+                    Stripe.createToken( stripeData, stripeResponseHandler );
 
-                // Prevent form from submitting
-                return false;
+                    // Prevent form from submitting
+                    return false;
+                }
             }
         }
 
@@ -167,20 +168,21 @@ jQuery(function ($) {
                 // Add errors the normal way
                 $form.find( '.woocommerce-error' ).remove();
                 $form.prepend( result.messages );
-
-                $( 'html, body' ).animate({
-                    scrollTop: ( $( 'form.checkout' ).offset().top - 100 )
-                }, 1000 );
             });
 
             $( '.stripe_token, .form_errors' ).remove();
+            $ccForm.append( '<input type="hidden" class="form_errors" name="form_errors" value="1">' );
+
             $form.unblock();
 
-            $ccForm.append( '<input type="hidden" class="form_errors" name="form_errors" value="1">' );
+            return false;
         }
         // Create the token if we don't have any errors
         else {
-            Stripe.createToken( stripeData, stripeResponseHandler );
+            // Clear out notices
+            $.post( wc_stripe_info.ajaxurl, message );
+
+            return true;
         }
     }
 });
