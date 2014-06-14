@@ -519,7 +519,7 @@ class Woocommerce_Stripe extends WC_Payment_Gateway {
 	 * Get data from Stripe's servers by passing an API endpoint
 	 *
 	 * @access protected
-	 * @param array $get_location
+	 * @param string $get_location
 	 * @return array
 	 */
 	protected function get_stripe_data( $get_location ) {
@@ -540,7 +540,8 @@ class Woocommerce_Stripe extends WC_Payment_Gateway {
 	 * Post data to Stripe's servers by passing data and an API endpoint
 	 *
 	 * @access protected
-	 * @param array $get_location
+	 * @param array $post_data
+	 * @param string $post_location
 	 * @return array
 	 */
 	protected function post_stripe_data( $post_data, $post_location = 'charges' ) {
@@ -562,7 +563,7 @@ class Woocommerce_Stripe extends WC_Payment_Gateway {
 	 * Parse Stripe's response after interacting with the API
 	 *
 	 * @access protected
-	 * @param array $get_location
+	 * @param array $response
 	 * @return array
 	 */
 	protected function parse_stripe_response( $response ) {
