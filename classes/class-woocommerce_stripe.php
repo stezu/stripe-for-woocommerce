@@ -461,36 +461,12 @@ class Woocommerce_Stripe extends WC_Payment_Gateway {
 	 */
 	protected function create_customer( $form_data, $customer_description ) {
 
-		$customer_response = wp_remote_post( $this->api_endpoint . 'v1/customers', array(
-			'method'		=> 'POST',
-			'headers' 		=> array(
-				'Authorization' => 'Basic ' . base64_encode( $this->secret_key . ':' ),
-			),
-			'body'			=> array(
-				'description'	=> $customer_description,
-				'card'			=> $form_data['token']
-			),
-			'timeout' 		=> 70,
-			'sslverify' 	=> false,
-			'user-agent' 	=> 'WooCommerce-Stripe',
-		) );
+		$post_body = array(
+			'description'	=> $customer_description,
+			'card'			=> $form_data['token']
+		);
 
-		if ( is_wp_error( $customer_response ) ) {
-			throw new Exception( __( 'There was a problem connecting to the payment gateway.', 'wc_stripe' ) );
-		}
-
-		if( empty( $customer_response['body'] ) ) {
-			throw new Exception( __( 'Empty response.', 'wc_stripe' ) );
-		}
-
-		$customer = json_decode( $customer_response['body'] );
-
-		// Handle response
-		if ( ! empty( $customer->error ) ) {
-			throw new Exception( __( $customer->error->message, 'wc_stripe' ) );
-		} elseif ( empty( $customer->id ) ) {
-			throw new Exception( __( 'Invalid response.', 'wc_stripe' ) );
-		}
+		$customer = $this->post_stripe_data( $post_body, 'customers' );
 
 		// Save users customer information for later use
 		add_user_meta( $this->current_user_id, $this->stripe_db_location, array(
@@ -513,34 +489,7 @@ class Woocommerce_Stripe extends WC_Payment_Gateway {
 	 * @return array
 	 */
 	protected function get_customer( $customer_id ) {
-
-		$customer_response = wp_remote_get( $this->api_endpoint . 'v1/customers/' . $customer_id, array(
-			'headers' 		=> array(
-				'Authorization' => 'Basic ' . base64_encode( $this->secret_key . ':' ),
-			),
-			'timeout' 		=> 70,
-			'sslverify' 	=> false,
-			'user-agent' 	=> 'WooCommerce-Stripe',
-		) );
-
-		if ( is_wp_error( $customer_response ) ) {
-			throw new Exception( __( 'There was a problem connecting to the payment gateway.', 'wc_stripe' ) );
-		}
-
-		if( empty( $customer_response['body'] ) ) {
-			throw new Exception( __( 'Empty response.', 'wc_stripe' ) );
-		}
-
-		$customer = json_decode( $customer_response['body'] );
-
-		// Handle response
-		if ( ! empty( $customer->error ) ) {
-			throw new Exception( __( $customer->error->message, 'wc_stripe' ) );
-		} elseif ( empty( $customer->id ) ) {
-			throw new Exception( __( 'Invalid response.', 'wc_stripe' ) );
-		}
-
-		return $customer;
+		return $this->get_stripe_data( 'customers/' . $customer_id );
 	}
 
 	/**
@@ -551,37 +500,8 @@ class Woocommerce_Stripe extends WC_Payment_Gateway {
 	 * @param array $request
 	 * @return array
 	 */
-	protected function update_customer( $customer_id, $request ) {
-
-		$customer_response = wp_remote_post( $this->api_endpoint . 'v1/customers/' . $customer_id, array(
-			'method'		=> 'POST',
-			'headers' 		=> array(
-				'Authorization' => 'Basic ' . base64_encode( $this->secret_key . ':' ),
-			),
-			'body'			=> $request,
-			'timeout' 		=> 70,
-			'sslverify' 	=> false,
-			'user-agent' 	=> 'WooCommerce-Stripe',
-		) );
-
-		if ( is_wp_error( $customer_response ) ) {
-			throw new Exception( __( 'There was a problem connecting to the payment gateway.', 'wc_stripe' ) );
-		}
-
-		if( empty( $customer_response['body'] ) ) {
-			throw new Exception( __( 'Empty response.', 'wc_stripe' ) );
-		}
-
-		$customer = json_decode( $customer_response['body'] );
-
-		// Handle response
-		if ( ! empty( $customer->error ) ) {
-			throw new Exception( __( $customer->error->message, 'wc_stripe' ) );
-		} elseif ( empty( $customer->id ) ) {
-			throw new Exception( __( 'Invalid response.', 'wc_stripe' ) );
-		}
-
-		return $customer;
+	protected function update_customer( $customer_id, $customer_data ) {
+		return $this->post_stripe_data( $customer_data, 'customers/' . $customer_id );
 	}
 
 	/**
@@ -592,36 +512,57 @@ class Woocommerce_Stripe extends WC_Payment_Gateway {
 	 * @return array
 	 */
 	protected function create_charge( $charge_data ) {
+		return $this->post_stripe_data( $charge_data );
+	}
 
-		$charge_response = wp_remote_post( $this->api_endpoint . 'v1/charges', array(
-			'method'		=> 'POST',
+	protected function get_stripe_data( $get_location ) {
+		$response = wp_remote_get( $this->api_endpoint . 'v1/' . $get_location, array(
+			'method'		=> 'GET',
 			'headers' 		=> array(
 				'Authorization' => 'Basic ' . base64_encode( $this->secret_key . ':' ),
 			),
-			'body'			=> $charge_data,
 			'timeout' 		=> 70,
 			'sslverify' 	=> false,
 			'user-agent' 	=> 'WooCommerce-Stripe',
 		) );
 
-		if ( is_wp_error( $charge_response ) ) {
+		return $this->parse_stripe_response( $response );
+	}
+
+	protected function post_stripe_data( $post_data, $post_location = 'charges' ) {
+		$response = wp_remote_post( $this->api_endpoint . 'v1/' . $post_location, array(
+			'method'		=> 'POST',
+			'headers' 		=> array(
+				'Authorization' => 'Basic ' . base64_encode( $this->secret_key . ':' ),
+			),
+			'body'			=> $post_data,
+			'timeout' 		=> 70,
+			'sslverify' 	=> false,
+			'user-agent' 	=> 'WooCommerce-Stripe',
+		) );
+
+		return $this->parse_stripe_response( $response );
+	}
+
+	protected function parse_stripe_response( $response ) {
+		if ( is_wp_error( $response ) ) {
 			throw new Exception( __( 'There was a problem connecting to the payment gateway.', 'wc_stripe' ) );
 		}
 
-		if( empty( $charge_response['body'] ) ) {
+		if( empty( $response['body'] ) ) {
 			throw new Exception( __( 'Empty response.', 'wc_stripe' ) );
 		}
 
-		$charge = json_decode( $charge_response['body'] );
+		$parsed_response = json_decode( $response['body'] );
 
 		// Handle response
-		if ( ! empty( $charge->error ) ) {
-			throw new Exception( __( $charge->error->message, 'wc_stripe' ) );
-		} elseif ( empty( $charge->id ) ) {
+		if ( ! empty( $parsed_response->error ) ) {
+			throw new Exception( __( $parsed_response->error->message, 'wc_stripe' ) );
+		} elseif ( empty( $parsed_response->id ) ) {
 			throw new Exception( __( 'Invalid response.', 'wc_stripe' ) );
 		}
 
-		return $charge;
+		return $parsed_response;
 	}
 
 	// public static function delete_card( $position ) {
