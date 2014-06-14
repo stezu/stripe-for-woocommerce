@@ -515,6 +515,13 @@ class Woocommerce_Stripe extends WC_Payment_Gateway {
 		return $this->post_stripe_data( $charge_data );
 	}
 
+	/**
+	 * Get data from Stripe's servers by passing an API endpoint
+	 *
+	 * @access protected
+	 * @param array $get_location
+	 * @return array
+	 */
 	protected function get_stripe_data( $get_location ) {
 		$response = wp_remote_get( $this->api_endpoint . 'v1/' . $get_location, array(
 			'method'		=> 'GET',
@@ -529,6 +536,13 @@ class Woocommerce_Stripe extends WC_Payment_Gateway {
 		return $this->parse_stripe_response( $response );
 	}
 
+	/**
+	 * Post data to Stripe's servers by passing data and an API endpoint
+	 *
+	 * @access protected
+	 * @param array $get_location
+	 * @return array
+	 */
 	protected function post_stripe_data( $post_data, $post_location = 'charges' ) {
 		$response = wp_remote_post( $this->api_endpoint . 'v1/' . $post_location, array(
 			'method'		=> 'POST',
@@ -544,6 +558,13 @@ class Woocommerce_Stripe extends WC_Payment_Gateway {
 		return $this->parse_stripe_response( $response );
 	}
 
+	/**
+	 * Parse Stripe's response after interacting with the API
+	 *
+	 * @access protected
+	 * @param array $get_location
+	 * @return array
+	 */
 	protected function parse_stripe_response( $response ) {
 		if ( is_wp_error( $response ) ) {
 			throw new Exception( __( 'There was a problem connecting to the payment gateway.', 'wc_stripe' ) );
