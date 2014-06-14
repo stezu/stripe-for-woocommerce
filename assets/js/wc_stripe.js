@@ -68,9 +68,9 @@ jQuery(function ($) {
                 // Validate form fields, create token if form is valid
                 if ( stripeFormValidator( stripeData ) ) {
                     Stripe.createToken( stripeData, stripeResponseHandler );
-
-                    // Prevent form from submitting
                     return false;
+                } else {
+                    return true;
                 }
             }
         }
@@ -96,60 +96,65 @@ jQuery(function ($) {
     function stripeFormValidator ( stripeData ) {
 
         // Validate form fields
-        fieldValidator( stripeData, function ( message ) {
-            // Action that we trigger
-            message.action = 'stripe_form_validation';
+        var message = fieldValidator( stripeData );
 
-            // If there are errors, display them using wc_add_notice on the backend
-            if ( message.errors.length ) {
-                $.post( wc_stripe_info.ajaxurl, message, function ( code ) {
-                    if ( code.indexOf( '<!--WC_STRIPE_START-->' ) >= 0 ) {
-                        code = code.split( '<!--WC_STRIPE_START-->' )[1]; // Strip off anything before WC_STRIPE_START
+        // Action that we trigger
+        message.action = 'stripe_form_validation';
+
+        // If there are errors, display them using wc_add_notice on the backend
+        if ( message.errors.length ) {
+            $.post( wc_stripe_info.ajaxurl, message, function ( code ) {
+                if ( code.indexOf( '<!--WC_STRIPE_START-->' ) >= 0 ) {
+                    code = code.split( '<!--WC_STRIPE_START-->' )[1]; // Strip off anything before WC_STRIPE_START
+                }
+                if ( code.indexOf( '<!--WC_STRIPE_END-->' ) >= 0 ) {
+                    code = code.split( '<!--WC_STRIPE_END-->' )[0]; // Strip off anything after WC_STRIPE_END
+                }
+                var result = $.parseJSON( code );
+
+                // Clear out event handlers to make sure they only fire once.
+                $( 'body' ).off( '.wc_stripe' );
+
+                // Add new errors if errors already exist
+                $( 'body' ).on( 'checkout_error.wc_stripe', function () {
+
+                    if ( result.messages.indexOf( '<ul class="woocommerce-error">' ) >= 0 ) {
+                        result.messages = result.messages.split( '<ul class="woocommerce-error">' )[1]; // Strip off anything before ul.woocommerce-error
                     }
-                    if ( code.indexOf( '<!--WC_STRIPE_END-->' ) >= 0 ) {
-                        code = code.split( '<!--WC_STRIPE_END-->' )[0]; // Strip off anything after WC_STRIPE_END
+                    if ( result.messages.indexOf( '</ul>' ) >= 0 ) {
+                        result.messages = result.messages.split( '</ul>' )[0]; // Strip off anything after ul.woocommerce-error
                     }
-                    var result = $.parseJSON( code );
 
-                    // Clear out event handlers to make sure they only fire once.
-                    $( 'body' ).off( '.wc_stripe' );
-
-                    // Add new errors if errors already exist
-                    $( 'body' ).on( 'checkout_error.wc_stripe', function () {
-
-                        if ( result.messages.indexOf( '<ul class="woocommerce-error">' ) >= 0 ) {
-                            result.messages = result.messages.split( '<ul class="woocommerce-error">' )[1]; // Strip off anything before ul.woocommerce-error
-                        }
-                        if ( result.messages.indexOf( '</ul>' ) >= 0 ) {
-                            result.messages = result.messages.split( '</ul>' )[0]; // Strip off anything after ul.woocommerce-error
-                        }
-
-                        $form.find( '.woocommerce-error' ).append( result.messages );
-                    });
-
-                    // Add errors the normal way
-                    $form.find( '.woocommerce-error' ).remove();
-                    $form.prepend( result.messages );
+                    $form.find( '.woocommerce-error' ).append( result.messages );
                 });
 
-                $( '.stripe_token, .form_errors' ).remove();
-                $ccForm.append( '<input type="hidden" class="form_errors" name="form_errors" value="1">' );
+                // Add errors the normal way
+                $form.find( '.woocommerce-error' ).remove();
+                $form.prepend( result.messages );
+            });
 
-                $form.unblock();
+            $( '.stripe_token, .form_errors' ).remove();
+            $ccForm.append( '<input type="hidden" class="form_errors" name="form_errors" value="1">' );
 
-                return false;
-            }
-            // Create the token if we don't have any errors
-            else {
-                // Clear out notices
-                $.post( wc_stripe_info.ajaxurl, message );
+            $form.unblock();
 
-                return true;
-            }
-        });
+            return false;
+        }
+
+        // Create the token if we don't have any errors
+        else {
+            var clearErrors = {
+                'errors': []
+            };
+            // Clear out notices
+            $.post( wc_stripe_info.ajaxurl, clearErrors );
+            $form.find( '.woocommerce-error' ).remove();
+
+            return true;
+        }
     }
 
-    function fieldValidator ( stripeData, callback ) {
+    function fieldValidator ( stripeData ) {
         var message = {
             'errors': []
         };
@@ -193,8 +198,8 @@ jQuery(function ($) {
             });
         }
 
-        // Send the message back to the calling function with all of the errors
-        callback( message );
+        // Send the message back
+        return message;
     }
 });
 
