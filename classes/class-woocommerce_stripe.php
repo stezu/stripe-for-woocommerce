@@ -205,6 +205,7 @@ class Woocommerce_Stripe extends WC_Payment_Gateway {
 		?>
 		<h3>Stripe Payment</h3>
 		<p>Allows Credit Card payments through <a href="https://stripe.com/">Stripe</a>.</p>
+		<p>You can find your API Keys in your <a href="https://dashboard.stripe.com/account/apikeys">Stripe Account Settings</a>.</p>
 		<table class="form-table">
 			<?php $this->generate_settings_html(); ?>
 		</table>
