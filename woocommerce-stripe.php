@@ -1,17 +1,17 @@
 <?php
 /*
-Plugin Name: Stripe for WooCommerce
-Plugin URI: https://github.com/stezu/woocommerce-stripe/
-Description: Use Stripe for collecting credit card payments on WooCommerce.
-Version: 0.1.0
-Author: Stephen Zuniga
-Author URI: https://github.com/stezu
-
-License: GNU General Public License v3.0
-License URI: http://www.gnu.org/licenses/gpl-3.0.html
-
-Foundation built by: Sean Voss // https://github.com/seanvoss/striper
-*/
+ * Plugin Name: Stripe for WooCommerce
+ * Plugin URI: https://github.com/stezu/woocommerce-stripe/
+ * Description: Use Stripe for collecting credit card payments on WooCommerce.
+ * Version: 0.1.0
+ * Author: Stephen Zuniga
+ * Author URI: https://github.com/stezu* 
+ *
+ * License: GNU General Public License v3.0
+ * License URI: http://www.gnu.org/licenses/gpl-3.0.html* 
+ *
+ * Foundation built by: Sean Voss // https://github.com/seanvoss/striper
+ */
 
 add_action( 'plugins_loaded', 'wc_stripe_init', 0 );
 
