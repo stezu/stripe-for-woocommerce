@@ -7,13 +7,13 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  *
  * Provides a Stripe Payment Gateway.
  *
- * @class 		Woocommerce_Stripe
+ * @class		WC_Stripe_Gateway
  * @extends		WC_Payment_Gateway
  * @version		0.1.0
  * @package		WooCommerce/Classes/Payment
- * @author 		Stephen Zuniga
+ * @author		Stephen Zuniga
  */
-class Woocommerce_Stripe extends WC_Payment_Gateway {
+class WC_Stripe_Gateway extends WC_Payment_Gateway {
 	protected $GATEWAY_NAME				= 'wc_stripe';
 	protected $order					= null;
 	protected $transactionId			= null;
@@ -26,6 +26,8 @@ class Woocommerce_Stripe extends WC_Payment_Gateway {
 	 * @return void
 	 */
 	public function __construct() {
+		global $wc_stripe;
+
 		$this->id						= 'wc_stripe';
 		$this->method_title				= 'WooCommerce Stripe';
 		$this->has_fields				= true;
@@ -50,8 +52,7 @@ class Woocommerce_Stripe extends WC_Payment_Gateway {
 		// Get current user information
 		$this->current_user				= wp_get_current_user();
 		$this->current_user_id			= get_current_user_id();
-		$this->stripe_db_location		= $this->testmode == 'yes' ? '_stripe_test_customer_info' : '_stripe_live_customer_info';
-		$this->stripe_customer_info		= get_user_meta( $this->current_user_id, $this->stripe_db_location );
+		$this->stripe_customer_info		= get_user_meta( $this->current_user_id, $wc_stripe->settings['stripe_db_location'] );
 
 		// Hooks
 		add_action( 'woocommerce_update_options_payment_gateways', array( $this, 'process_admin_options' ) );
@@ -391,19 +392,19 @@ class Woocommerce_Stripe extends WC_Payment_Gateway {
 			if ( is_user_logged_in() ) {
 
 				if ( ! $this->stripe_customer_info ) {
-					$customer = $this->create_customer( $data, $customer_description );
+					$customer = WC_Stripe::create_customer( $this->current_user_id, $data, $customer_description );
 				} else {
 					// If the user is already registered on the stripe servers, retreive their information
-					$customer = $this->get_customer( $this->stripe_customer_info[0]['customer_id'] );
+					$customer = WC_Stripe::get_customer( $this->stripe_customer_info[0]['customer_id'] );
 
 					if ( $data['chosen_card'] == 'new' ) {
 						// Add new card on stripe servers
-						$card = $this->update_customer( $this->stripe_customer_info[0]['customer_id'] . '/cards', array(
+						$card = WC_Stripe::update_customer( $this->stripe_customer_info[0]['customer_id'] . '/cards', array(
 							'card' => $data['token']
 						) );
 
 						// Make new card the default
-						$customer = $this->update_customer( $this->stripe_customer_info[0]['customer_id'], array(
+						$customer = WC_Stripe::update_customer( $this->stripe_customer_info[0]['customer_id'], array(
 							'default_card' => $card->id
 						) );
 
@@ -430,7 +431,7 @@ class Woocommerce_Stripe extends WC_Payment_Gateway {
 			}
 
 			// Create the charge on Stripe's servers - this will charge the user's card
-			$charge = $this->create_charge( $stripe_charge_data );
+			$charge = WC_Stripe::create_charge( $stripe_charge_data );
 
 			$this->transactionId = $charge->id;
 
@@ -450,151 +451,6 @@ class Woocommerce_Stripe extends WC_Payment_Gateway {
 			return false;
 		}
 	}
-
-	/**
-	 * Create customer on stripe servers
-	 *
-	 * @access protected
-	 * @param array $form_data
-	 * @param string $customer_description
-	 * @return array
-	 */
-	protected function create_customer( $form_data, $customer_description ) {
-
-		$post_body = array(
-			'description'	=> $customer_description,
-			'card'			=> $form_data['token']
-		);
-
-		$customer = $this->post_stripe_data( $post_body, 'customers' );
-
-		// Save users customer information for later use
-		add_user_meta( $this->current_user_id, $this->stripe_db_location, array(
-			'customer_id'	=> $customer->id,
-			'card_id'		=> $customer->active_card->id,
-			'type'			=> $customer->active_card->type,
-			'last4'			=> $customer->active_card->last4,
-			'exp_year'		=> $customer->active_card->exp_year,
-			'exp_month'		=> $customer->active_card->exp_month,
-		) );
-
-		return $customer;
-	}
-
-	/**
-	 * Get customer from stripe servers
-	 *
-	 * @access protected
-	 * @param string $customer_id
-	 * @return array
-	 */
-	protected function get_customer( $customer_id ) {
-		return $this->get_stripe_data( 'customers/' . $customer_id );
-	}
-
-	/**
-	 * Update customer on stripe servers
-	 *
-	 * @access protected
-	 * @param string $customer_id
-	 * @param array $request
-	 * @return array
-	 */
-	protected function update_customer( $customer_id, $customer_data ) {
-		return $this->post_stripe_data( $customer_data, 'customers/' . $customer_id );
-	}
-
-	/**
-	 * Create charge on stripe servers
-	 *
-	 * @access protected
-	 * @param array $charge_data
-	 * @return array
-	 */
-	protected function create_charge( $charge_data ) {
-		return $this->post_stripe_data( $charge_data );
-	}
-
-	/**
-	 * Get data from Stripe's servers by passing an API endpoint
-	 *
-	 * @access protected
-	 * @param string $get_location
-	 * @return array
-	 */
-	protected function get_stripe_data( $get_location ) {
-		$response = wp_remote_get( $this->api_endpoint . 'v1/' . $get_location, array(
-			'method'		=> 'GET',
-			'headers' 		=> array(
-				'Authorization' => 'Basic ' . base64_encode( $this->secret_key . ':' ),
-			),
-			'timeout' 		=> 70,
-			'sslverify' 	=> false,
-			'user-agent' 	=> 'WooCommerce-Stripe',
-		) );
-
-		return $this->parse_stripe_response( $response );
-	}
-
-	/**
-	 * Post data to Stripe's servers by passing data and an API endpoint
-	 *
-	 * @access protected
-	 * @param array $post_data
-	 * @param string $post_location
-	 * @return array
-	 */
-	protected function post_stripe_data( $post_data, $post_location = 'charges' ) {
-		$response = wp_remote_post( $this->api_endpoint . 'v1/' . $post_location, array(
-			'method'		=> 'POST',
-			'headers' 		=> array(
-				'Authorization' => 'Basic ' . base64_encode( $this->secret_key . ':' ),
-			),
-			'body'			=> $post_data,
-			'timeout' 		=> 70,
-			'sslverify' 	=> false,
-			'user-agent' 	=> 'WooCommerce-Stripe',
-		) );
-
-		return $this->parse_stripe_response( $response );
-	}
-
-	/**
-	 * Parse Stripe's response after interacting with the API
-	 *
-	 * @access protected
-	 * @param array $response
-	 * @return array
-	 */
-	protected function parse_stripe_response( $response ) {
-		if ( is_wp_error( $response ) ) {
-			throw new Exception( __( 'There was a problem connecting to the payment gateway.', 'wc_stripe' ) );
-		}
-
-		if( empty( $response['body'] ) ) {
-			throw new Exception( __( 'Empty response.', 'wc_stripe' ) );
-		}
-
-		$parsed_response = json_decode( $response['body'] );
-
-		// Handle response
-		if ( ! empty( $parsed_response->error ) ) {
-			throw new Exception( __( $parsed_response->error->message, 'wc_stripe' ) );
-		} elseif ( empty( $parsed_response->id ) ) {
-			throw new Exception( __( 'Invalid response.', 'wc_stripe' ) );
-		}
-
-		return $parsed_response;
-	}
-
-	// public static function delete_card( $position ) {
-	// 	$user_meta = get_user_meta( get_current_user_id(), $this->stripe_db_location, $position );
-	// 	$customer = Stripe_Customer::retrieve( $user_meta['customer_id'] );
-	// 	$current_card = $user_meta['card_id'];
-
-	// 	$customer->cards->retrieve( $current_card )->delete();
-	// 	delete_user_meta( get_current_user_id(), $this->stripe_db_location, $position );
-	// }
 
 	/**
 	 * Process the payment and return the result
