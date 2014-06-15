@@ -45,10 +45,6 @@ class WC_Stripe_Gateway extends WC_Payment_Gateway {
 		$this->capture					= $this->settings['capture'];
 		$this->additional_fields		= $this->settings['additional_fields'];
 
-		// Get API Keys
-		$this->publishable_key			= $this->testmode == 'yes' ? $this->settings['test_publishable_key'] : $this->settings['live_publishable_key'];
-		$this->secret_key				= $this->testmode == 'yes' ? $this->settings['test_secret_key'] : $this->settings['live_secret_key'];
-
 		// Get current user information
 		$this->current_user				= wp_get_current_user();
 		$this->current_user_id			= get_current_user_id();
@@ -69,7 +65,7 @@ class WC_Stripe_Gateway extends WC_Payment_Gateway {
 	 * @return bool
 	 */
 	public function perform_checks() {
-		global $woocommerce;
+		global $woocommerce, $wc_stripe;
 
 		if ( $this->enabled == 'no') {
 			return false;
@@ -82,7 +78,7 @@ class WC_Stripe_Gateway extends WC_Payment_Gateway {
 		}
 
 		// Check for API Keys
-		if ( ! $this->publishable_key && ! $this->secret_key ) {
+		if ( ! $wc_stripe->settings['publishable_key'] && ! $wc_stripe->settings['secret_key'] ) {
 			echo '<div class="error"><p>Stripe needs API Keys to work, please find your secret and publishable keys in the <a href="https://manage.stripe.com/account/apikeys" target="_blank">Stripe accounts section</a>.</p></div>';
 			return false;
 		}
@@ -114,7 +110,7 @@ class WC_Stripe_Gateway extends WC_Payment_Gateway {
 		}
 
 		// Stripe won't work without keys
-		if ( ! $this->publishable_key && ! $this->secret_key ) {
+		if ( ! $wc_stripe->settings['publishable_key'] && ! $wc_stripe->settings['secret_key'] ) {
 			return false;
 		}
 
@@ -223,6 +219,8 @@ class WC_Stripe_Gateway extends WC_Payment_Gateway {
 	 * @return void
 	 */
 	public function load_scripts() {
+		global $wc_stripe;
+
 		// Main stripe js
 		wp_enqueue_script( 'stripe', 'https://js.stripe.com/v2/', '', '1.0', true );
 
@@ -237,7 +235,7 @@ class WC_Stripe_Gateway extends WC_Payment_Gateway {
 
 		$wc_stripe_info = array(
 			'ajaxurl'			=> admin_url( 'admin-ajax.php' ),
-			'publishableKey'	=> $this->publishable_key,
+			'publishableKey'	=> $wc_stripe->settings['publishable_key'],
 			'hasCard'			=> $this->stripe_customer_info ? true : false
 		);
 
@@ -437,7 +435,6 @@ class WC_Stripe_Gateway extends WC_Payment_Gateway {
 
 			// Save data for the "Capture"
 			update_post_meta( $this->order->id, 'transaction_id', $this->transactionId );
-			update_post_meta( $this->order->id, 'key', $this->secret_key );
 			update_post_meta( $this->order->id, 'auth_capture', strcmp( $this->capture, 'yes' ) == 0 );
 
 			// Save data for cross-reference between Stripe Dashboard and WooCommerce
