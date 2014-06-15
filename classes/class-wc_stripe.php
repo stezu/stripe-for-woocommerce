@@ -92,11 +92,11 @@ class WC_Stripe {
 	/**
 	 * Create charge on stripe servers
 	 *
-	 * @access protected
+	 * @access public
 	 * @param array $charge_data
 	 * @return array
 	 */
-	protected function create_charge( $charge_data ) {
+	public static function create_charge( $charge_data ) {
 		return WC_Stripe::post_data( $charge_data );
 	}
 
