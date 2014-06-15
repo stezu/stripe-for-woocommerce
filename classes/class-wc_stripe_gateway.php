@@ -42,7 +42,7 @@ class WC_Stripe_Gateway extends WC_Payment_Gateway {
 		$this->title					= $this->settings['title'];
 		$this->description				= $this->settings['description'];
 		$this->testmode					= $this->settings['testmode'];
-		$this->capture					= $this->settings['capture'];
+		$this->charge_type				= $this->settings['charge_type'];
 		$this->additional_fields		= $this->settings['additional_fields'];
 
 		// Get current user information
@@ -133,21 +133,8 @@ class WC_Stripe_Gateway extends WC_Payment_Gateway {
 			'enabled' => array(
 				'type'			=> 'checkbox',
 				'title'			=> __( 'Enable/Disable', 'wc_stripe' ),
-				'label'			=> __( 'Enable Credit Card Payment', 'wc_stripe' ),
+				'label'			=> __( 'Enable Stripe for WooCommerce', 'wc_stripe' ),
 				'default'		=> 'yes'
-			),
-			'capture' => array(
-				'type'			=> 'checkbox',
-				'title'			=> __( 'Auth & Capture', 'wc_stripe' ),
-				'description'	=> __( 'This authorizes payment on checkout, but doesn\'t charge until you manually set the order as processing', 'wc_stripe' ),
-				'label'			=> __( 'Enable Authorization & Capture', 'wc_stripe' ),
-				'default'		=> 'no'
-			),
-			'testmode' => array(
-				'type'			=> 'checkbox',
-				'title'			=> __( 'Testing', 'wc_stripe' ),
-				'label'			=> __( 'Turn on testing', 'wc_stripe' ),
-				'default'		=> 'no'
 			),
 			'title' => array(
 				'type'			=> 'text',
@@ -156,16 +143,33 @@ class WC_Stripe_Gateway extends WC_Payment_Gateway {
 				'default'		=> __( 'Credit Card Payment', 'wc_stripe' )
 			),
 			'description' => array(
-				'type'			=> 'text',
+				'type'			=> 'textarea',
 				'title'			=> __( 'Description', 'wc_stripe' ),
 				'description'	=> __( 'This controls the description which the user sees during checkout.', 'wc_stripe' ),
 				'default'		=> __( '', 'wc_stripe' )
 			),
+			'charge_type' => array(
+				'type'			=> 'select',
+				'title'			=> __( 'Charge Type', 'wc_stripe' ),
+				'description'	=> __( 'Choose to capture payment at checkout, or authorize only to capture later.', 'wc_stripe' ),
+				'options'		=> array(
+					'capture'	=> 'Authorize & Capture',
+					'authorize'	=> 'Authorize Only'
+				),
+				'default'		=> 'capture'
+			),
 			'additional_fields' => array(
 				'type'			=> 'checkbox',
 				'title'			=> __( 'Additional Fields', 'wc_stripe' ),
-				'description'	=> __( 'This enables the use of a Billing ZIP and a Name on Card for Stripe authentication purposes. This is only neccessary if you check the "Only ship to the users billing address" box on WooCommerce Shipping settings.', 'wc_stripe' ),
+				'description'	=> __( 'Add a Billing ZIP and a Name on Card for Stripe authentication purposes. This is only neccessary if you check the "Only ship to the users billing address" box on WooCommerce Shipping settings.', 'wc_stripe' ),
 				'label'			=> __( 'Use Additional Fields', 'wc_stripe' ),
+				'default'		=> 'no'
+			),
+			'testmode' => array(
+				'type'			=> 'checkbox',
+				'title'			=> __( 'Testing', 'wc_stripe' ),
+				'description'	=> __( 'Use the test mode on Stripe\'s dashboard to verify everything works before going live.', 'wc_stripe' ),
+				'label'			=> __( 'Turn on testing', 'wc_stripe' ),
 				'default'		=> 'no'
 			),
 			'test_secret_key'	=> array(
@@ -380,7 +384,7 @@ class WC_Stripe_Gateway extends WC_Payment_Gateway {
 			'amount'		=> $data['amount'], // amount in cents
 			'currency'		=> $data['currency'],
 			'description'	=> $customer_description,
-			// 'capture'		=> $this->capture == 'yes' ? true : false,
+			'capture'		=> ($this->charge_type == 'capture') ? "true" : "false"
 		);
 
 		// Set up the charge for Stripe's servers
@@ -435,7 +439,7 @@ class WC_Stripe_Gateway extends WC_Payment_Gateway {
 
 			// Save data for the "Capture"
 			update_post_meta( $this->order->id, 'transaction_id', $this->transactionId );
-			update_post_meta( $this->order->id, 'auth_capture', strcmp( $this->capture, 'yes' ) == 0 );
+			update_post_meta( $this->order->id, 'capture', strcmp( $this->charge_type, 'authorize' ) == 0 );
 
 			// Save data for cross-reference between Stripe Dashboard and WooCommerce
 			update_post_meta( $this->order->id, 'customer_id', $customer->id );
@@ -549,134 +553,3 @@ class WC_Stripe_Gateway extends WC_Payment_Gateway {
 		return false;
 	}
 }
-
-/**
- * Process the captured payment when changing order status to completed
- *
- * @access public
- * @param int $order_id
- * @return bool
- */
-function wc_stripe_order_status_completed( $order_id = null ) {
-	global $woocommerce;
-
-	if ( ! $order_id ) {
-		$order_id = $_POST['order_id'];
-	}
-
-	$data = get_post_meta( $order_id );
-	$total = $data['_order_total'][0] * 100;
-
-	$params = array();
-	if( isset( $_POST['amount'] ) && $amount = $_POST['amount'] ) {
-		$params['amount'] = round( $amount );
-	}
-
-	if( get_post_meta( $order_id, 'auth_capture', true ) ) {
-
-		try {
-			$transaction_id = get_post_meta( $order_id, 'transaction_id', true );
-
-			$charge_response = wp_remote_post( $this->api_endpoint . 'v1/charges/' . $transaction_id . '/capture', array(
-				'method'		=> 'POST',
-				'headers' 		=> array(
-					'Authorization' => 'Basic ' . base64_encode( get_post_meta( $order_id, 'key', true ) . ':' ),
-				),
-				'body'			=> $params,
-				'timeout' 		=> 70,
-				'sslverify' 	=> false,
-				'user-agent' 	=> 'WooCommerce-Stripe',
-			) );
-
-			if ( is_wp_error( $charge_response ) ) {
-				throw new Exception( __( 'There was a problem connecting to the payment gateway.', 'wc_stripe' ) );
-			}
-
-			if( empty( $charge_response['body'] ) ) {
-				throw new Exception( __( 'Empty response.', 'wc_stripe' ) );
-			}
-
-			$charge = json_decode( $charge_response['body'] );
-
-			// Handle response
-			if ( ! empty( $charge->error ) ) {
-				throw new Exception( __( $charge->error->message, 'wc_stripe' ) );
-			} elseif ( empty( $charge->id ) ) {
-				throw new Exception( __( 'Invalid response.', 'wc_stripe' ) );
-			}
-		} catch ( Exception $e ) {
-			// There was an error
-			$body = $e->getJsonBody();
-			$err  = $body['error'];
-
-			error_log( 'Stripe Error:' . $err['message'] . '\n' );
-			wc_add_notice( __( 'Payment error:', 'wc_stripe') . $err['message'], 'error' );
-
-			return null;
-		}
-
-		return true;
-	}
-}
-add_action( 'woocommerce_order_status_processing_to_completed', 'wc_stripe_order_status_completed' );
-
-/**
- * Handles posting notifications to the user when their credit card information is invalid
- *
- * @access public
- * @return void
- */
-function validation_errors() {
-
-	foreach( $_POST['errors'] as $error ) {
-		$message = '';
-
-		$message .= '<strong>';
-		switch ( $error['field'] ) {
-			case 'number':
-				$message .= __( 'Credit Card Number', 'wc_stripe' );
-				break;
-			case 'expiration':
-				$message .= __( 'Credit Card Expiration', 'wc_stripe' );
-				break;
-			case 'cvc':
-				$message .= __( 'Credit Card CVC', 'wc_stripe' );
-				break;
-		}
-		$message .= '</strong>';
-
-		switch ( $error['type'] ) {
-			case 'undefined':
-				$message .= ' ' . __( 'is a required field', 'wc_stripe' );
-				break;
-			case 'invalid':
-				$message = __( 'Please enter a valid', 'wc_stripe' ) . ' ' . $message;
-				break;
-		}
-		$message .= '.';
-
-		wc_add_notice( $message, 'error' );
-	}
-
-	if ( is_ajax() ) {
-
-		ob_start();
-		wc_print_notices();
-		$messages = ob_get_clean();
-
-		echo '<!--WC_STRIPE_START-->' . json_encode(
-			array(
-				'result'	=> 'failure',
-				'messages' 	=> $messages,
-				'refresh' 	=> isset( WC()->session->refresh_totals ) ? 'true' : 'false',
-				'reload'    => isset( WC()->session->reload_checkout ) ? 'true' : 'false'
-			)
-		) . '<!--WC_STRIPE_END-->';
-
-		unset( WC()->session->refresh_totals, WC()->session->reload_checkout );
-		exit;
-	}
-	die();
-}
-add_action( 'wp_ajax_stripe_form_validation', 'validation_errors' );
-add_action( 'wp_ajax_nopriv_stripe_form_validation', 'validation_errors' );

@@ -101,6 +101,18 @@ class WC_Stripe {
 	}
 
 	/**
+	 * Capture charge on stripe servers
+	 *
+	 * @access public
+	 * @param string $transaction_id
+	 * @param array $charge_data
+	 * @return array
+	 */
+	public static function capture_charge( $transaction_id, $charge_data ) {
+		return WC_Stripe::post_data( $charge_data, 'charges/' . $transaction_id . '/capture' );
+	}
+
+	/**
 	 * Get data from Stripe's servers by passing an API endpoint
 	 *
 	 * @access public
