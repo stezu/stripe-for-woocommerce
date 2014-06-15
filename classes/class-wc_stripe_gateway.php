@@ -98,7 +98,7 @@ class WC_Stripe_Gateway extends WC_Payment_Gateway {
 	 * @return bool
 	 */
 	public function is_available() {
-		global $woocommerce;
+		global $woocommerce, $wc_stripe;
 
 		if ( $this->enabled == 'no' ) {
 			return false;
