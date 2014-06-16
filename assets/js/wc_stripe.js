@@ -45,7 +45,7 @@ jQuery(function ($) {
         if ( $( '#payment_method_wc_stripe' ).is( ':checked' ) && ( ! $( 'input[name="wc_stripe_card"]' ).length || $( 'input[name="wc_stripe_card"]:checked' ).val() === 'new' ) ) {
 
             if ( ! $( 'input.stripe_token' ).length ) {
-                var cardExpiry = $('.wc_stripe-card-expiry').payment('cardExpiryVal');
+                var cardExpiry = $( '.wc_stripe-card-expiry' ).payment( 'cardExpiryVal' );
 
                 var stripeData = {
                     number          : $( '.wc_stripe-card-number' ).val(),
@@ -91,7 +91,7 @@ jQuery(function ($) {
 
         } else {
             // insert the token into the form so it gets submitted to the server
-            $ccForm.append( '<input type="hidden" class="stripe_token" name="stripe_token" value="' + response.id + '"/>' );
+            $form.append( '<input type="hidden" class="stripe_token" name="stripe_token" value="' + response.id + '"/>' );
             $form.submit();
         }
     }
