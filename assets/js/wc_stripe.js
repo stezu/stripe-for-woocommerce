@@ -5,6 +5,9 @@ jQuery(function ($) {
     var $form = $( 'form.checkout, form#order_review' ),
         $ccForm = $( '#wc_stripe-creditcard-form' );
 
+    // Make sure the form doesn't use html validation
+    $form.attr('novalidate', 'novalidate');
+
     // Add container for card image
     $( '.wc_stripe-card-number' ).after( '<span class="wc_stripe-card-image"></span>' );
 

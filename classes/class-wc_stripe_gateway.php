@@ -280,8 +280,7 @@ class WC_Stripe_Gateway extends WC_Payment_Gateway {
 					'input_class'		=> array( 'wc_stripe-billing-name' ),
 					'return'			=> true,
 					'custom_attributes'	=> array(
-						'autocomplete'	=> 'off',
-						'novalidate'	=> 'novalidate'
+						'autocomplete'	=> 'off'
 					)
 				) );
 				echo $billing_name;
@@ -294,8 +293,7 @@ class WC_Stripe_Gateway extends WC_Payment_Gateway {
 					'return'			=> true,
 					'clear'				=> true,
 					'custom_attributes'	=> array(
-						'autocomplete'	=> 'off',
-						'novalidate'	=> 'novalidate'
+						'autocomplete'	=> 'off'
 					)
 				) );
 				echo $billing_zip;
@@ -311,8 +309,7 @@ class WC_Stripe_Gateway extends WC_Payment_Gateway {
 				'return'			=> true,
 				'custom_attributes'	=> array(
 					'autocomplete'	=> 'off',
-					'pattern'		=> '\d*',
-					'novalidate'	=> 'novalidate'
+					'pattern'		=> '\d*'
 				)
 			) );
 			$cc_number = preg_replace( '/name=".*?\"/i', '', $cc_number );
@@ -327,8 +324,7 @@ class WC_Stripe_Gateway extends WC_Payment_Gateway {
 				'return'			=> true,
 				'custom_attributes'	=> array(
 					'autocomplete'	=> 'off',
-					'pattern'		=> '\d*',
-					'novalidate'	=> 'novalidate'
+					'pattern'		=> '\d*'
 				)
 			) );
 			$cc_expiry = preg_replace( '/name=".*?\"/i', '', $cc_expiry );
@@ -344,8 +340,7 @@ class WC_Stripe_Gateway extends WC_Payment_Gateway {
 				'clear'				=> true,
 				'custom_attributes'	=> array(
 					'autocomplete'	=> 'off',
-					'pattern'		=> '\d*',
-					'novalidate'	=> 'novalidate'
+					'pattern'		=> '\d*'
 				)
 			) );
 			$cc_cvc = preg_replace( '/name=".*?\"/i', '', $cc_cvc );
