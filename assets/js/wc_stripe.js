@@ -1,9 +1,9 @@
 // Set API key
-Stripe.setPublishableKey(wc_stripe_info.publishableKey);
+Stripe.setPublishableKey( wc_stripe_info.publishableKey );
 
 jQuery(function ($) {
-    var $form = $('form.checkout, form#order_review'),
-        $ccForm = $('#wc_stripe-creditcard-form');
+    var $form = $( 'form.checkout, form#order_review' ),
+        $ccForm = $( '#wc_stripe-creditcard-form' );
 
     // Add container for card image
     $( '.wc_stripe-card-number' ).after( '<span class="wc_stripe-card-image"></span>' );
@@ -14,24 +14,24 @@ jQuery(function ($) {
     }
 
     // Checkout Form
-    $('form.checkout').on('checkout_place_order_wc_stripe', function () {
+    $( 'form.checkout' ).on( 'checkout_place_order_wc_stripe', function () {
         return stripeFormHandler();
     });
 
     // Pay Page Form
-    $('form#order_review').on('submit', function () {
+    $( 'form#order_review' ).on( 'submit', function () {
         return stripeFormHandler();
     });
 
     // Both Forms
-    $form.on('keyup change', '#card-number, #card-expiry, #card-cvc, input[name="wc_stripe_card"]', function () {
-        $('.woocommerce_error, .woocommerce-error, .woocommerce-message, .woocommerce_message, .stripe_token, .form_errors').remove();
+    $form.on( 'keyup change', '#card-number, #card-expiry, #card-cvc, input[name="wc_stripe_card"]', function () {
+        $( '.woocommerce_error, .woocommerce-error, .woocommerce-message, .woocommerce_message, .stripe_token, .form_errors' ).remove();
     });
 
     // Toggle new card form
-    $form.on('change', 'input[name="wc_stripe_card"]', function () {
+    $form.on( 'change', 'input[name="wc_stripe_card"]', function () {
 
-        if ( $('input[name="wc_stripe_card"]:checked').val() === 'new' ) {
+        if ( $( 'input[name="wc_stripe_card"]:checked' ).val() === 'new' ) {
             $ccForm.slideDown( 200 );
         } else {
             $ccForm.slideUp( 200 );
@@ -39,22 +39,22 @@ jQuery(function ($) {
     });
 
     function stripeFormHandler () {
-        if ( $('#payment_method_wc_stripe').is(':checked') && ( ! $('input[name="wc_stripe_card"]').length || $('input[name="wc_stripe_card"]:checked').val() === 'new' ) ) {
+        if ( $( '#payment_method_wc_stripe' ).is( ':checked' ) && ( ! $( 'input[name="wc_stripe_card"]' ).length || $( 'input[name="wc_stripe_card"]:checked' ).val() === 'new' ) ) {
 
             if ( ! $( 'input.stripe_token' ).length ) {
                 var cardExpiry = $('.wc_stripe-card-expiry').payment('cardExpiryVal');
 
                 var stripeData = {
-                    number          : $('.wc_stripe-card-number').val(),
-                    cvc             : $('.wc_stripe-card-cvc').val(),
+                    number          : $( '.wc_stripe-card-number' ).val(),
+                    cvc             : $( '.wc_stripe-card-cvc' ).val(),
                     exp_month       : cardExpiry.month,
                     exp_year        : cardExpiry.year,
-                    name            : $('.wc_stripe-billing-name').val() || $('#billing_first_name').val() + ' ' + $('#billing_last_name').val(),
-                    address_line1   : $('#billing_address_1').val(),
-                    address_line2   : $('#billing_address_2').val(),
-                    address_state   : $('#billing_state').val(),
-                    address_zip     : $('.wc_stripe-billing-zip').val() || $('#billing_postcode').val(),
-                    address_country : $('#billing_country').val()
+                    name            : $( '.wc_stripe-billing-name' ).val() || $( '#billing_first_name' ).val() + ' ' + $( '#billing_last_name' ).val(),
+                    address_line1   : $( '#billing_address_1' ).val(),
+                    address_line2   : $( '#billing_address_2' ).val(),
+                    address_state   : $( '#billing_state' ).val(),
+                    address_zip     : $( '.wc_stripe-billing-zip' ).val() || $( '#billing_postcode' ).val(),
+                    address_country : $( '#billing_country' ).val()
                 };
 
                 $form.block({
@@ -82,7 +82,7 @@ jQuery(function ($) {
 
         if ( response.error ) {
             // show the errors on the form
-            $('.payment-errors, .stripe_token, .form_errors').remove();
+            $( '.payment-errors, .stripe_token, .form_errors' ).remove();
             $ccForm.before( '<span class="payment-errors required">' + response.error.message + '</span>' );
             $form.unblock();
 
@@ -125,11 +125,11 @@ jQuery(function ($) {
                         result.messages = result.messages.split( '</ul>' )[0]; // Strip off anything after ul.woocommerce-error
                     }
 
-                    $form.find( '.woocommerce-error' ).append( result.messages );
+                    $( '.woocommerce-error' ).append( result.messages );
                 });
 
                 // Add errors the normal way
-                $form.find( '.woocommerce-error' ).remove();
+                $( '.woocommerce-error' ).remove();
                 $form.prepend( result.messages );
             });
 
@@ -201,12 +201,6 @@ jQuery(function ($) {
         // Send the message back
         return message;
     }
-});
-
-jQuery( function( $ ) {
-    $( '.wc_stripe-card-number' ).payment( 'formatCardNumber' );
-    $( '.wc_stripe-card-expiry' ).payment( 'formatCardExpiry' );
-    $( '.wc_stripe-card-cvc' ).payment( 'formatCardCVC' );
 
     $( 'body' ).on( 'updated_checkout', function() {
         $( '.wc_stripe-card-number' ).payment( 'formatCardNumber' );
@@ -214,7 +208,10 @@ jQuery( function( $ ) {
         $( '.wc_stripe-card-cvc' ).payment( 'formatCardCVC' );
     });
 
+    $( '.wc_stripe-card-number' ).payment( 'formatCardNumber' );
+    $( '.wc_stripe-card-expiry' ).payment( 'formatCardExpiry' );
     $( '.wc_stripe-card-cvc' )
+        .payment( 'formatCardCVC' )
         .focus( function () {
             $( '.wc_stripe-card-number' ).addClass( 'cvc' );
         })
