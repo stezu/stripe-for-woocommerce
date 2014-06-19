@@ -379,7 +379,7 @@ class WC_Stripe_Gateway extends WC_Payment_Gateway {
 			'amount'		=> $data['amount'], // amount in cents
 			'currency'		=> $data['currency'],
 			'description'	=> $customer_description,
-			'capture'		=> ($this->charge_type == 'capture') ? "true" : "false"
+			'capture'		=> ($this->charge_type == 'capture') ? 'true' : 'false'
 		);
 
 		// Set up the charge for Stripe's servers
