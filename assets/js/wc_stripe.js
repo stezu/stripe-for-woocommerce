@@ -48,16 +48,16 @@ jQuery(function ($) {
                 var cardExpiry = $( '.wc_stripe-card-expiry' ).payment( 'cardExpiryVal' );
 
                 var stripeData = {
-                    number          : $( '.wc_stripe-card-number' ).val(),
-                    cvc             : $( '.wc_stripe-card-cvc' ).val(),
-                    exp_month       : cardExpiry.month,
-                    exp_year        : cardExpiry.year,
-                    name            : $( '.wc_stripe-billing-name' ).val() || $( '#billing_first_name' ).val() + ' ' + $( '#billing_last_name' ).val(),
-                    address_line1   : $( '#billing_address_1' ).val(),
-                    address_line2   : $( '#billing_address_2' ).val(),
-                    address_state   : $( '#billing_state' ).val(),
-                    address_zip     : $( '.wc_stripe-billing-zip' ).val() || $( '#billing_postcode' ).val(),
-                    address_country : $( '#billing_country' ).val()
+                    number          : $( '.wc_stripe-card-number' ).val() || '',
+                    cvc             : $( '.wc_stripe-card-cvc' ).val() || '',
+                    exp_month       : cardExpiry.month || '',
+                    exp_year        : cardExpiry.year || '',
+                    name            : $( '.wc_stripe-billing-name' ).val() || $( '#billing_first_name' ).val() + ' ' + $( '#billing_last_name' ).val() || '',
+                    address_line1   : $( '#billing_address_1' ).val() || '',
+                    address_line2   : $( '#billing_address_2' ).val() || '',
+                    address_state   : $( '#billing_state' ).val() || '',
+                    address_zip     : $( '.wc_stripe-billing-zip' ).val() || $( '#billing_postcode' ).val() || '',
+                    address_country : $( '#billing_country' ).val() || ''
                 };
 
                 $form.block({
