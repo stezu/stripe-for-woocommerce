@@ -253,7 +253,7 @@ class WC_Stripe_Gateway extends WC_Payment_Gateway {
 	 * @return void
 	 */
 	public function payment_fields() {
-		if( is_user_logged_in() && $this->stripe_customer_info && isset( $this->stripe_customer_info['cards'] ) ) :
+		if( is_user_logged_in() && $this->stripe_customer_info && isset( $this->stripe_customer_info['cards'] ) && count( $this->stripe_customer_info['cards'] ) ) :
 
 			// Add option to use a saved card
 			foreach ( $this->stripe_customer_info['cards'] as $i => $credit_card ) : ?>
@@ -394,7 +394,7 @@ class WC_Stripe_Gateway extends WC_Payment_Gateway {
 					// If the user is already registered on the stripe servers, retreive their information
 					$customer = WC_Stripe::get_customer( $this->stripe_customer_info['customer_id'] );
 
-					if ( $data['chosen_card'] == 'new' ) {
+					if ( ! count( $this->stripe_customer_info['cards'] ) || $data['chosen_card'] == 'new' ) {
 						// Add new card on stripe servers
 						$card = WC_Stripe::update_customer( $this->stripe_customer_info['customer_id'] . '/cards', array(
 							'card' => $data['token']
