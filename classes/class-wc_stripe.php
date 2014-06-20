@@ -77,7 +77,7 @@ class WC_Stripe {
 	 *
 	 * @access public
 	 * @param integer $user_id
-	 * @param array $position
+	 * @param integer $position
 	 * @return array
 	 */
 	public static function delete_card( $user_id, $position ) {
@@ -86,11 +86,11 @@ class WC_Stripe {
 		if ( ! $position )
 			$position = 0;
 
-		$user_meta = get_user_meta( $user_id, $wc_stripe->settings['stripe_db_location'] )[ $position ];
+		$user_meta = get_user_meta( $user_id, $wc_stripe->settings['stripe_db_location'], true );
 
-		delete_user_meta( get_current_user_id(), $wc_stripe->settings['stripe_db_location'], $position );
+		WC_Stripe::delete_customer_db( get_current_user_id(), array( 'card' => $user_meta['cards'][$position]['id'] ) );
 
-		return WC_Stripe::delete_data( 'customers/' . $user_meta['customer_id'] . '/cards/' . $user_meta['card_id'] );
+		return WC_Stripe::delete_data( 'customers/' . $user_meta['customer_id'] . '/cards/' . $user_meta['cards'][$position]['id'] );
 	}
 
 	/**
