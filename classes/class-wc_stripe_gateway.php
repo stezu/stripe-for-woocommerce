@@ -48,7 +48,7 @@ class WC_Stripe_Gateway extends WC_Payment_Gateway {
 		// Get current user information
 		$this->current_user				= wp_get_current_user();
 		$this->current_user_id			= get_current_user_id();
-		$this->stripe_customer_info		= get_user_meta( $this->current_user_id, $wc_stripe->settings['stripe_db_location'] );
+		$this->stripe_customer_info		= get_user_meta( $this->current_user_id, $wc_stripe->settings['stripe_db_location'], true );
 
 		// Hooks
 		add_action( 'woocommerce_update_options_payment_gateways', array( $this, 'process_admin_options' ) );
@@ -253,10 +253,10 @@ class WC_Stripe_Gateway extends WC_Payment_Gateway {
 	 * @return void
 	 */
 	public function payment_fields() {
-		if( is_user_logged_in() && $this->stripe_customer_info ) :
+		if( is_user_logged_in() && $this->stripe_customer_info && isset( $this->stripe_customer_info['cards'] ) ) :
 
 			// Add option to use a saved card
-			foreach ( $this->stripe_customer_info as $i => $credit_card ) : ?>
+			foreach ( $this->stripe_customer_info['cards'] as $i => $credit_card ) : ?>
 
 				<input type="radio" id="stripe_card_<?php echo $i; ?>" name="wc_stripe_card" value="<?php echo $i; ?>" checked>
 				<label for="stripe_card_<?php echo $i; ?>">Card ending with <?php echo $credit_card['last4']; ?> (<?php echo $credit_card['exp_month']; ?>/<?php echo $credit_card['exp_year']; ?>)</label><br>
@@ -392,31 +392,35 @@ class WC_Stripe_Gateway extends WC_Payment_Gateway {
 					$customer = WC_Stripe::create_customer( $this->current_user_id, $data, $customer_description );
 				} else {
 					// If the user is already registered on the stripe servers, retreive their information
-					$customer = WC_Stripe::get_customer( $this->stripe_customer_info[0]['customer_id'] );
+					$customer = WC_Stripe::get_customer( $this->stripe_customer_info['customer_id'] );
 
 					if ( $data['chosen_card'] == 'new' ) {
 						// Add new card on stripe servers
-						$card = WC_Stripe::update_customer( $this->stripe_customer_info[0]['customer_id'] . '/cards', array(
+						$card = WC_Stripe::update_customer( $this->stripe_customer_info['customer_id'] . '/cards', array(
 							'card' => $data['token']
 						) );
 
 						// Make new card the default
-						$customer = WC_Stripe::update_customer( $this->stripe_customer_info[0]['customer_id'], array(
+						$customer = WC_Stripe::update_customer( $this->stripe_customer_info['customer_id'], array(
 							'default_card' => $card->id
 						) );
 
-						add_user_meta( $this->current_user_id, $this->stripe_db_location, array(
+						$customerArray = array(
 							'customer_id'	=> $customer->id,
-							'card_id'		=> $card->id,
-							'type'			=> $card->type,
-							'last4'			=> $card->last4,
-							'exp_year'		=> $card->exp_year,
-							'exp_month'		=> $card->exp_month
-						) );
+							'card'			=> array(
+								'id'			=> $card->id,
+								'brand'			=> $card->type,
+								'last4'			=> $card->last4,
+								'exp_year'		=> $card->exp_year,
+								'exp_month'		=> $card->exp_month
+							),
+							'default_card'	=> $card->id
+						);
+						WC_Stripe::update_customer_db( $this->current_user_id, $customerArray );
 
 						$stripe_charge_data['card'] = $card->id;
 					} else {
-						$stripe_charge_data['card'] = $this->stripe_customer_info[ $data['chosen_card'] ]['card_id'];
+						$stripe_charge_data['card'] = $this->stripe_customer_info['cards'][ $data['chosen_card'] ]['id'];
 					}
 				}
 
