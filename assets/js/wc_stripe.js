@@ -1,20 +1,33 @@
 // Set API key
 Stripe.setPublishableKey( wc_stripe_info.publishableKey );
 
-jQuery(function ($) {
-    var $form = $( 'form.checkout, form#order_review' ),
-        $ccForm = $( '#wc_stripe-creditcard-form' );
+jQuery( function ( $ ) {
+    var $body = $( 'body' ),
+        $form = $( 'form.checkout, form#order_review' );
 
     // Make sure the form doesn't use html validation
     $form.attr('novalidate', 'novalidate');
 
-    // Add container for card image
-    $( '.wc_stripe-card-number' ).after( '<span class="wc_stripe-card-image"></span>' );
+    $body.on( 'updated_checkout.wc_stripe', function () {
+        var $ccForm = $( '#wc_stripe-creditcard-form' );
 
-    // Hide the CC form if the user has a saved card.
-    if ( wc_stripe_info.hasCard ) {
-        $ccForm.hide();
-    }
+        // Hide the CC form if the user has a saved card.
+        if ( wc_stripe_info.hasCard ) {
+            $ccForm.hide();
+        }
+
+        // Toggle new card form
+        $form.on( 'change', 'input[name="wc_stripe_card"]', function () {
+
+            if ( $( 'input[name="wc_stripe_card"]:checked' ).val() === 'new' ) {
+                $ccForm.slideDown( 200 );
+            } else {
+                $ccForm.slideUp( 200 );
+            }
+        });
+
+        $body.off( 'updated_checkout.wc_stripe' );
+    });
 
     // Checkout Form
     $( 'form.checkout' ).on( 'checkout_place_order_wc_stripe', function () {
@@ -29,16 +42,6 @@ jQuery(function ($) {
     // Both Forms
     $form.on( 'keyup change', '#card-number, #card-expiry, #card-cvc, input[name="wc_stripe_card"]', function () {
         $( '.woocommerce_error, .woocommerce-error, .woocommerce-message, .woocommerce_message, .stripe_token, .form_errors' ).remove();
-    });
-
-    // Toggle new card form
-    $form.on( 'change', 'input[name="wc_stripe_card"]', function () {
-
-        if ( $( 'input[name="wc_stripe_card"]:checked' ).val() === 'new' ) {
-            $ccForm.slideDown( 200 );
-        } else {
-            $ccForm.slideUp( 200 );
-        }
     });
 
     function stripeFormHandler () {
@@ -211,7 +214,9 @@ jQuery(function ($) {
         $( '.wc_stripe-card-cvc' ).payment( 'formatCardCVC' );
     });
 
-    $( '.wc_stripe-card-number' ).payment( 'formatCardNumber' );
+    $( '.wc_stripe-card-number' )
+        .payment( 'formatCardNumber' )
+        .after( '<span class="wc_stripe-card-image"></span>' );
     $( '.wc_stripe-card-expiry' ).payment( 'formatCardExpiry' );
     $( '.wc_stripe-card-cvc' )
         .payment( 'formatCardCVC' )
