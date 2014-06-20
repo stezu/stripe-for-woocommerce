@@ -64,16 +64,20 @@ class WooCommerce_Stripe {
 	public function account_saved_cards() {
 		global $wc_stripe;
 
-		$credit_cards = get_user_meta( get_current_user_id(), $wc_stripe->settings['stripe_db_location'] );
-
-		if ( ! $credit_cards )
+		// If the current user is not a stripe customer, return
+		if ( ! get_user_meta( get_current_user_id(), $wc_stripe->settings['stripe_db_location'], true ) )
 			return;
 
+		// If user requested to delete a card, delete it
 		if ( isset( $_POST['delete_card'] ) && wp_verify_nonce( $_POST['_wpnonce'], "stripe_del_card" ) ) {
 			WC_Stripe::delete_card( get_current_user_id(), $_POST['delete_card'] );
 		}
 
-		$credit_cards = get_user_meta( get_current_user_id(), $wc_stripe->settings['stripe_db_location'] );
+		// Get user database object
+		$user_meta = get_user_meta( get_current_user_id(), $wc_stripe->settings['stripe_db_location'], true );
+
+		// Get user credit cards
+		$credit_cards = isset( $user_meta['cards'] ) ? $user_meta['cards'] : false;
 
 		if ( $credit_cards ) :
 		?>
@@ -94,7 +98,7 @@ class WooCommerce_Stripe {
 						<td>
 							<form action="#saved-cards" method="POST">
 								<?php wp_nonce_field ( 'stripe_del_card' ); ?>
-								<input type="hidden" name="delete_card" value="<?php esc_attr($i); ?>">
+								<input type="hidden" name="delete_card" value="<?php echo esc_attr( $i ); ?>">
 								<input type="submit" value="Delete card">
 							</form>
 						</td>
