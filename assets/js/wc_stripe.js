@@ -8,6 +8,7 @@ jQuery( function ( $ ) {
     // Make sure the form doesn't use html validation
     $form.attr('novalidate', 'novalidate');
 
+    // Make sure the credit card form exists before we try working with it
     $body.on( 'updated_checkout.wc_stripe', function () {
         var $ccForm = $( '#wc_stripe-creditcard-form' );
 
@@ -26,6 +27,7 @@ jQuery( function ( $ ) {
             }
         });
 
+        // Make sure we don't repeat this
         $body.off( 'updated_checkout.wc_stripe' );
     });
 
