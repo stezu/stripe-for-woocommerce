@@ -9,23 +9,9 @@ jQuery( function ( $ ) {
     $form.attr('novalidate', 'novalidate');
 
     // Make sure the credit card form exists before we try working with it
+    $(window).on( 'load.wc_stripe', initCCForm );
     $body.on( 'updated_checkout.wc_stripe', function () {
-        var $ccForm = $( '#wc_stripe-creditcard-form' );
-
-        // Hide the CC form if the user has a saved card.
-        if ( wc_stripe_info.hasCard ) {
-            $ccForm.hide();
-        }
-
-        // Toggle new card form
-        $form.on( 'change', 'input[name="wc_stripe_card"]', function () {
-
-            if ( $( 'input[name="wc_stripe_card"]:checked' ).val() === 'new' ) {
-                $ccForm.slideDown( 200 );
-            } else {
-                $ccForm.slideUp( 200 );
-            }
-        });
+        initCCForm();
 
         // Make sure we don't repeat this
         $body.off( 'updated_checkout.wc_stripe' );
@@ -45,6 +31,25 @@ jQuery( function ( $ ) {
     $form.on( 'keyup change', '#card-number, #card-expiry, #card-cvc, input[name="wc_stripe_card"]', function () {
         $( '.woocommerce_error, .woocommerce-error, .woocommerce-message, .woocommerce_message, .stripe_token, .form_errors' ).remove();
     });
+
+    function initCCForm() {
+        var $ccForm = $( '#wc_stripe-creditcard-form' );
+
+        // Hide the CC form if the user has a saved card.
+        if ( wc_stripe_info.hasCard ) {
+            $ccForm.hide();
+        }
+
+        // Toggle new card form
+        $form.on( 'change', 'input[name="wc_stripe_card"]', function () {
+
+            if ( $( 'input[name="wc_stripe_card"]:checked' ).val() === 'new' ) {
+                $ccForm.slideDown( 200 );
+            } else {
+                $ccForm.slideUp( 200 );
+            }
+        });
+    }
 
     function stripeFormHandler () {
         if ( $( '#payment_method_wc_stripe' ).is( ':checked' ) && ( ! $( 'input[name="wc_stripe_card"]' ).length || $( 'input[name="wc_stripe_card"]:checked' ).val() === 'new' ) ) {
