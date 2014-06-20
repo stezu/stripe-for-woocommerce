@@ -240,7 +240,7 @@ class WC_Stripe_Gateway extends WC_Payment_Gateway {
 		$wc_stripe_info = array(
 			'ajaxurl'			=> admin_url( 'admin-ajax.php' ),
 			'publishableKey'	=> $wc_stripe->settings['publishable_key'],
-			'hasCard'			=> $this->stripe_customer_info ? true : false
+			'hasCard'			=> count( $this->stripe_customer_info['cards'] ) ? true : false
 		);
 
 		wp_localize_script( 'wc_stripe_js', 'wc_stripe_info', $wc_stripe_info );
