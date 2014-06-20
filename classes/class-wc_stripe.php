@@ -33,14 +33,18 @@ class WC_Stripe {
 		$active_card = $customer->cards->data[ array_search( $customer->default_card, $customer->cards->data ) ];
 
 		// Save users customer information for later use
-		add_user_meta( $user_id, $wc_stripe->settings['stripe_db_location'], array(
-			'customer_id'		=> $customer->id,
-			'card_id'			=> $active_card->id,
-			'type'				=> $active_card->type,
-			'last4'				=> $active_card->last4,
-			'exp_year'			=> $active_card->exp_year,
-			'exp_month'			=> $active_card->exp_month,
-		) );
+		$customerArray = array(
+			'customer_id'	=> $customer->id,
+			'card'			=> array(
+				'id'			=> $active_card->id,
+				'brand'			=> $active_card->type,
+				'last4'			=> $active_card->last4,
+				'exp_year'		=> $active_card->exp_year,
+				'exp_month'		=> $active_card->exp_month
+			),
+			'default_card'	=> $active_card->id
+		);
+		WC_Stripe::update_customer_db( $user_id, $customerArray );
 
 		return $customer;
 	}
