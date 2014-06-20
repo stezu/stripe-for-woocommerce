@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  *
  * @class		WC_Stripe_Gateway
  * @extends		WC_Payment_Gateway
- * @version		0.1.0
+ * @version		1.0
  * @package		WooCommerce/Classes/Payment
  * @author		Stephen Zuniga
  */
