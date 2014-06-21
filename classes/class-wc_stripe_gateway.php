@@ -394,6 +394,7 @@ class WC_Stripe_Gateway extends WC_Payment_Gateway {
 					// If the user is already registered on the stripe servers, retreive their information
 					$customer = WC_Stripe::get_customer( $this->stripe_customer_info['customer_id'] );
 
+					// If the user doesn't have cards or is adding a new one
 					if ( ! count( $this->stripe_customer_info['cards'] ) || $data['chosen_card'] == 'new' ) {
 						// Add new card on stripe servers
 						$card = WC_Stripe::update_customer( $this->stripe_customer_info['customer_id'] . '/cards', array(
@@ -405,6 +406,7 @@ class WC_Stripe_Gateway extends WC_Payment_Gateway {
 							'default_card' => $card->id
 						) );
 
+						// Add new customer details to database
 						$customerArray = array(
 							'customer_id'	=> $customer->id,
 							'card'			=> array(
