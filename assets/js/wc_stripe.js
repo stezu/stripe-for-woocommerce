@@ -49,6 +49,19 @@ jQuery( function ( $ ) {
                 $ccForm.slideUp( 200 );
             }
         });
+
+        $( '.wc_stripe-card-number' )
+            .payment( 'formatCardNumber' )
+            .after( '<span class="wc_stripe-card-image"></span>' );
+        $( '.wc_stripe-card-expiry' ).payment( 'formatCardExpiry' );
+        $( '.wc_stripe-card-cvc' )
+            .payment( 'formatCardCVC' )
+            .focus( function () {
+                $( '.wc_stripe-card-number' ).addClass( 'cvc' );
+            })
+            .blur( function () {
+                $( '.wc_stripe-card-number' ).removeClass( 'cvc' );
+            });
     }
 
     function stripeFormHandler () {
@@ -214,23 +227,4 @@ jQuery( function ( $ ) {
         // Send the message back
         return message;
     }
-
-    $( 'body' ).on( 'updated_checkout', function() {
-        $( '.wc_stripe-card-number' ).payment( 'formatCardNumber' );
-        $( '.wc_stripe-card-expiry' ).payment( 'formatCardExpiry' );
-        $( '.wc_stripe-card-cvc' ).payment( 'formatCardCVC' );
-    });
-
-    $( '.wc_stripe-card-number' )
-        .payment( 'formatCardNumber' )
-        .after( '<span class="wc_stripe-card-image"></span>' );
-    $( '.wc_stripe-card-expiry' ).payment( 'formatCardExpiry' );
-    $( '.wc_stripe-card-cvc' )
-        .payment( 'formatCardCVC' )
-        .focus( function () {
-            $( '.wc_stripe-card-number' ).addClass( 'cvc' );
-        })
-        .blur( function () {
-            $( '.wc_stripe-card-number' ).removeClass( 'cvc' );
-        });
 });
