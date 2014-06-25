@@ -29,6 +29,7 @@ class WC_Stripe_Gateway extends WC_Payment_Gateway {
 		global $wc_stripe;
 
 		$this->id						= 'wc_stripe';
+		$this->icon						= plugins_url( 'assets/images/credits.png', dirname(__FILE__) );
 		$this->method_title				= 'WooCommerce Stripe';
 		$this->has_fields				= true;
 		$this->api_endpoint				= 'https://api.stripe.com/';

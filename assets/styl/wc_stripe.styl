@@ -1,3 +1,6 @@
+/*
+ * Add an icon to indicate the card brand
+ */
 #card-number_field
 	position relative
 
@@ -33,3 +36,9 @@
 	&.cvc + .wc_stripe-card-image
 		background-image url("data:image/svg+xml;charset=US-ASCII,%3C%3Fxml%20version%3D%221.0%22%20encoding%3D%22utf-8%22%3F%3E%0D%0A%3C%21--%20Generator%3A%20Adobe%20Illustrator%2017.1.0%2C%20SVG%20Export%20Plug-In%20.%20SVG%20Version%3A%206.00%20Build%200%29%20%20--%3E%0D%0A%3C%21DOCTYPE%20svg%20PUBLIC%20%22-//W3C//DTD%20SVG%201.1//EN%22%20%22http%3A//www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd%22%3E%0D%0A%3Csvg%20version%3D%221.1%22%20id%3D%22Layer_1%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20xmlns%3Axlink%3D%22http%3A//www.w3.org/1999/xlink%22%20x%3D%220px%22%20y%3D%220px%22%0D%0A%09%20viewBox%3D%220%20308.7%2060%2040%22%20enable-background%3D%22new%200%20308.7%2060%2040%22%20xml%3Aspace%3D%22preserve%22%3E%0D%0A%3Cg%3E%0D%0A%09%3Cg%3E%0D%0A%09%09%3Cpath%20fill%3D%22%23CDCDCD%22%20d%3D%22M60%2C343.7c0%2C2.8-2.2%2C5-5%2C5H5c-2.8%2C0-5-2.2-5-5v-30c0-2.8%2C2.2-5%2C5-5h50c2.8%2C0%2C5%2C2.2%2C5%2C5V343.7z%22/%3E%0D%0A%09%3C/g%3E%0D%0A%09%3Crect%20x%3D%221.8%22%20y%3D%22315%22%20fill%3D%22%23424143%22%20width%3D%2258.2%22%20height%3D%228%22/%3E%0D%0A%09%3Crect%20x%3D%227.8%22%20y%3D%22327%22%20fill%3D%22%23FFFFFF%22%20width%3D%2236%22%20height%3D%228%22/%3E%0D%0A%09%3Crect%20x%3D%2210.8%22%20y%3D%22330%22%20fill%3D%22%23424143%22%20width%3D%2229%22%20height%3D%222%22/%3E%0D%0A%09%3Cg%3E%0D%0A%09%09%3Cg%3E%0D%0A%09%09%09%3Cpath%20fill%3D%22%23DFDEDD%22%20d%3D%22M55%2C309.7c2.2%2C0%2C4%2C1.8%2C4%2C4v30c0%2C2.2-1.8%2C4-4%2C4H5c-2.2%2C0-4-1.8-4-4v-30c0-2.2%2C1.8-4%2C4-4H55%20M55%2C308.7H5%0D%0A%09%09%09%09c-2.8%2C0-5%2C2.2-5%2C5v30c0%2C2.8%2C2.2%2C5%2C5%2C5h50c2.8%2C0%2C5-2.2%2C5-5v-30C60%2C311%2C57.8%2C308.7%2C55%2C308.7L55%2C308.7z%22/%3E%0D%0A%09%09%3C/g%3E%0D%0A%09%3C/g%3E%0D%0A%09%3Crect%20x%3D%2246.8%22%20y%3D%22327%22%20fill%3D%22%23FFFFFF%22%20width%3D%228%22%20height%3D%228%22/%3E%0D%0A%09%3Crect%20x%3D%2247.8%22%20y%3D%22330%22%20fill%3D%22%23424143%22%20width%3D%226%22%20height%3D%222%22/%3E%0D%0A%09%3Ccircle%20fill%3D%22none%22%20stroke%3D%22%23E9564B%22%20stroke-width%3D%222%22%20stroke-miterlimit%3D%2210%22%20cx%3D%2250.2%22%20cy%3D%22330.9%22%20r%3D%227.8%22/%3E%0D%0A%3C/g%3E%0D%0A%3C/svg%3E%0D%0A")
 		transform rotateY(180deg)
+
+/*
+ * Remove the shadow from the gateway icon
+ */
+.payment_method_wc_stripe label img
+	box-shadow none
