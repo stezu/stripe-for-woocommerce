@@ -263,6 +263,7 @@ class WC_Stripe_Gateway extends WC_Payment_Gateway {
 		// Plugin css
 		wp_enqueue_style( 'wc_stripe_css', plugins_url( 'assets/css/wc_stripe.css', dirname( __FILE__ ) ), false, '1.0');
 
+		// Add data that wc_stripe.js needs
 		$wc_stripe_info = array(
 			'ajaxurl'			=> admin_url( 'admin-ajax.php' ),
 			'publishableKey'	=> $wc_stripe->settings['publishable_key'],
@@ -318,47 +319,8 @@ class WC_Stripe_Gateway extends WC_Payment_Gateway {
 
 			// Make sure we only create customers if a user is logged in
 			if ( is_user_logged_in() ) {
-
-				if ( ! $this->stripe_customer_info ) {
-					$customer = WC_Stripe::create_customer( $this->current_user_id, $data, $customer_description );
-				} else {
-					// If the user is already registered on the stripe servers, retreive their information
-					$customer = WC_Stripe::get_customer( $this->stripe_customer_info['customer_id'] );
-
-					// If the user doesn't have cards or is adding a new one
-					if ( ! count( $this->stripe_customer_info['cards'] ) || $data['chosen_card'] == 'new' ) {
-						// Add new card on stripe servers
-						$card = WC_Stripe::update_customer( $this->stripe_customer_info['customer_id'] . '/cards', array(
-							'card' => $data['token']
-						) );
-
-						// Make new card the default
-						$customer = WC_Stripe::update_customer( $this->stripe_customer_info['customer_id'], array(
-							'default_card' => $card->id
-						) );
-
-						// Add new customer details to database
-						$customerArray = array(
-							'customer_id'	=> $customer->id,
-							'card'			=> array(
-								'id'			=> $card->id,
-								'brand'			=> $card->type,
-								'last4'			=> $card->last4,
-								'exp_year'		=> $card->exp_year,
-								'exp_month'		=> $card->exp_month
-							),
-							'default_card'	=> $card->id
-						);
-						WC_Stripe::update_customer_db( $this->current_user_id, $customerArray );
-
-						$stripe_charge_data['card'] = $card->id;
-					} else {
-						$stripe_charge_data['card'] = $this->stripe_customer_info['cards'][ $data['chosen_card'] ]['id'];
-					}
-				}
-
-				// Set up charging data to include customer information
-				$stripe_charge_data['customer'] = $customer->id;
+				// Add a customer or retrieve an existing one
+				$stripe_charge_data = $this->get_customer( $stripe_charge_data, $data );
 			} else {
 				// Set up one time charge
 				$stripe_charge_data['card'] = $data['token'];
@@ -383,6 +345,61 @@ class WC_Stripe_Gateway extends WC_Payment_Gateway {
 
 			return false;
 		}
+	}
+
+	/**
+	 * Create a customer if the current user isn't already one
+	 * Retrieve a customer if one already exists
+	 * Add a card to a customer if necessary
+	 *
+	 * @access public
+	 * @param $stripe_charge_data
+	 * @param $form_data
+	 * @return array
+	 */
+	public function get_customer( $stripe_charge_data, $form_data ) {
+
+		if ( ! $this->stripe_customer_info ) {
+			$customer = WC_Stripe::create_customer( $this->current_user_id, $form_data, $customer_description );
+		} else {
+			// If the user is already registered on the stripe servers, retreive their information
+			$customer = WC_Stripe::get_customer( $this->stripe_customer_info['customer_id'] );
+
+			// If the user doesn't have cards or is adding a new one
+			if ( ! count( $this->stripe_customer_info['cards'] ) || $form_data['chosen_card'] == 'new' ) {
+				// Add new card on stripe servers
+				$card = WC_Stripe::update_customer( $this->stripe_customer_info['customer_id'] . '/cards', array(
+					'card' => $form_data['token']
+				) );
+
+				// Make new card the default
+				$customer = WC_Stripe::update_customer( $this->stripe_customer_info['customer_id'], array(
+					'default_card' => $card->id
+				) );
+
+				// Add new customer details to database
+				$customerArray = array(
+					'customer_id'	=> $customer->id,
+					'card'			=> array(
+						'id'			=> $card->id,
+						'brand'			=> $card->type,
+						'last4'			=> $card->last4,
+						'exp_year'		=> $card->exp_year,
+						'exp_month'		=> $card->exp_month
+					),
+					'default_card'	=> $card->id
+				);
+				WC_Stripe::update_customer_db( $this->current_user_id, $customerArray );
+
+				$stripe_charge_data['card'] = $card->id;
+			} else {
+				$stripe_charge_data['card'] = $this->stripe_customer_info['cards'][ $form_data['chosen_card'] ]['id'];
+			}
+		}
+		// Set up charging data to include customer information
+		$stripe_charge_data['customer'] = $customer->id;
+
+		return $stripe_charge_data;
 	}
 
 	/**
