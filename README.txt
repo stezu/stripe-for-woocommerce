@@ -38,3 +38,13 @@ The manual installation method involves downloading our eCommerce plugin and upl
 = Updating =
 
 The plugin should automatically update with new features, but you could always download the new version of the plugin and manually update the same way you would manually install.
+
+== Changelog ==
+
+= 1.0 =
+* Feature: Charge a guest using Stripe
+* Feature: Create a customer in Stripe for logged in users
+* Feature: Charge a Stripe customer with a saved card
+* Feature: Add a card to a customer
+* Feature: Delete cards from customers
+* Feature: Authorize & Capture or Authorize only
