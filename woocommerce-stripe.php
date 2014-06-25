@@ -107,7 +107,7 @@ add_action( 'woocommerce_order_status_processing_to_completed', 'wc_stripe_order
  * @access public
  * @return void
  */
-function validation_errors() {
+function wc_stripe_validation_errors() {
 
 	foreach( $_POST['errors'] as $error ) {
 		$message = '';
@@ -159,8 +159,8 @@ function validation_errors() {
 	}
 	die();
 }
-add_action( 'wp_ajax_stripe_form_validation', 'validation_errors' );
-add_action( 'wp_ajax_nopriv_stripe_form_validation', 'validation_errors' );
+add_action( 'wp_ajax_stripe_form_validation', 'wc_stripe_validation_errors' );
+add_action( 'wp_ajax_nopriv_stripe_form_validation', 'wc_stripe_validation_errors' );
 
 /**
  * Wrapper of wc_get_template to relate directly to woocommerce-stripe
