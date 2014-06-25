@@ -204,13 +204,38 @@ class WC_Stripe_Gateway extends WC_Payment_Gateway {
 	 * @return void
 	 */
 	public function admin_options() {
+		global $wpdb;
+
+		// If the user hit a button at the bottom of the page that caused an action
+		if ( ! empty( $_GET['action'] ) && ! empty( $_REQUEST['_wpnonce'] ) && wp_verify_nonce( $_REQUEST['_wpnonce'], 'wc_stripe_action' ) ) {
+
+			// Delete test data
+			if ( $_GET['action'] = 'delete_test_data' ) {
+				$wpdb->query( "
+					DELETE FROM {$wpdb->usermeta}
+					WHERE `meta_key` = '_stripe_test_customer_info'
+				" );
+
+				echo '<div class="updated"><p>' . __( 'Stripe Test Data successfully deleted.', 'wc_stripe' ) . '</p></div>';
+			}
+		}
 		?>
 		<h3>Stripe Payment</h3>
 		<p>Allows Credit Card payments through <a href="https://stripe.com/">Stripe</a>.</p>
 		<p>You can find your API Keys in your <a href="https://dashboard.stripe.com/account/apikeys">Stripe Account Settings</a>.</p>
 		<table class="form-table">
 			<?php $this->generate_settings_html(); ?>
+			<tr>
+				<th>Delete Stripe Test Data</th>
+				<td>
+					<p>
+						<a href="<?php echo wp_nonce_url( admin_url('admin.php?page=wc-settings&tab=checkout&section=wc_stripe_gateway&action=delete_test_data' ), 'wc_stripe_action' ); ?>" class="button">Delete all Test Data</a>
+						<span class="description"><strong class="red">Note:</strong> This will delete all Stripe test customer data, make sure to back up your database.</span>
+					</p>
+				</td>
+			</tr>
 		</table>
+
 		<?php
 	}
 
