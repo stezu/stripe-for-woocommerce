@@ -288,7 +288,7 @@ class WC_Stripe_Gateway extends WC_Payment_Gateway {
 	 * Handles sending the charge to an existing customer, a new customer (that's logged in), or a guest
 	 *
 	 * @access public
-	 * @return void
+	 * @return boolean
 	 */
 	protected function send_to_stripe() {
 		global $woocommerce;
