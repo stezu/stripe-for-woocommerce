@@ -1,4 +1,13 @@
 <?php
+/**
+ * The Template for displaying the credit card form on the checkout page
+ *
+ * Override this template by copying it to yourtheme/woocommerce/woocommerce-stripe/payment-fields.php
+ *
+ * @author		Stephen Zuniga
+ * @version		1.1
+ */
+
 global $wc_stripe;
 
 $stripe_customer_info = get_user_meta( get_current_user_id(), $wc_stripe->settings['stripe_db_location'], true );

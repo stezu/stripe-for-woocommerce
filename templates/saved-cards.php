@@ -1,4 +1,15 @@
 <?php
+/**
+ * The Template for displaying the saved credit cards on the account page
+ *
+ * Override this template by copying it to yourtheme/woocommerce/woocommerce-stripe/saved-cards.php
+ *
+ * @author		Stephen Zuniga
+ * @version		1.1
+ */
+
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+
 global $wc_stripe;
 
 // If the current user is not a stripe customer, return
