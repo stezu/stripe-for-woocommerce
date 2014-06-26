@@ -5,13 +5,15 @@
  * Description: Use Stripe for collecting credit card payments on WooCommerce.
  * Version: 1.0
  * Author: Stephen Zuniga
- * Author URI: https://github.com/stezu* 
+ * Author URI: https://github.com/stezu
  *
  * License: GNU General Public License v3.0
  * License URI: http://www.gnu.org/licenses/gpl-3.0.html
  *
  * Foundation built by: Sean Voss // https://github.com/seanvoss/striper
  */
+
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class WooCommerce_Stripe {
 

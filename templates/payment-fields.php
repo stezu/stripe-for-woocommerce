@@ -8,6 +8,8 @@
  * @version		1.1
  */
 
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+
 global $wc_stripe;
 
 $stripe_customer_info = get_user_meta( get_current_user_id(), $wc_stripe->settings['stripe_db_location'], true );
