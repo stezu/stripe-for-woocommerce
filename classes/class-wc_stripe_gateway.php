@@ -1,7 +1,4 @@
 <?php
-
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
-
 /**
  * Stripe Gateway
  *
@@ -13,6 +10,9 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * @package		WooCommerce/Classes/Payment
  * @author		Stephen Zuniga
  */
+
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+
 class WC_Stripe_Gateway extends WC_Payment_Gateway {
 	protected $GATEWAY_NAME				= 'wc_stripe';
 	protected $order					= null;
