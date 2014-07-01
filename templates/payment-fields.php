@@ -12,6 +12,10 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 global $wc_stripe;
 
+if ( $wc_stripe->settings['description'] ) : ?>
+	<p class="wc_stripe-description"><?php echo $wc_stripe->settings['description']; ?></p>
+<?php endif;
+
 $stripe_customer_info = get_user_meta( get_current_user_id(), $wc_stripe->settings['stripe_db_location'], true );
 
 if( is_user_logged_in() && $stripe_customer_info && isset( $stripe_customer_info['cards'] ) && count( $stripe_customer_info['cards'] ) ) :
