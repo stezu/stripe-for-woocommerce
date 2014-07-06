@@ -41,6 +41,14 @@ The plugin should automatically update with new features, but you could always d
 
 == Changelog ==
 
+= 1.1 =
+* Feature: Templates! For credit card form and account page
+* Feature: Button to delete all test data
+* Tweak: Payment.js might not have worked consistently, should be better now
+* Fix: Add an icon for the gateway
+* Fix: Add description to Credit Card Page
+* Fix: Inconsistencies on Customer creation
+
 = 1.0 =
 * Feature: Charge a guest using Stripe
 * Feature: Create a customer in Stripe for logged in users
