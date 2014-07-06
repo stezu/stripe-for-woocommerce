@@ -1,11 +1,11 @@
 <?php
 /*
  * Plugin Name: Stripe for WooCommerce
- * Plugin URI: https://github.com/stezu/woocommerce-stripe/
+ * Plugin URI: https://wordpress.org/plugins/stripe-for-woocommerce
  * Description: Use Stripe for collecting credit card payments on WooCommerce.
  * Version: 1.1
  * Author: Stephen Zuniga
- * Author URI: https://github.com/stezu
+ * Author URI: http://stephenzuniga.com
  *
  * License: GNU General Public License v3.0
  * License URI: http://www.gnu.org/licenses/gpl-3.0.html
