@@ -22,6 +22,9 @@ class WooCommerce_Stripe {
 		// Include Stripe Methods
 		include_once( 'classes/class-wc_stripe.php' );
 
+		// Include Database Manipulation Methods
+		include_once( 'classes/class-wc_stripe_db.php' );
+
 		// Grab settings
 		$this->settings = get_option( 'woocommerce_wc_stripe' . '_settings', null );
 

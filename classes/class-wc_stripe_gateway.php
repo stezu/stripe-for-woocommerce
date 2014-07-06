@@ -389,7 +389,7 @@ class WC_Stripe_Gateway extends WC_Payment_Gateway {
 					),
 					'default_card'	=> $card->id
 				);
-				WC_Stripe::update_customer_db( $this->current_user_id, $customerArray );
+				WC_Stripe_DB::update_customer( $this->current_user_id, $customerArray );
 
 				$stripe_charge_data['card'] = $card->id;
 			} else {
