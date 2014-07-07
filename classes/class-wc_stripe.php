@@ -214,4 +214,24 @@ class WC_Stripe {
 
 		return $parsed_response;
 	}
+
+	/**
+	 * @deprecated 1.1
+	 * @return WC_Stripe_DB::update_customer
+	 */
+	public static function update_customer_db( $user_id, $customer_data ) {
+		_deprecated_function( 'WC_Stripe->update_customer_db', '1.2', 'WC_Stripe_DB->update_customer' );
+
+		return WC_Stripe_DB::update_customer( $user_id, $customer_data );
+	}
+
+	/**
+	 * @deprecated 1.1
+	 * @return WC_Stripe_DB::delete_customer
+	 */
+	public static function delete_customer_db( $user_id, $customer_data ) {
+		_deprecated_function( 'WC_Stripe->delete_customer_db', '1.2', 'WC_Stripe_DB->delete_customer' );
+
+		return WC_Stripe_DB::delete_customer( $user_id, $customer_data );
+	}
 }
