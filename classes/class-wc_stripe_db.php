@@ -134,14 +134,16 @@ class WC_Stripe_DB {
 	}
 }
 
-function recursive_array_search( $needle, $haystack ) {
+if ( ! function_exists( 'recursive_array_search' ) ) {
+	function recursive_array_search( $needle, $haystack ) {
 
-    foreach ( $haystack as $key => $value ) {
-        $current_key = $key;
+		foreach ( $haystack as $key => $value ) {
+			$current_key = $key;
 
-        if ( $needle === $value OR ( is_array( $value ) && recursive_array_search( $needle, $value ) !== false ) ) {
-            return $current_key;
-        }
-    }
-    return false;
+			if ( $needle === $value OR ( is_array( $value ) && recursive_array_search( $needle, $value ) !== false ) ) {
+				return $current_key;
+			}
+		}
+		return false;
+	}
 }
