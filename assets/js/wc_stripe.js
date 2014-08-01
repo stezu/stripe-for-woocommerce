@@ -12,9 +12,6 @@ jQuery( function ( $ ) {
     $(window).on( 'load.wc_stripe', initCCForm );
     $body.on( 'updated_checkout.wc_stripe', function () {
         initCCForm();
-
-        // Make sure we don't repeat this
-        $body.off( 'updated_checkout.wc_stripe' );
     });
 
     // Checkout Form
