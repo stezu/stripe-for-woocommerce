@@ -3,7 +3,7 @@
  * Functions for interfacing with the database
  *
  * @class 		WC_Stripe_DB
- * @version		1.1
+ * @version		1.11
  * @author 		Stephen Zuniga
  */
 

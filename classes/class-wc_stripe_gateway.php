@@ -6,7 +6,7 @@
  *
  * @class		WC_Stripe_Gateway
  * @extends		WC_Payment_Gateway
- * @version		1.1
+ * @version		1.11
  * @package		WooCommerce/Classes/Payment
  * @author		Stephen Zuniga
  */

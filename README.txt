@@ -41,6 +41,12 @@ The plugin should automatically update with new features, but you could always d
 
 == Changelog ==
 
+= 1.11 =
+* Tweak: Database handling is now in it's own class
+* Fix: JS sometimes didn't create a token
+* Fix: Users with wp_debug on fresh install had fatal errors
+* Fix: Possible function redeclaration issue
+
 = 1.1 =
 * Feature: Templates! For credit card form and account page
 * Feature: Button to delete all test data

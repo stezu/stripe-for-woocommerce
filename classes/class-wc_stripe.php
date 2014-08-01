@@ -3,7 +3,7 @@
  * Functions for interfacing with Stripe's API
  *
  * @class 		WC_Stripe
- * @version		1.1
+ * @version		1.11
  * @author 		Stephen Zuniga
  */
 
