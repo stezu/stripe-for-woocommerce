@@ -26,7 +26,7 @@ class WooCommerce_Stripe {
 		include_once( 'classes/class-wc_stripe_db.php' );
 
 		// Grab settings
-		$this->settings = get_option( 'woocommerce_wc_stripe' . '_settings', null );
+		$this->settings = get_option( 'woocommerce_wc_stripe' . '_settings', array() );
 
 		// Add default values for fresh installs
 		$this->settings['testmode'] = isset( $this->settings['testmode'] ) ? $this->settings['testmode'] : 'yes';
