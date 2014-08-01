@@ -28,6 +28,13 @@ class WooCommerce_Stripe {
 		// Grab settings
 		$this->settings = get_option( 'woocommerce_wc_stripe' . '_settings', null );
 
+		// Add default values for fresh installs
+		$this->settings['testmode'] = isset( $this->settings['testmode'] ) ? $this->settings['testmode'] : 'yes';
+		$this->settings['test_publishable_key'] = isset( $this->settings['test_publishable_key'] ) ? $this->settings['test_publishable_key'] : '';
+		$this->settings['test_secret_key'] = isset( $this->settings['test_secret_key'] ) ? $this->settings['test_secret_key'] : '';
+		$this->settings['live_publishable_key'] = isset( $this->settings['live_publishable_key'] ) ? $this->settings['live_publishable_key'] : '';
+		$this->settings['live_secret_key'] = isset( $this->settings['live_secret_key'] ) ? $this->settings['live_secret_key'] : '';
+
 		// API Info
 		$this->settings['api_endpoint']				= 'https://api.stripe.com/';
 		$this->settings['publishable_key']			= $this->settings['testmode'] == 'yes' ? $this->settings['test_publishable_key'] : $this->settings['live_publishable_key'];
