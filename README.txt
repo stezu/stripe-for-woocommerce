@@ -18,7 +18,7 @@ In reality, there aren't a lot of methods you can use that provide PayPal-like c
 This plugin exists because the current solutions for Stripe on WooCommerce are incomplete or expensive. WooThemes made a [Stripe plugin](http://www.woothemes.com/products/stripe/) but it costs $79. [Striper](https://wordpress.org/plugins/striper/) is the plugin that I used to initally start this plugin process and while free, was lacking a few features that I thought were necessary. It also appears to have dropped out of development recently and I hope that this plugin will fill in where it left off.
 
 = Contributing =
-If you'd like to contribute, feel free to tackle a feature or fix a bug on [Github](https://github.com/stezu/woocommerce-stripe/) and when you're ready, send a pull request. If you'd like to get more involved than that, please e-mail me at [hello@stephenzuniga.com](mailto:hello@stephenzuniga.com).
+If you'd like to contribute, feel free to tackle a feature or fix a bug on [Github](https://github.com/stezu/stripe-for-woocommerce/) and when you're ready, send a pull request. If you'd like to get more involved than that, please e-mail me at [hello@stephenzuniga.com](mailto:hello@stephenzuniga.com).
 
 == Installation ==
 

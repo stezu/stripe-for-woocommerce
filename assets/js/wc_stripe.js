@@ -3,7 +3,8 @@ Stripe.setPublishableKey( wc_stripe_info.publishableKey );
 
 jQuery( function ( $ ) {
     var $body = $( 'body' ),
-        $form = $( 'form.checkout, form#order_review' );
+        $form = $( 'form.checkout, form#order_review' ),
+        $ccForm;
 
     // Make sure the form doesn't use html validation
     $form.attr('novalidate', 'novalidate');
@@ -30,7 +31,7 @@ jQuery( function ( $ ) {
     });
 
     function initCCForm() {
-        var $ccForm = $( '#wc_stripe-creditcard-form' );
+        $ccForm = $( '#wc_stripe-creditcard-form' );
 
         // Hide the CC form if the user has a saved card.
         if ( wc_stripe_info.hasCard ) {
