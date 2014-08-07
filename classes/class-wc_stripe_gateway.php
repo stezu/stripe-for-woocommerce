@@ -270,6 +270,24 @@ class WC_Stripe_Gateway extends WC_Payment_Gateway {
 			'hasCard'			=> ( $this->stripe_customer_info && count( $this->stripe_customer_info['cards'] ) ) ? true : false
 		);
 
+		// If we're on the pay page, Stripe needs the address
+		if ( is_checkout_pay_page() ) {
+			$order_key = urldecode( $_GET['key'] );
+			$order_id  = absint( get_query_var( 'order-pay' ) );
+			$order     = new WC_Order( $order_id );
+
+			if ( $order->id == $order_id && $order->order_key == $order_key ) {
+				$wc_stripe_info['billing_first_name']	= $order->billing_first_name;
+				$wc_stripe_info['billing_last_name']	= $order->billing_last_name;
+				$wc_stripe_info['billing_address_1']	= $order->billing_address_1;
+				$wc_stripe_info['billing_address_2']	= $order->billing_address_2;
+				$wc_stripe_info['billing_city']			= $order->billing_city;
+				$wc_stripe_info['billing_state']		= $order->billing_state;
+				$wc_stripe_info['billing_postcode']		= $order->billing_postcode;
+				$wc_stripe_info['billing_country']		= $order->billing_country;
+			}
+		}
+
 		wp_localize_script( 'wc_stripe_js', 'wc_stripe_info', $wc_stripe_info );
 	}
 

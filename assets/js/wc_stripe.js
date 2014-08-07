@@ -66,19 +66,21 @@ jQuery( function ( $ ) {
         if ( $( '#payment_method_wc_stripe' ).is( ':checked' ) && ( ! $( 'input[name="wc_stripe_card"]' ).length || $( 'input[name="wc_stripe_card"]:checked' ).val() === 'new' ) ) {
 
             if ( ! $( 'input.stripe_token' ).length ) {
-                var cardExpiry = $( '.wc_stripe-card-expiry' ).payment( 'cardExpiryVal' );
+                var cardExpiry = $( '.wc_stripe-card-expiry' ).payment( 'cardExpiryVal' ),
+                    name = ( wc_stripe_info.billing_first_name || wc_stripe_info.billing_last_name ) ? wc_stripe_info.billing_first_name + ' ' + wc_stripe_info.billing_last_name : $( '#billing_first_name' ).val() + ' ' + $( '#billing_last_name' ).val();
 
                 var stripeData = {
                     number          : $( '.wc_stripe-card-number' ).val() || '',
                     cvc             : $( '.wc_stripe-card-cvc' ).val() || '',
                     exp_month       : cardExpiry.month || '',
                     exp_year        : cardExpiry.year || '',
-                    name            : $( '.wc_stripe-billing-name' ).val() || $( '#billing_first_name' ).val() + ' ' + $( '#billing_last_name' ).val() || '',
-                    address_line1   : $( '#billing_address_1' ).val() || '',
-                    address_line2   : $( '#billing_address_2' ).val() || '',
-                    address_state   : $( '#billing_state' ).val() || '',
-                    address_zip     : $( '.wc_stripe-billing-zip' ).val() || $( '#billing_postcode' ).val() || '',
-                    address_country : $( '#billing_country' ).val() || ''
+                    name            : $( '.wc_stripe-billing-name' ).val() || name,
+                    address_line1   : wc_stripe_info.billing_address_1 || $( '#billing_address_1' ).val() || '',
+                    address_line2   : wc_stripe_info.billing_address_2 || $( '#billing_address_2' ).val() || '',
+                    address_city    : wc_stripe_info.billing_city || $('#billing_city').val() || '',
+                    address_state   : wc_stripe_info.billing_state || $( '#billing_state' ).val() || '',
+                    address_zip     : wc_stripe_info.billing_postcode || $( '.wc_stripe-billing-zip' ).val() || $( '#billing_postcode' ).val() || '',
+                    address_country : wc_stripe_info.billing_country || $( '#billing_country' ).val() || ''
                 };
 
                 $form.block({
