@@ -379,7 +379,7 @@ class WC_Stripe_Gateway extends WC_Payment_Gateway {
 	 * @return array
 	 */
 	public function get_customer( $stripe_charge_data, $form_data ) {
-		$customer = array();
+		$output = array();
 
 		if ( ! $this->stripe_customer_info ) {
 			$customer = WC_Stripe::create_customer( $this->current_user_id, $form_data, $stripe_charge_data['description'] );
@@ -413,15 +413,15 @@ class WC_Stripe_Gateway extends WC_Payment_Gateway {
 				);
 				WC_Stripe_DB::update_customer( $this->current_user_id, $customerArray );
 
-				$customer['card'] = $card->id;
+				$output['card'] = $card->id;
 			} else {
-				$customer['card'] = $this->stripe_customer_info['cards'][ $form_data['chosen_card'] ]['id'];
+				$output['card'] = $this->stripe_customer_info['cards'][ $form_data['chosen_card'] ]['id'];
 			}
 		}
 		// Set up charging data to include customer information
-		$customer['id'] = $customer->id;
+		$output['id'] = $customer->id;
 
-		return $customer;
+		return $output;
 	}
 
 	/**
@@ -507,7 +507,7 @@ class WC_Stripe_Gateway extends WC_Payment_Gateway {
 				'currency'		=> strtolower( get_woocommerce_currency() ),
 				'token'			=> isset( $_POST['stripe_token'] ) ? $_POST['stripe_token'] : '',
 				'description'	=> 'Charge for %s' . $this->order->billing_email,
-				'chosen_card'	=> isset( $_POST['wc_stripe_card'] ) ? $_POST['wc_stripe_card'] : '',
+				'chosen_card'	=> isset( $_POST['wc_stripe_card'] ) ? $_POST['wc_stripe_card'] : 0,
 				'card'			=> array(
 					'name'				=> $this->order->billing_first_name . ' ' . $this->order->billing_last_name,
 					'billing_email'		=> $this->order->billing_email,
