@@ -143,26 +143,26 @@ class WC_Stripe_Gateway extends WC_Payment_Gateway {
 		$this->form_fields = array(
 			'enabled' => array(
 				'type'			=> 'checkbox',
-				'title'			=> __( 'Enable/Disable', 'wc_stripe' ),
-				'label'			=> __( 'Enable Stripe for WooCommerce', 'wc_stripe' ),
+				'title'			=> __( 'Enable/Disable', 'stripe-for-woocommerce' ),
+				'label'			=> __( 'Enable Stripe for WooCommerce', 'stripe-for-woocommerce' ),
 				'default'		=> 'yes'
 			),
 			'title' => array(
 				'type'			=> 'text',
-				'title'			=> __( 'Title', 'wc_stripe' ),
-				'description'	=> __( 'This controls the title which the user sees during checkout.', 'wc_stripe' ),
-				'default'		=> __( 'Credit Card Payment', 'wc_stripe' )
+				'title'			=> __( 'Title', 'stripe-for-woocommerce' ),
+				'description'	=> __( 'This controls the title which the user sees during checkout.', 'stripe-for-woocommerce' ),
+				'default'		=> __( 'Credit Card Payment', 'stripe-for-woocommerce' )
 			),
 			'description' => array(
 				'type'			=> 'textarea',
-				'title'			=> __( 'Description', 'wc_stripe' ),
-				'description'	=> __( 'This controls the description which the user sees during checkout.', 'wc_stripe' ),
-				'default'		=> __( '', 'wc_stripe' )
+				'title'			=> __( 'Description', 'stripe-for-woocommerce' ),
+				'description'	=> __( 'This controls the description which the user sees during checkout.', 'stripe-for-woocommerce' ),
+				'default'		=> __( '', 'stripe-for-woocommerce' )
 			),
 			'charge_type' => array(
 				'type'			=> 'select',
-				'title'			=> __( 'Charge Type', 'wc_stripe' ),
-				'description'	=> __( 'Choose to capture payment at checkout, or authorize only to capture later.', 'wc_stripe' ),
+				'title'			=> __( 'Charge Type', 'stripe-for-woocommerce' ),
+				'description'	=> __( 'Choose to capture payment at checkout, or authorize only to capture later.', 'stripe-for-woocommerce' ),
 				'options'		=> array(
 					'capture'	=> 'Authorize & Capture',
 					'authorize'	=> 'Authorize Only'
@@ -171,37 +171,37 @@ class WC_Stripe_Gateway extends WC_Payment_Gateway {
 			),
 			'additional_fields' => array(
 				'type'			=> 'checkbox',
-				'title'			=> __( 'Additional Fields', 'wc_stripe' ),
-				'description'	=> __( 'Add a Billing ZIP and a Name on Card for Stripe authentication purposes. This is only neccessary if you check the "Only ship to the users billing address" box on WooCommerce Shipping settings.', 'wc_stripe' ),
-				'label'			=> __( 'Use Additional Fields', 'wc_stripe' ),
+				'title'			=> __( 'Additional Fields', 'stripe-for-woocommerce' ),
+				'description'	=> __( 'Add a Billing ZIP and a Name on Card for Stripe authentication purposes. This is only neccessary if you check the "Only ship to the users billing address" box on WooCommerce Shipping settings.', 'stripe-for-woocommerce' ),
+				'label'			=> __( 'Use Additional Fields', 'stripe-for-woocommerce' ),
 				'default'		=> 'no'
 			),
 			'testmode' => array(
 				'type'			=> 'checkbox',
-				'title'			=> __( 'Testing', 'wc_stripe' ),
-				'description'	=> __( 'Use the test mode on Stripe\'s dashboard to verify everything works before going live.', 'wc_stripe' ),
-				'label'			=> __( 'Turn on testing', 'wc_stripe' ),
+				'title'			=> __( 'Testing', 'stripe-for-woocommerce' ),
+				'description'	=> __( 'Use the test mode on Stripe\'s dashboard to verify everything works before going live.', 'stripe-for-woocommerce' ),
+				'label'			=> __( 'Turn on testing', 'stripe-for-woocommerce' ),
 				'default'		=> 'no'
 			),
 			'test_secret_key'	=> array(
 				'type'			=> 'text',
-				'title'			=> __( 'Stripe API Test Secret key', 'wc_stripe' ),
-				'default'		=> __( '', 'wc_stripe' )
+				'title'			=> __( 'Stripe API Test Secret key', 'stripe-for-woocommerce' ),
+				'default'		=> __( '', 'stripe-for-woocommerce' )
 			),
 			'test_publishable_key' => array(
 				'type'			=> 'text',
-				'title'			=> __( 'Stripe API Test Publishable key', 'wc_stripe' ),
-				'default'		=> __( '', 'wc_stripe' )
+				'title'			=> __( 'Stripe API Test Publishable key', 'stripe-for-woocommerce' ),
+				'default'		=> __( '', 'stripe-for-woocommerce' )
 			),
 			'live_secret_key'	=> array(
 				'type'			=> 'text',
-				'title'			=> __( 'Stripe API Live Secret key', 'wc_stripe' ),
-				'default'		=> __( '', 'wc_stripe' )
+				'title'			=> __( 'Stripe API Live Secret key', 'stripe-for-woocommerce' ),
+				'default'		=> __( '', 'stripe-for-woocommerce' )
 			),
 			'live_publishable_key' => array(
 				'type'			=> 'text',
-				'title'			=> __( 'Stripe API Live Publishable key', 'wc_stripe' ),
-				'default'		=> __( '', 'wc_stripe' )
+				'title'			=> __( 'Stripe API Live Publishable key', 'stripe-for-woocommerce' ),
+				'default'		=> __( '', 'stripe-for-woocommerce' )
 			),
 		);
 	}
@@ -226,7 +226,7 @@ class WC_Stripe_Gateway extends WC_Payment_Gateway {
 					WHERE `meta_key` = '_stripe_test_customer_info'
 				" );
 
-				echo '<div class="updated"><p>' . __( 'Stripe Test Data successfully deleted.', 'wc_stripe' ) . '</p></div>';
+				echo '<div class="updated"><p>' . __( 'Stripe Test Data successfully deleted.', 'stripe-for-woocommerce' ) . '</p></div>';
 			}
 		}
 		?>
@@ -372,7 +372,7 @@ class WC_Stripe_Gateway extends WC_Payment_Gateway {
 			return true;
 
 		} catch ( Exception $e ) {
-			wc_add_notice( __( 'Error:', 'wc_stripe' ) . ' ' . $e->getMessage(), 'error' );
+			wc_add_notice( __( 'Error:', 'stripe-for-woocommerce' ) . ' ' . $e->getMessage(), 'error' );
 
 			return false;
 		}
@@ -457,7 +457,7 @@ class WC_Stripe_Gateway extends WC_Payment_Gateway {
 			return $result;
 		} else {
 			$this->payment_failed();
-			wc_add_notice( __( 'Transaction Error: Could not complete your payment.', 'wc_stripe' ), 'error' );
+			wc_add_notice( __( 'Transaction Error: Could not complete your payment.', 'stripe-for-woocommerce' ), 'error' );
 		}
 	}
 

@@ -46,6 +46,9 @@ class WooCommerce_Stripe {
 		// Hooks
 		add_filter( 'woocommerce_payment_gateways', array( &$this, 'woocommerce_stripe_gateway' ) );
 		add_action( 'woocommerce_after_my_account', array( &$this, 'account_saved_cards' ) );
+
+		// Localization
+		load_plugin_textdomain( 'stripe-for-woocommerce', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
 	}
 
 	/**
@@ -134,23 +137,23 @@ function wc_stripe_validation_errors() {
 		$message .= '<strong>';
 		switch ( $error['field'] ) {
 			case 'number':
-				$message .= __( 'Credit Card Number', 'wc_stripe' );
+				$message .= __( 'Credit Card Number', 'stripe-for-woocommerce' );
 				break;
 			case 'expiration':
-				$message .= __( 'Credit Card Expiration', 'wc_stripe' );
+				$message .= __( 'Credit Card Expiration', 'stripe-for-woocommerce' );
 				break;
 			case 'cvc':
-				$message .= __( 'Credit Card CVC', 'wc_stripe' );
+				$message .= __( 'Credit Card CVC', 'stripe-for-woocommerce' );
 				break;
 		}
 		$message .= '</strong>';
 
 		switch ( $error['type'] ) {
 			case 'undefined':
-				$message .= ' ' . __( 'is a required field', 'wc_stripe' );
+				$message .= ' ' . __( 'is a required field', 'stripe-for-woocommerce' );
 				break;
 			case 'invalid':
-				$message = __( 'Please enter a valid', 'wc_stripe' ) . ' ' . $message;
+				$message = __( 'Please enter a valid', 'stripe-for-woocommerce' ) . ' ' . $message;
 				break;
 		}
 		$message .= '.';

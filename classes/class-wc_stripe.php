@@ -196,20 +196,20 @@ class WC_Stripe {
 	 */
 	public static function parse_response( $response ) {
 		if ( is_wp_error( $response ) ) {
-			throw new Exception( __( 'There was a problem connecting to the payment gateway.', 'wc_stripe' ) );
+			throw new Exception( __( 'There was a problem connecting to the payment gateway.', 'stripe-for-woocommerce' ) );
 		}
 
 		if( empty( $response['body'] ) ) {
-			throw new Exception( __( 'Empty response.', 'wc_stripe' ) );
+			throw new Exception( __( 'Empty response.', 'stripe-for-woocommerce' ) );
 		}
 
 		$parsed_response = json_decode( $response['body'] );
 
 		// Handle response
 		if ( ! empty( $parsed_response->error ) ) {
-			throw new Exception( __( $parsed_response->error->message, 'wc_stripe' ) );
+			throw new Exception( __( $parsed_response->error->message, 'stripe-for-woocommerce' ) );
 		} elseif ( empty( $parsed_response->id ) ) {
-			throw new Exception( __( 'Invalid response.', 'wc_stripe' ) );
+			throw new Exception( __( 'Invalid response.', 'stripe-for-woocommerce' ) );
 		}
 
 		return $parsed_response;

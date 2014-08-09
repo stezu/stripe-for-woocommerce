@@ -64,7 +64,7 @@ class WC_Stripe_Subscriptions_Gateway extends WC_Stripe_Gateway {
 			return true;
 
 		} catch ( Exception $e ) {
-			wc_add_notice( __( 'Error:', 'wc_stripe' ) . ' ' . $e->getMessage(), 'error' );
+			wc_add_notice( __( 'Error:', 'stripe-for-woocommerce' ) . ' ' . $e->getMessage(), 'error' );
 
 			return false;
 		}
@@ -113,7 +113,7 @@ class WC_Stripe_Subscriptions_Gateway extends WC_Stripe_Gateway {
 				return $result;
 			} else {
 				$this->payment_failed();
-				wc_add_notice( __( 'Transaction Error: Could not complete your payment.', 'wc_stripe' ), 'error' );
+				wc_add_notice( __( 'Transaction Error: Could not complete your payment.', 'stripe-for-woocommerce' ), 'error' );
 			}
 		} else {
 			return parent::process_payment( $order_id );
@@ -143,7 +143,7 @@ class WC_Stripe_Subscriptions_Gateway extends WC_Stripe_Gateway {
 		$charge = WC_Stripe::create_charge( $charge_data );
 
 		if ( isset( $charge->id ) ) {
-			$order->add_order_note( sprintf( __( 'Subscription paid (%s)', 'wc_stripe' ), $charge->id ) );
+			$order->add_order_note( sprintf( __( 'Subscription paid (%s)', 'stripe-for-woocommerce' ), $charge->id ) );
 
 			return $charge;
 		}
