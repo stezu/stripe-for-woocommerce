@@ -33,6 +33,16 @@ class WC_Stripe_Gateway extends WC_Payment_Gateway {
 		$this->method_title				= 'WooCommerce Stripe';
 		$this->has_fields				= true;
 		$this->api_endpoint				= 'https://api.stripe.com/';
+		$this->supports 				= array(
+			'products',
+			'subscriptions',
+			'subscription_cancellation',
+			'subscription_suspension',
+			'subscription_reactivation',
+			'subscription_amount_changes',
+			'subscription_date_changes',
+			'subscription_payment_method_change'
+		);
 
 		// Init settings
 		$this->init_form_fields();
@@ -305,7 +315,7 @@ class WC_Stripe_Gateway extends WC_Payment_Gateway {
 	 * Send form data to Stripe
 	 * Handles sending the charge to an existing customer, a new customer (that's logged in), or a guest
 	 *
-	 * @access public
+	 * @access protected
 	 * @return boolean
 	 */
 	protected function send_to_stripe() {

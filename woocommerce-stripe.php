@@ -26,7 +26,7 @@ class WooCommerce_Stripe {
 		include_once( 'classes/class-wc_stripe_db.php' );
 
 		// Grab settings
-		$this->settings = get_option( 'woocommerce_wc_stripe' . '_settings', array() );
+		$this->settings = get_option( 'woocommerce_wc_stripe_settings', array() );
 
 		// Add default values for fresh installs
 		$this->settings['testmode']					= isset( $this->settings['testmode'] ) ? $this->settings['testmode'] : 'yes';
@@ -56,11 +56,18 @@ class WooCommerce_Stripe {
 	 * @return array
 	 */
 	public function woocommerce_stripe_gateway( $methods ) {
-		if ( class_exists( 'WC_Payment_Gateway' ) ) {
-			include_once( 'classes/class-wc_stripe_gateway.php' );
+		if ( ! class_exists( 'WC_Payment_Gateway' ) ) {
+			return;
 		}
 
-		if ( class_exists( 'WC_Stripe_Gateway' ) ) {
+		// Include payment gateway
+		include_once( 'classes/class-wc_stripe_gateway.php' );
+
+		if ( class_exists( 'WC_Subscriptions_Order' ) ) {
+			include_once( 'classes/class-wc_stripe_subscriptions_gateway.php' );
+
+			$methods[] = 'WC_Stripe_Subscriptions_Gateway';
+		} else {
 			$methods[] = 'WC_Stripe_Gateway';
 		}
 
