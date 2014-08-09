@@ -10,39 +10,39 @@
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
-global $wc_stripe;
+global $s4wc;
 
-if ( $wc_stripe->settings['description'] ) : ?>
-	<p class="wc_stripe-description"><?php echo $wc_stripe->settings['description']; ?></p>
+if ( $s4wc->settings['description'] ) : ?>
+	<p class="s4wc-description"><?php echo $s4wc->settings['description']; ?></p>
 <?php endif;
 
-$stripe_customer_info = get_user_meta( get_current_user_id(), $wc_stripe->settings['stripe_db_location'], true );
+$stripe_customer_info = get_user_meta( get_current_user_id(), $s4wc->settings['stripe_db_location'], true );
 
 if( is_user_logged_in() && $stripe_customer_info && isset( $stripe_customer_info['cards'] ) && count( $stripe_customer_info['cards'] ) ) :
 
 	// Add option to use a saved card
 	foreach ( $stripe_customer_info['cards'] as $i => $credit_card ) : ?>
 
-		<input type="radio" id="stripe_card_<?php echo $i; ?>" name="wc_stripe_card" value="<?php echo $i; ?>" checked>
+		<input type="radio" id="stripe_card_<?php echo $i; ?>" name="s4wc_card" value="<?php echo $i; ?>" checked>
 		<label for="stripe_card_<?php echo $i; ?>">Card ending with <?php echo $credit_card['last4']; ?> (<?php echo $credit_card['exp_month']; ?>/<?php echo $credit_card['exp_year']; ?>)</label><br>
 
 	<?php endforeach; ?>
 
-	<input type="radio" id="new_card" name="wc_stripe_card" value="new">
+	<input type="radio" id="new_card" name="s4wc_card" value="new">
 	<label for="new_card">Use a new credit card</label>
 
 <?php endif; ?>
 
-<div id="wc_stripe-creditcard-form">
+<div id="s4wc-creditcard-form">
 
 <?php
-	if ( $wc_stripe->settings['additional_fields'] == 'yes' ) : 
+	if ( $s4wc->settings['additional_fields'] == 'yes' ) : 
 
 		$billing_name = woocommerce_form_field( 'billing-name', array(
 			'label'				=> 'Name on Card',
 			'required'			=> true,
 			'class'				=> array( 'form-row-first' ),
-			'input_class'		=> array( 'wc_stripe-billing-name' ),
+			'input_class'		=> array( 's4wc-billing-name' ),
 			'return'			=> true,
 			'custom_attributes'	=> array(
 				'autocomplete'	=> 'off'
@@ -54,7 +54,7 @@ if( is_user_logged_in() && $stripe_customer_info && isset( $stripe_customer_info
 			'label'				=> 'Billing Zip',
 			'required'			=> true,
 			'class'				=> array( 'form-row-last' ),
-			'input_class'		=> array( 'wc_stripe-billing-zip' ),
+			'input_class'		=> array( 's4wc-billing-zip' ),
 			'return'			=> true,
 			'clear'				=> true,
 			'custom_attributes'	=> array(
@@ -70,7 +70,7 @@ if( is_user_logged_in() && $stripe_customer_info && isset( $stripe_customer_info
 		'placeholder'		=> '•••• •••• •••• ••••',
 		'maxlength'			=> 20,
 		'required'			=> true,
-		'input_class'		=> array( 'wc_stripe-card-number' ),
+		'input_class'		=> array( 's4wc-card-number' ),
 		'return'			=> true,
 		'custom_attributes'	=> array(
 			'autocomplete'	=> 'off',
@@ -85,7 +85,7 @@ if( is_user_logged_in() && $stripe_customer_info && isset( $stripe_customer_info
 		'placeholder'		=> 'MM / YY',
 		'required'			=> true,
 		'class'				=> array( 'form-row-first' ),
-		'input_class'		=> array( 'wc_stripe-card-expiry' ),
+		'input_class'		=> array( 's4wc-card-expiry' ),
 		'return'			=> true,
 		'custom_attributes'	=> array(
 			'autocomplete'	=> 'off',
@@ -100,7 +100,7 @@ if( is_user_logged_in() && $stripe_customer_info && isset( $stripe_customer_info
 		'placeholder'		=> 'CVC',
 		'required'			=> true,
 		'class'				=> array( 'form-row-last' ),
-		'input_class'		=> array( 'wc_stripe-card-cvc' ),
+		'input_class'		=> array( 's4wc-card-cvc' ),
 		'return'			=> true,
 		'clear'				=> true,
 		'custom_attributes'	=> array(

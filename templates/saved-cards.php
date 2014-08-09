@@ -10,19 +10,19 @@
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
-global $wc_stripe;
+global $s4wc;
 
 // If the current user is not a stripe customer, return
-if ( ! get_user_meta( get_current_user_id(), $wc_stripe->settings['stripe_db_location'], true ) )
+if ( ! get_user_meta( get_current_user_id(), $s4wc->settings['stripe_db_location'], true ) )
 	return;
 
 // If user requested to delete a card, delete it
 if ( isset( $_POST['delete_card'] ) && wp_verify_nonce( $_POST['_wpnonce'], "stripe_del_card" ) ) {
-	WC_Stripe::delete_card( get_current_user_id(), $_POST['delete_card'] );
+	S4WC_API::delete_card( get_current_user_id(), $_POST['delete_card'] );
 }
 
 // Get user database object
-$user_meta = get_user_meta( get_current_user_id(), $wc_stripe->settings['stripe_db_location'], true );
+$user_meta = get_user_meta( get_current_user_id(), $s4wc->settings['stripe_db_location'], true );
 
 // Get user credit cards
 $credit_cards = isset( $user_meta['cards'] ) ? $user_meta['cards'] : false;
