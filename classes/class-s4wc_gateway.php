@@ -14,7 +14,7 @@
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class S4WC_Gateway extends WC_Payment_Gateway {
-	protected $GATEWAY_NAME				= 'wc_stripe';
+	protected $GATEWAY_NAME				= 'S4WC';
 	protected $order					= null;
 	protected $transactionId			= null;
 	protected $transactionErrorMessage	= null;
