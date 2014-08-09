@@ -379,7 +379,7 @@ class WC_Stripe_Gateway extends WC_Payment_Gateway {
 	 * @return array
 	 */
 	public function get_customer( $stripe_charge_data, $form_data ) {
-		$customer = array()
+		$customer = array();
 
 		if ( ! $this->stripe_customer_info ) {
 			$customer = WC_Stripe::create_customer( $this->current_user_id, $form_data, $stripe_charge_data['description'] );
