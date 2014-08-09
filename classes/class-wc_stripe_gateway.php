@@ -338,7 +338,10 @@ class WC_Stripe_Gateway extends WC_Payment_Gateway {
 			// Make sure we only create customers if a user is logged in
 			if ( is_user_logged_in() ) {
 				// Add a customer or retrieve an existing one
-				$stripe_charge_data = $this->get_customer( $stripe_charge_data, $data );
+				$customer = $this->get_customer( $stripe_charge_data, $data );
+
+				$stripe_charge_data['card'] = $customer['card'];
+				$stripe_charge_data['customer'] = $customer['id'];
 			} else {
 				// Set up one time charge
 				$stripe_charge_data['card'] = $data['token'];
@@ -354,7 +357,7 @@ class WC_Stripe_Gateway extends WC_Payment_Gateway {
 			update_post_meta( $this->order->id, 'capture', strcmp( $this->charge_type, 'authorize' ) == 0 );
 
 			// Save data for cross-reference between Stripe Dashboard and WooCommerce
-			update_post_meta( $this->order->id, 'customer_id', $customer->id );
+			update_post_meta( $this->order->id, 'customer_id', $customer['id'] );
 
 			return true;
 
@@ -376,6 +379,7 @@ class WC_Stripe_Gateway extends WC_Payment_Gateway {
 	 * @return array
 	 */
 	public function get_customer( $stripe_charge_data, $form_data ) {
+		$customer = array()
 
 		if ( ! $this->stripe_customer_info ) {
 			$customer = WC_Stripe::create_customer( $this->current_user_id, $form_data, $stripe_charge_data['description'] );
@@ -409,15 +413,15 @@ class WC_Stripe_Gateway extends WC_Payment_Gateway {
 				);
 				WC_Stripe_DB::update_customer( $this->current_user_id, $customerArray );
 
-				$stripe_charge_data['card'] = $card->id;
+				$customer['card'] = $card->id;
 			} else {
-				$stripe_charge_data['card'] = $this->stripe_customer_info['cards'][ $form_data['chosen_card'] ]['id'];
+				$customer['card'] = $this->stripe_customer_info['cards'][ $form_data['chosen_card'] ]['id'];
 			}
 		}
 		// Set up charging data to include customer information
-		$stripe_charge_data['customer'] = $customer->id;
+		$customer['id'] = $customer->id;
 
-		return $stripe_charge_data;
+		return $customer;
 	}
 
 	/**
