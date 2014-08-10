@@ -355,7 +355,7 @@ class S4WC_Gateway extends WC_Payment_Gateway {
 				$stripe_charge_data['card'] = $form_data['token'];
 			}
 
-			$stripe_charge_data['description'] = apply_filters( 'wc_stripe_charge_description', $stripe_charge_data['description'], $stripe_charge_data['description'], $form_data );
+			$stripe_charge_data['description'] = apply_filters( 's4wc_charge_description', $stripe_charge_data['description'], $stripe_charge_data['description'], $form_data );
 
 			// Create the charge on Stripe's servers - this will charge the user's card
 			$charge = S4WC_API::create_charge( $stripe_charge_data );

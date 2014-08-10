@@ -22,10 +22,9 @@ class S4WC_API {
 	 */
 	public static function create_customer( $form_data, $customer_description ) {
 		global $s4wc;
-		global $wc_stripe;
 
 		$post_body = array(
-			'description'	=> apply_filters( 'wc_stripe_customer_description', $customer_description, $customer_description, $form_data ),
+			'description'	=> apply_filters( 's4wc_customer_description', $customer_description, $customer_description, $form_data ),
 			'card'			=> $form_data['token']
 		);
 
