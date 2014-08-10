@@ -36,15 +36,22 @@ class S4WC_Subscriptions_Gateway extends S4WC_Gateway {
 	 * @return boolean
 	 */
 	protected function subscription_to_stripe() {
-		global $woocommerce;
+		global $woocommerce, $s4wc;
 
 		// Get the credit card details submitted by the form
-		$data = $this->get_form_data();
+		$form_data = $this->get_form_data();
 
 		// If there are errors on the form, don't bother sending to Stripe.
-		if ( $data['errors'] == 1 ) {
+		if ( $form_data['errors'] == 1 ) {
 			return;
 		}
+
+		// Get customer id
+		$customer = get_user_meta( $this->current_user_id, $s4wc->settings['stripe_db_location'], true );
+
+		// Update default card
+		$default_card = $customer['cards'][ $form_data['chosen_card'] ]['id'];
+		S4WC_DB::update_customer( $this->current_user_id, array( 'default_card' => $default_card ) );
 
 		// Set up the charge for Stripe's servers
 		try {
@@ -57,6 +64,9 @@ class S4WC_Subscriptions_Gateway extends S4WC_Gateway {
 			// Save data for the "Capture"
 			update_post_meta( $this->order->id, 'transaction_id', $this->transactionId );
 			update_post_meta( $this->order->id, 'capture', strcmp( $this->charge_type, 'authorize' ) == 0 );
+
+			// Save data for cross-reference between Stripe Dashboard and WooCommerce
+			update_post_meta( $this->order->id, 'customer_id', $customer['customer_id'] );
 
 			return true;
 
