@@ -322,40 +322,40 @@ class S4WC_Gateway extends WC_Payment_Gateway {
 		global $woocommerce;
 
 		// Get the credit card details submitted by the form
-		$data = $this->get_form_data();
+		$form_data = $this->get_form_data();
 
 		// If there are errors on the form, don't bother sending to Stripe.
-		if ( $data['errors'] == 1 ) {
+		if ( $form_data['errors'] == 1 ) {
 			return;
 		}
-
-		// Set up basics for charging
-		if ( is_user_logged_in() ) {
-			$customer_description = $this->current_user->user_login . ' (#' . $this->current_user_id . ' - ' . $this->current_user->user_email . ') ' . $data['card']['name']; // username (user_id - user_email) Full Name
-		} else {
-			$customer_description = 'Guest (' . $this->order->billing_email . ') ' . $data['card']['name']; // Guest (user_email) Full Name
-		}
-		$stripe_charge_data = array(
-			'amount'		=> $data['amount'], // amount in cents
-			'currency'		=> $data['currency'],
-			'description'	=> $customer_description,
-			'capture'		=> ($this->charge_type == 'capture') ? 'true' : 'false'
-		);
 
 		// Set up the charge for Stripe's servers
 		try {
 
+			// Set up basics for charging
+			$stripe_charge_data = array(
+				'amount'		=> $form_data['amount'], // amount in cents
+				'currency'		=> $form_data['currency'],
+				'capture'		=> ($this->charge_type == 'capture') ? 'true' : 'false'
+			);
+
 			// Make sure we only create customers if a user is logged in
 			if ( is_user_logged_in() ) {
+				$stripe_charge_data['description'] = $this->current_user->user_login . ' (#' . $this->current_user_id . ' - ' . $this->current_user->user_email . ') ' . $form_data['card']['name']; // username (user_id - user_email) Full Name
+
 				// Add a customer or retrieve an existing one
-				$customer = $this->get_customer( $stripe_charge_data, $data );
+				$customer = $this->get_customer( $stripe_charge_data, $form_data );
 
 				$stripe_charge_data['card'] = $customer['card'];
 				$stripe_charge_data['customer'] = $customer['id'];
 			} else {
+				$stripe_charge_data['description'] = 'Guest (' . $this->order->billing_email . ') ' . $form_data['card']['name']; // Guest (user_email) Full Name
+
 				// Set up one time charge
-				$stripe_charge_data['card'] = $data['token'];
+				$stripe_charge_data['card'] = $form_data['token'];
 			}
+
+			$stripe_charge_data['description'] = apply_filters( 'wc_stripe_charge_description', $stripe_charge_data['description'], $stripe_charge_data['description'], $form_data );
 
 			// Create the charge on Stripe's servers - this will charge the user's card
 			$charge = S4WC_API::create_charge( $stripe_charge_data );

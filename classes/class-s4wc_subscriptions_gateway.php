@@ -29,13 +29,13 @@ class S4WC_Subscriptions_Gateway extends S4WC_Gateway {
 	}
 
 	/**
-	 * Send form data to Stripe
+	 * Send subscription form data to Stripe
 	 * Handles sending the charge to an existing customer, a new customer (that's logged in), or a guest
 	 *
 	 * @access protected
 	 * @return boolean
 	 */
-	protected function send_to_stripe() {
+	protected function subscription_to_stripe() {
 		global $woocommerce;
 
 		// Get the credit card details submitted by the form
@@ -100,7 +100,7 @@ class S4WC_Subscriptions_Gateway extends S4WC_Gateway {
 		if ( WC_Subscriptions_Order::order_contains_subscription( $order_id ) ) {
 			$this->order = new WC_Order( $order_id );
 
-			if ( $this->send_to_stripe() ) {
+			if ( $this->subscription_to_stripe() ) {
 				$this->order_complete();
 
 				WC_Subscriptions_Manager::activate_subscriptions_for_order( $this->order );

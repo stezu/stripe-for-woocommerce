@@ -20,11 +20,12 @@ class S4WC_API {
 	 * @param string $customer_description
 	 * @return array
 	 */
-	public static function create_customer( $user_id, $form_data, $customer_description ) {
+	public static function create_customer( $form_data, $customer_description ) {
 		global $s4wc;
+		global $wc_stripe;
 
 		$post_body = array(
-			'description'	=> $customer_description,
+			'description'	=> apply_filters( 'wc_stripe_customer_description', $customer_description, $customer_description, $form_data ),
 			'card'			=> $form_data['token']
 		);
 
@@ -44,7 +45,7 @@ class S4WC_API {
 			),
 			'default_card'	=> $active_card->id
 		);
-		S4WC_DB::update_customer( $user_id, $customerArray );
+		S4WC_DB::update_customer( get_current_user_id(), $customerArray );
 
 		return $customer;
 	}
