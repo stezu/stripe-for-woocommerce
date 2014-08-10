@@ -58,9 +58,6 @@ class S4WC_Subscriptions_Gateway extends S4WC_Gateway {
 			update_post_meta( $this->order->id, 'transaction_id', $this->transactionId );
 			update_post_meta( $this->order->id, 'capture', strcmp( $this->charge_type, 'authorize' ) == 0 );
 
-			// Save data for cross-reference between Stripe Dashboard and WooCommerce
-			update_post_meta( $this->order->id, 'customer_id', $customer['id'] );
-
 			return true;
 
 		} catch ( Exception $e ) {
@@ -129,6 +126,13 @@ class S4WC_Subscriptions_Gateway extends S4WC_Gateway {
 	 * @return array
 	 */
 	public function process_subscription_payment( $order, $amount = 0 ) {
+		global $s4wc;
+
+		// Can't send to stripe without a value, assume it's good to go.
+		if ( $amount === 0 ) {
+			return true;
+		}
+
 		$product_name = 'Subscription';
 		$order_items = $order->get_items();
 		foreach ( $order_items as $key => $item ) {
@@ -138,15 +142,16 @@ class S4WC_Subscriptions_Gateway extends S4WC_Gateway {
 			}
 		}
 
-		// Get customer id from order meta
-		$customer = get_post_meta( $order->id, 'customer_id', true );
+		// Get customer id
+		$customer = get_user_meta( $order->user_id, $s4wc->settings['stripe_db_location'], true );
 
 		// Set up basics for charging
 		$charge_data = array(
 			'amount'		=> $amount * 100, // amount in cents
 			'currency'		=> strtolower( get_woocommerce_currency() ),
 			'description'	=> __( 'Payment for ' . $product_name . '(Order: ' . $order->get_order_number() . ')', 'stripe-for-woocommerce' ),
-			'customer'		=> $customer
+			'customer'		=> $customer['customer_id'],
+			'card'			=> $customer['default_card']
 		);
 		$charge = S4WC_API::create_charge( $charge_data );
 

@@ -23,7 +23,7 @@ if( is_user_logged_in() && $stripe_customer_info && isset( $stripe_customer_info
 	// Add option to use a saved card
 	foreach ( $stripe_customer_info['cards'] as $i => $credit_card ) : ?>
 
-		<input type="radio" id="stripe_card_<?php echo $i; ?>" name="s4wc_card" value="<?php echo $i; ?>" checked>
+		<input type="radio" id="stripe_card_<?php echo $i; ?>" name="s4wc_card" value="<?php echo $i; ?>"<?php echo ( $stripe_customer_info['default_card'] == $credit_card['id'] ) ? ' checked' : ''; ?>>
 		<label for="stripe_card_<?php echo $i; ?>">Card ending with <?php echo $credit_card['last4']; ?> (<?php echo $credit_card['exp_month']; ?>/<?php echo $credit_card['exp_year']; ?>)</label><br>
 
 	<?php endforeach; ?>
