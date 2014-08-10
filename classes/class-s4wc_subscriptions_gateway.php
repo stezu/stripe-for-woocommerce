@@ -4,8 +4,8 @@
  *
  * Provides a Stripe Payment Gateway for Subscriptions.
  *
- * @class		WC_Stripe_Subscriptions_Gateway
- * @extends		WC_Stripe_Gateway
+ * @class		S4WC_Subscriptions_Gateway
+ * @extends		S4WC_Gateway
  * @version		1.11
  * @package		WooCommerce/Classes/Payment
  * @author		Stephen Zuniga
@@ -13,7 +13,7 @@
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
-class WC_Stripe_Subscriptions_Gateway extends WC_Stripe_Gateway {
+class S4WC_Subscriptions_Gateway extends S4WC_Gateway {
 
 	/**
 	 * Constructor for the gateway.
@@ -57,9 +57,6 @@ class WC_Stripe_Subscriptions_Gateway extends WC_Stripe_Gateway {
 			// Save data for the "Capture"
 			update_post_meta( $this->order->id, 'transaction_id', $this->transactionId );
 			update_post_meta( $this->order->id, 'capture', strcmp( $this->charge_type, 'authorize' ) == 0 );
-
-			// Save data for cross-reference between Stripe Dashboard and WooCommerce
-			update_post_meta( $this->order->id, 'customer_id', $customer['id'] );
 
 			return true;
 
@@ -124,23 +121,39 @@ class WC_Stripe_Subscriptions_Gateway extends WC_Stripe_Gateway {
 	 * Process the subscription payment and return the result
 	 *
 	 * @access public
-	 * @param int $order
+	 * @param WC_Order $order
 	 * @param int $amount
 	 * @return array
 	 */
 	public function process_subscription_payment( $order, $amount = 0 ) {
+		global $s4wc;
 
-		// Get customer id from order meta
-		$customer = get_post_meta( $order->id, 'customer_id', true );
+		// Can't send to stripe without a value, assume it's good to go.
+		if ( $amount === 0 ) {
+			return true;
+		}
+
+		$product_name = 'Subscription';
+		$order_items = $order->get_items();
+		foreach ( $order_items as $key => $item ) {
+			if ( isset( $item['subscription_status'] ) ) {
+				$product_name = $item['name'];
+				break;
+			}
+		}
+
+		// Get customer id
+		$customer = get_user_meta( $order->user_id, $s4wc->settings['stripe_db_location'], true );
 
 		// Set up basics for charging
 		$charge_data = array(
 			'amount'		=> $amount * 100, // amount in cents
 			'currency'		=> strtolower( get_woocommerce_currency() ),
-			'description'	=> 'Subscription Payment',
-			'customer'		=> $customer
+			'description'	=> __( 'Payment for ' . $product_name . '(Order: ' . $order->get_order_number() . ')', 'stripe-for-woocommerce' ),
+			'customer'		=> $customer['customer_id'],
+			'card'			=> $customer['default_card']
 		);
-		$charge = WC_Stripe::create_charge( $charge_data );
+		$charge = S4WC_API::create_charge( $charge_data );
 
 		if ( isset( $charge->id ) ) {
 			$order->add_order_note( sprintf( __( 'Subscription paid (%s)', 'stripe-for-woocommerce' ), $charge->id ) );

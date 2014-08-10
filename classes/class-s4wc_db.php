@@ -2,14 +2,14 @@
 /**
  * Functions for interfacing with the database
  *
- * @class 		WC_Stripe_DB
+ * @class 		S4WC_DB
  * @version		1.11
  * @author 		Stephen Zuniga
  */
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
-class WC_Stripe_DB {
+class S4WC_DB {
 
 	/**
 	 * Add/Update the customer database object
@@ -20,7 +20,7 @@ class WC_Stripe_DB {
 	 * @return mixed
 	 */
 	public static function update_customer( $user_id, $customer_data ) {
-		global $wc_stripe;
+		global $s4wc;
 
 		// Sample structure of $customer_data
 		// $customer_data = array(
@@ -51,7 +51,7 @@ class WC_Stripe_DB {
 			$default_card = isset( $customer_data['default_card'] ) ? $customer_data['default_card'] : null;
 
 			// Grab the current object out of the database and return a useable array
-			$currentObject = maybe_unserialize( get_user_meta( $user_id, $wc_stripe->settings['stripe_db_location'], true ) );
+			$currentObject = maybe_unserialize( get_user_meta( $user_id, $s4wc->settings['stripe_db_location'], true ) );
 
 			// If there is an exising object, append values
 			if ( $currentObject ) {
@@ -91,7 +91,7 @@ class WC_Stripe_DB {
 			}
 
 			// Add to the database
-			return update_user_meta( $user_id, $wc_stripe->settings['stripe_db_location'], $newObject );
+			return update_user_meta( $user_id, $s4wc->settings['stripe_db_location'], $newObject );
 		}
 	}
 
@@ -104,7 +104,7 @@ class WC_Stripe_DB {
 	 * @return mixed
 	 */
 	public static function delete_customer( $user_id, $customer_data ) {
-		global $wc_stripe;
+		global $s4wc;
 
 		// Sample structure of $customer_data
 		// $customer_data = array( 
@@ -114,7 +114,7 @@ class WC_Stripe_DB {
 		if ( isset( $customer_data ) ) {
 
 			// Grab the current object out of the database and return a useable array
-			$currentObject = maybe_unserialize( get_user_meta( $user_id, $wc_stripe->settings['stripe_db_location'], true ) );
+			$currentObject = maybe_unserialize( get_user_meta( $user_id, $s4wc->settings['stripe_db_location'], true ) );
 
 			// If the object exists already, do work
 			if ( $currentObject ) {
@@ -126,7 +126,7 @@ class WC_Stripe_DB {
 				}
 
 				// Add to the database
-				return update_user_meta( $user_id, $wc_stripe->settings['stripe_db_location'], $newObject );
+				return update_user_meta( $user_id, $s4wc->settings['stripe_db_location'], $newObject );
 			} else {
 				return false;
 			}

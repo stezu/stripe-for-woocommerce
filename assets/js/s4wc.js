@@ -1,5 +1,5 @@
 // Set API key
-Stripe.setPublishableKey( wc_stripe_info.publishableKey );
+Stripe.setPublishableKey( s4wc_info.publishableKey );
 
 jQuery( function ( $ ) {
     var $body = $( 'body' ),
@@ -10,13 +10,13 @@ jQuery( function ( $ ) {
     $form.attr('novalidate', 'novalidate');
 
     // Make sure the credit card form exists before we try working with it
-    $(window).on( 'load.wc_stripe', initCCForm );
-    $body.on( 'updated_checkout.wc_stripe', function () {
+    $(window).on( 'load.s4wc', initCCForm );
+    $body.on( 'updated_checkout.s4wc', function () {
         initCCForm();
     });
 
     // Checkout Form
-    $( 'form.checkout' ).on( 'checkout_place_order_wc_stripe', function () {
+    $( 'form.checkout' ).on( 'checkout_place_order_s4wc', function () {
         return stripeFormHandler();
     });
 
@@ -26,61 +26,61 @@ jQuery( function ( $ ) {
     });
 
     // Both Forms
-    $form.on( 'keyup change', '#card-number, #card-expiry, #card-cvc, input[name="wc_stripe_card"]', function () {
+    $form.on( 'keyup change', '#card-number, #card-expiry, #card-cvc, input[name="s4wc_card"]', function () {
         $( '.woocommerce_error, .woocommerce-error, .woocommerce-message, .woocommerce_message, .stripe_token, .form_errors' ).remove();
     });
 
     function initCCForm() {
-        $ccForm = $( '#wc_stripe-creditcard-form' );
+        $ccForm = $( '#s4wc-creditcard-form' );
 
         // Hide the CC form if the user has a saved card.
-        if ( wc_stripe_info.hasCard ) {
+        if ( s4wc_info.hasCard ) {
             $ccForm.hide();
         }
 
         // Toggle new card form
-        $form.on( 'change', 'input[name="wc_stripe_card"]', function () {
+        $form.on( 'change', 'input[name="s4wc_card"]', function () {
 
-            if ( $( 'input[name="wc_stripe_card"]:checked' ).val() === 'new' ) {
+            if ( $( 'input[name="s4wc_card"]:checked' ).val() === 'new' ) {
                 $ccForm.slideDown( 200 );
             } else {
                 $ccForm.slideUp( 200 );
             }
         });
 
-        $( '.wc_stripe-card-number' )
+        $( '.s4wc-card-number' )
             .payment( 'formatCardNumber' )
-            .after( '<span class="wc_stripe-card-image"></span>' );
-        $( '.wc_stripe-card-expiry' ).payment( 'formatCardExpiry' );
-        $( '.wc_stripe-card-cvc' )
+            .after( '<span class="s4wc-card-image"></span>' );
+        $( '.s4wc-card-expiry' ).payment( 'formatCardExpiry' );
+        $( '.s4wc-card-cvc' )
             .payment( 'formatCardCVC' )
             .focus( function () {
-                $( '.wc_stripe-card-number' ).addClass( 'cvc' );
+                $( '.s4wc-card-number' ).addClass( 'cvc' );
             })
             .blur( function () {
-                $( '.wc_stripe-card-number' ).removeClass( 'cvc' );
+                $( '.s4wc-card-number' ).removeClass( 'cvc' );
             });
     }
 
     function stripeFormHandler () {
-        if ( $( '#payment_method_wc_stripe' ).is( ':checked' ) && ( ! $( 'input[name="wc_stripe_card"]' ).length || $( 'input[name="wc_stripe_card"]:checked' ).val() === 'new' ) ) {
+        if ( $( '#payment_method_s4wc' ).is( ':checked' ) && ( ! $( 'input[name="s4wc_card"]' ).length || $( 'input[name="s4wc_card"]:checked' ).val() === 'new' ) ) {
 
             if ( ! $( 'input.stripe_token' ).length ) {
-                var cardExpiry = $( '.wc_stripe-card-expiry' ).payment( 'cardExpiryVal' ),
-                    name = ( wc_stripe_info.billing_first_name || wc_stripe_info.billing_last_name ) ? wc_stripe_info.billing_first_name + ' ' + wc_stripe_info.billing_last_name : $( '#billing_first_name' ).val() + ' ' + $( '#billing_last_name' ).val();
+                var cardExpiry = $( '.s4wc-card-expiry' ).payment( 'cardExpiryVal' ),
+                    name = ( s4wc_info.billing_first_name || s4wc_info.billing_last_name ) ? s4wc_info.billing_first_name + ' ' + s4wc_info.billing_last_name : $( '#billing_first_name' ).val() + ' ' + $( '#billing_last_name' ).val();
 
                 var stripeData = {
-                    number          : $( '.wc_stripe-card-number' ).val() || '',
-                    cvc             : $( '.wc_stripe-card-cvc' ).val() || '',
+                    number          : $( '.s4wc-card-number' ).val() || '',
+                    cvc             : $( '.s4wc-card-cvc' ).val() || '',
                     exp_month       : cardExpiry.month || '',
                     exp_year        : cardExpiry.year || '',
-                    name            : $( '.wc_stripe-billing-name' ).val() || name,
-                    address_line1   : wc_stripe_info.billing_address_1 || $( '#billing_address_1' ).val() || '',
-                    address_line2   : wc_stripe_info.billing_address_2 || $( '#billing_address_2' ).val() || '',
-                    address_city    : wc_stripe_info.billing_city || $('#billing_city').val() || '',
-                    address_state   : wc_stripe_info.billing_state || $( '#billing_state' ).val() || '',
-                    address_zip     : wc_stripe_info.billing_postcode || $( '.wc_stripe-billing-zip' ).val() || $( '#billing_postcode' ).val() || '',
-                    address_country : wc_stripe_info.billing_country || $( '#billing_country' ).val() || ''
+                    name            : $( '.s4wc-billing-name' ).val() || name,
+                    address_line1   : s4wc_info.billing_address_1 || $( '#billing_address_1' ).val() || '',
+                    address_line2   : s4wc_info.billing_address_2 || $( '#billing_address_2' ).val() || '',
+                    address_city    : s4wc_info.billing_city || $('#billing_city').val() || '',
+                    address_state   : s4wc_info.billing_state || $( '#billing_state' ).val() || '',
+                    address_zip     : s4wc_info.billing_postcode || $( '.s4wc-billing-zip' ).val() || $( '#billing_postcode' ).val() || '',
+                    address_country : s4wc_info.billing_country || $( '#billing_country' ).val() || ''
                 };
 
                 $form.block({
@@ -129,20 +129,20 @@ jQuery( function ( $ ) {
 
         // If there are errors, display them using wc_add_notice on the backend
         if ( message.errors.length ) {
-            $.post( wc_stripe_info.ajaxurl, message, function ( code ) {
-                if ( code.indexOf( '<!--WC_STRIPE_START-->' ) >= 0 ) {
-                    code = code.split( '<!--WC_STRIPE_START-->' )[1]; // Strip off anything before WC_STRIPE_START
+            $.post( s4wc_info.ajaxurl, message, function ( code ) {
+                if ( code.indexOf( '<!--s4wc_START-->' ) >= 0 ) {
+                    code = code.split( '<!--s4wc_START-->' )[1]; // Strip off anything before s4wc_START
                 }
-                if ( code.indexOf( '<!--WC_STRIPE_END-->' ) >= 0 ) {
-                    code = code.split( '<!--WC_STRIPE_END-->' )[0]; // Strip off anything after WC_STRIPE_END
+                if ( code.indexOf( '<!--s4wc_END-->' ) >= 0 ) {
+                    code = code.split( '<!--s4wc_END-->' )[0]; // Strip off anything after s4wc_END
                 }
                 var result = $.parseJSON( code );
 
                 // Clear out event handlers to make sure they only fire once.
-                $( 'body' ).off( '.wc_stripe' );
+                $( 'body' ).off( '.s4wc' );
 
                 // Add new errors if errors already exist
-                $( 'body' ).on( 'checkout_error.wc_stripe', function () {
+                $( 'body' ).on( 'checkout_error.s4wc', function () {
 
                     if ( result.messages.indexOf( '<ul class="woocommerce-error">' ) >= 0 ) {
                         result.messages = result.messages.split( '<ul class="woocommerce-error">' )[1]; // Strip off anything before ul.woocommerce-error
@@ -173,7 +173,7 @@ jQuery( function ( $ ) {
                 'errors': []
             };
             // Clear out notices
-            $.post( wc_stripe_info.ajaxurl, clearErrors );
+            $.post( s4wc_info.ajaxurl, clearErrors );
             $form.find( '.woocommerce-error' ).remove();
 
             return true;

@@ -15,15 +15,15 @@
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
-class WooCommerce_Stripe {
+class S4WC {
 
 	public function __construct() {
 
 		// Include Stripe Methods
-		include_once( 'classes/class-wc_stripe.php' );
+		include_once( 'classes/class-s4wc_api.php' );
 
 		// Include Database Manipulation Methods
-		include_once( 'classes/class-wc_stripe_db.php' );
+		include_once( 'classes/class-s4wc_db.php' );
 
 		// Grab settings
 		$this->settings = get_option( 'woocommerce_wc_stripe_settings', array() );
@@ -64,14 +64,14 @@ class WooCommerce_Stripe {
 		}
 
 		// Include payment gateway
-		include_once( 'classes/class-wc_stripe_gateway.php' );
+		include_once( 'classes/class-s4wc_gateway.php' );
 
 		if ( class_exists( 'WC_Subscriptions_Order' ) ) {
-			include_once( 'classes/class-wc_stripe_subscriptions_gateway.php' );
+			include_once( 'classes/class-s4wc_subscriptions_gateway.php' );
 
-			$methods[] = 'WC_Stripe_Subscriptions_Gateway';
+			$methods[] = 'S4WC_Subscriptions_Gateway';
 		} else {
-			$methods[] = 'WC_Stripe_Gateway';
+			$methods[] = 'S4WC_Gateway';
 		}
 
 		return $methods;
@@ -84,11 +84,11 @@ class WooCommerce_Stripe {
 	 * @return void
 	 */
 	public function account_saved_cards() {
-		wc_stripe_get_template( 'saved-cards.php' );
+		s4wc_get_template( 'saved-cards.php' );
 	}
 }
 
-$GLOBALS['wc_stripe'] = new WooCommerce_Stripe();
+$GLOBALS['s4wc'] = new S4WC();
 
 /**
  * Process the captured payment when changing order status to completed
@@ -97,8 +97,8 @@ $GLOBALS['wc_stripe'] = new WooCommerce_Stripe();
  * @param int $order_id
  * @return bool
  */
-function wc_stripe_order_status_completed( $order_id = null ) {
-	global $woocommerce, $wc_stripe;
+function s4wc_order_status_completed( $order_id = null ) {
+	global $woocommerce, $s4wc;
 
 	if ( ! $order_id ) {
 		$order_id = $_POST['order_id'];
@@ -116,12 +116,12 @@ function wc_stripe_order_status_completed( $order_id = null ) {
 
 		$transaction_id = get_post_meta( $order_id, 'transaction_id', true );
 
-		$charge = WC_Stripe::capture_charge( $transaction_id, $params );
+		$charge = S4WC_API::capture_charge( $transaction_id, $params );
 
 		return $charge;
 	}
 }
-add_action( 'woocommerce_order_status_processing_to_completed', 'wc_stripe_order_status_completed' );
+add_action( 'woocommerce_order_status_processing_to_completed', 's4wc_order_status_completed' );
 
 /**
  * Handles posting notifications to the user when their credit card information is invalid
@@ -129,7 +129,7 @@ add_action( 'woocommerce_order_status_processing_to_completed', 'wc_stripe_order
  * @access public
  * @return void
  */
-function wc_stripe_validation_errors() {
+function s4wc_validation_errors() {
 
 	foreach( $_POST['errors'] as $error ) {
 		$message = '';
@@ -167,22 +167,22 @@ function wc_stripe_validation_errors() {
 		wc_print_notices();
 		$messages = ob_get_clean();
 
-		echo '<!--WC_STRIPE_START-->' . json_encode(
+		echo '<!--S4WC_START-->' . json_encode(
 			array(
 				'result'	=> 'failure',
 				'messages' 	=> $messages,
 				'refresh' 	=> isset( WC()->session->refresh_totals ) ? 'true' : 'false',
 				'reload'    => isset( WC()->session->reload_checkout ) ? 'true' : 'false'
 			)
-		) . '<!--WC_STRIPE_END-->';
+		) . '<!--S4WC_END-->';
 
 		unset( WC()->session->refresh_totals, WC()->session->reload_checkout );
 		exit;
 	}
 	die();
 }
-add_action( 'wp_ajax_stripe_form_validation', 'wc_stripe_validation_errors' );
-add_action( 'wp_ajax_nopriv_stripe_form_validation', 'wc_stripe_validation_errors' );
+add_action( 'wp_ajax_stripe_form_validation', 's4wc_validation_errors' );
+add_action( 'wp_ajax_nopriv_stripe_form_validation', 's4wc_validation_errors' );
 
 /**
  * Wrapper of wc_get_template to relate directly to woocommerce-stripe
@@ -190,6 +190,6 @@ add_action( 'wp_ajax_nopriv_stripe_form_validation', 'wc_stripe_validation_error
  * @param string $template_name
  * @return string
  */
-function wc_stripe_get_template( $template_name ) {
+function s4wc_get_template( $template_name ) {
 	return wc_get_template( $template_name, array(), WC()->template_path() . '/woocommerce-stripe', plugin_dir_path( __FILE__ ) . '/templates/' );
 }
