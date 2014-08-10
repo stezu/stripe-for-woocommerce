@@ -392,7 +392,7 @@ class WC_Stripe_Gateway extends WC_Payment_Gateway {
 		$output = array();
 
 		if ( ! $this->stripe_customer_info ) {
-			$customer = WC_Stripe::create_customer( $this->current_user_id, $form_data, $stripe_charge_data['description'] );
+			$customer = WC_Stripe::create_customer( $form_data, $stripe_charge_data['description'] );
 		} else {
 			// If the user is already registered on the stripe servers, retreive their information
 			$customer = WC_Stripe::get_customer( $this->stripe_customer_info['customer_id'] );

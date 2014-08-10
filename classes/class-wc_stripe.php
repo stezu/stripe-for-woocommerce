@@ -20,7 +20,7 @@ class WC_Stripe {
 	 * @param string $customer_description
 	 * @return array
 	 */
-	public static function create_customer( $user_id, $form_data, $customer_description ) {
+	public static function create_customer( $form_data, $customer_description ) {
 		global $wc_stripe;
 
 		$post_body = array(
@@ -44,7 +44,7 @@ class WC_Stripe {
 			),
 			'default_card'	=> $active_card->id
 		);
-		WC_Stripe_DB::update_customer( $user_id, $customerArray );
+		WC_Stripe_DB::update_customer( get_current_user_id(), $customerArray );
 
 		return $customer;
 	}
