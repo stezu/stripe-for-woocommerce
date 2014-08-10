@@ -24,7 +24,7 @@ class WC_Stripe {
 		global $wc_stripe;
 
 		$post_body = array(
-			'description'	=> $customer_description,
+			'description'	=> apply_filters( 'wc_stripe_customer_description', $customer_description, $customer_description, $form_data ),
 			'card'			=> $form_data['token']
 		);
 
