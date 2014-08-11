@@ -28,7 +28,7 @@ class S4WC_Gateway extends WC_Payment_Gateway {
 	public function __construct() {
 		global $s4wc;
 
-		$this->id						= 'wc_stripe';
+		$this->id						= 's4wc';
 		$this->icon						= plugins_url( 'assets/images/credits.png', dirname(__FILE__) );
 		$this->method_title				= 'Stripe for WooCommerce';
 		$this->has_fields				= true;

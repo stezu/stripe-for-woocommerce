@@ -25,8 +25,14 @@ class S4WC {
 		// Include Database Manipulation Methods
 		include_once( 'classes/class-s4wc_db.php' );
 
+		// Transition to new namespace
+		if ( ! get_option( 'woocommerce_s4wc_settings' ) ) {
+			update_option( 'woocommerce_s4wc_settings', get_option( 'woocommerce_wc_stripe_settings', array() ) );
+			delete_option( 'woocommerce_wc_stripe_settings' );
+		}
+
 		// Grab settings
-		$this->settings = get_option( 'woocommerce_wc_stripe_settings', array() );
+		$this->settings = get_option( 'woocommerce_s4wc_settings', array() );
 
 		// Add default values for fresh installs
 		$this->settings['testmode']					= isset( $this->settings['testmode'] ) ? $this->settings['testmode'] : 'yes';
