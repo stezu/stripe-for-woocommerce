@@ -231,15 +231,14 @@ class S4WC_Gateway extends WC_Payment_Gateway {
 		}
 		?>
 		<h3>Stripe Payment</h3>
-		<p>Allows Credit Card payments through <a href="https://stripe.com/">Stripe</a>.</p>
-		<p>You can find your API Keys in your <a href="https://dashboard.stripe.com/account/apikeys">Stripe Account Settings</a>.</p>
+		<p>Allows Credit Card payments through <a href="https://stripe.com/">Stripe</a>. You can find your API Keys in your <a href="https://dashboard.stripe.com/account/apikeys">Stripe Account Settings</a>.</p>
 		<table class="form-table">
 			<?php $this->generate_settings_html(); ?>
 			<tr>
 				<th>Delete Stripe Test Data</th>
 				<td>
 					<p>
-						<a href="<?php echo wp_nonce_url( admin_url('admin.php?page=wc-settings&tab=checkout&section=wc_stripe_gateway&action=delete_test_data' ), 's4wc_action' ); ?>" class="button">Delete all Test Data</a>
+						<a href="<?php echo wp_nonce_url( admin_url('admin.php?page=wc-settings&tab=checkout&section=' . strtolower( get_called_class() ) . '&action=delete_test_data' ), 's4wc_action' ); ?>" class="button">Delete all Test Data</a>
 						<span class="description"><strong class="red">Note:</strong> This will delete all Stripe test customer data, make sure to back up your database.</span>
 					</p>
 				</td>
