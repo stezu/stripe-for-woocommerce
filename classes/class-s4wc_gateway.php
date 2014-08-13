@@ -388,15 +388,15 @@ class S4WC_Gateway extends WC_Payment_Gateway {
 	 * Add a card to a customer if necessary
 	 *
 	 * @access public
-	 * @param $stripe_charge_data
-	 * @param $form_data
+	 * @param array $stripe_charge_data
+	 * @param array $form_data
 	 * @return array
 	 */
 	public function get_customer( $stripe_charge_data, $form_data ) {
 		$output = array();
 
 		if ( ! $this->stripe_customer_info ) {
-			$customer = S4WC_API::create_customer( $this->current_user_id, $form_data, $stripe_charge_data['description'] );
+			$customer = S4WC_API::create_customer( $form_data, $stripe_charge_data['description'] );
 		} else {
 			// If the user is already registered on the stripe servers, retreive their information
 			$customer = S4WC_API::get_customer( $this->stripe_customer_info['customer_id'] );

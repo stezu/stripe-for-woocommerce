@@ -15,7 +15,6 @@ class S4WC_API {
 	 * Create customer on stripe servers
 	 *
 	 * @access public
-	 * @param integer $user_id
 	 * @param array $form_data
 	 * @param string $customer_description
 	 * @return array
