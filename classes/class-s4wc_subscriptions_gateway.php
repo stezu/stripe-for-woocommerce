@@ -87,7 +87,7 @@ class S4WC_Subscriptions_Gateway extends S4WC_Gateway {
 	 * @return void
 	 */
 	public function scheduled_subscription_payment( $amount_to_charge, $order, $product_id ) {
-		$charge = $this->process_subscription_payment( $order, $amount_to_charge );
+		$charge = $this->process_subscription_payment( $amount_to_charge, $order );
 
 		if ( $charge ) {
 			WC_Subscriptions_Manager::process_subscription_payments_on_order( $order );
@@ -131,11 +131,11 @@ class S4WC_Subscriptions_Gateway extends S4WC_Gateway {
 	 * Process the subscription payment and return the result
 	 *
 	 * @access public
-	 * @param WC_Order $order
 	 * @param int $amount
+	 * @param WC_Order $order
 	 * @return array
 	 */
-	public function process_subscription_payment( $order, $amount = 0 ) {
+	public function process_subscription_payment( $amount = 0, $order ) {
 		global $s4wc;
 
 		// Can't send to stripe without a value, assume it's good to go.
@@ -157,7 +157,7 @@ class S4WC_Subscriptions_Gateway extends S4WC_Gateway {
 		$customer = get_user_meta( $order->user_id, $s4wc->settings['stripe_db_location'], true );
 
 		// Charge description
-		$charge_description = 'Payment for ' . $product_name . '(Order: ' . $order->get_order_number() . ')';
+		$charge_description = 'Payment for ' . $product_name . ' (Order: ' . $order->get_order_number() . ')';
 		// Set up basics for charging
 		$charge_data = array(
 			'amount'		=> $amount * 100, // amount in cents
