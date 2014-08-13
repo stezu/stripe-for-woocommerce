@@ -5,7 +5,7 @@
  * Override this template by copying it to yourtheme/woocommerce/woocommerce-stripe/saved-cards.php
  *
  * @author		Stephen Zuniga
- * @version		1.2
+ * @version		1.21
  */
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly

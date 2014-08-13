@@ -27,9 +27,9 @@ If you'd like to contribute, feel free to tackle a feature or fix a bug on [Gith
 * WooCommerce 2.1.0 or later
 
 = Automatic installation =
-Automatic installation is the easiest option as WordPress handles the file transfers itself and you don’t need to leave your web browser. To do an automatic install of WooCommerce, log in to your WordPress dashboard, navigate to the Plugins menu and click Add New.
+Automatic installation is the easiest option as WordPress handles the file transfers itself and you don't need to leave your web browser. To do an automatic install of WooCommerce, log in to your WordPress dashboard, navigate to the Plugins menu and click Add New.
 
-In the search field type “Stripe for WooCommerce” and click Search Plugins. Once you’ve found our plugin you can view details about it such as the the point release, rating and description. Most importantly of course, you can install it by simply clicking “Install Now”.
+In the search field type “Stripe for WooCommerce” and click Search Plugins. Once you've found our plugin you can view details about it such as the the point release, rating and description. Most importantly of course, you can install it by simply clicking “Install Now”.
 
 = Manual installation =
 
@@ -41,7 +41,7 @@ The plugin should automatically update with new features, but you could always d
 
 == Changelog ==
 
-= 1.2 =
+= 1.21 =
 * Feature: Subscriptions!
 * Feature: Filters for customer and charge descriptions sent to Stripe
 * Tweak: Localization wasn't set up before, now if someone wants to translate, they can
