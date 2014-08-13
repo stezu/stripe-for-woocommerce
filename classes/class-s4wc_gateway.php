@@ -6,7 +6,7 @@
  *
  * @class		S4WC_Gateway
  * @extends		WC_Payment_Gateway
- * @version		1.21
+ * @version		1.22
  * @package		WooCommerce/Classes/Payment
  * @author		Stephen Zuniga
  */

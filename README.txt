@@ -41,6 +41,10 @@ The plugin should automatically update with new features, but you could always d
 
 == Changelog ==
 
+= 1.22 =
+* Fix: New customers were returning an invalid string error
+* Fix: Backend error messages were bad
+
 = 1.21 =
 * Feature: Subscriptions!
 * Feature: Filters for customer and charge descriptions sent to Stripe
