@@ -2,7 +2,7 @@
 Contributors: stephen.zuniga001
 Tags: woocommerce, stripe, payment gateway, credit card, ecommerce, e-commerce, commerce, cart, checkout
 Requires at least: 3.8.0
-Tested up to: 3.9.1
+Tested up to: 3.9.2
 Stable tag: trunk
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
@@ -40,6 +40,15 @@ The manual installation method involves downloading our eCommerce plugin and upl
 The plugin should automatically update with new features, but you could always download the new version of the plugin and manually update the same way you would manually install.
 
 == Changelog ==
+
+= 1.2 =
+* Feature: Subscriptions!
+* Feature: Filters for customer and charge descriptions sent to Stripe
+* Tweak: Localization wasn't set up before, now if someone wants to translate, they can
+* Tweak: Namespace changed from wc_stripe to s4wc
+* Fix: The most recent card used is marked as default now
+* Fix: Token was sometimes not created
+* Fix: Paying from the pay page didn't send Stripe address details
 
 = 1.11 =
 * Tweak: Database handling is now in it's own class
