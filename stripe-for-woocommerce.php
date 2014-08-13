@@ -18,6 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 class S4WC {
 
 	public function __construct() {
+		global $wpdb;
 
 		// Include Stripe Methods
 		include_once( 'classes/class-s4wc_api.php' );
@@ -27,8 +28,19 @@ class S4WC {
 
 		// Transition to new namespace
 		if ( ! get_option( 'woocommerce_s4wc_settings' ) ) {
+
+			// Update settings
 			update_option( 'woocommerce_s4wc_settings', get_option( 'woocommerce_wc_stripe_settings', array() ) );
 			delete_option( 'woocommerce_wc_stripe_settings' );
+
+			// Update saved payment methods
+			$wpdb->query(
+				"
+				UPDATE $wpdb->postmeta
+					SET `meta_value` = 's4wc'
+					WHERE `meta_value` = 'wc_stripe'
+				"
+			);
 		}
 
 		// Grab settings
