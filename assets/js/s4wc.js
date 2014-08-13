@@ -130,11 +130,11 @@ jQuery( function ( $ ) {
         // If there are errors, display them using wc_add_notice on the backend
         if ( message.errors.length ) {
             $.post( s4wc_info.ajaxurl, message, function ( code ) {
-                if ( code.indexOf( '<!--s4wc_START-->' ) >= 0 ) {
-                    code = code.split( '<!--s4wc_START-->' )[1]; // Strip off anything before s4wc_START
+                if ( code.indexOf( '<!--S4WC_START-->' ) >= 0 ) {
+                    code = code.split( '<!--S4WC_START-->' )[1]; // Strip off anything before S4WC_START
                 }
-                if ( code.indexOf( '<!--s4wc_END-->' ) >= 0 ) {
-                    code = code.split( '<!--s4wc_END-->' )[0]; // Strip off anything after s4wc_END
+                if ( code.indexOf( '<!--S4WC_END-->' ) >= 0 ) {
+                    code = code.split( '<!--S4WC_END-->' )[0]; // Strip off anything after S4WC_END
                 }
                 var result = $.parseJSON( code );
 
