@@ -355,8 +355,10 @@ class S4WC_Gateway extends WC_Payment_Gateway {
 			}
 
 			// Update default card
-			$default_card = $this->stripe_customer_info['cards'][ $form_data['chosen_card'] ]['id'];
-			S4WC_DB::update_customer( $this->current_user_id, array( 'default_card' => $default_card ) );
+			if ( $form_data['chosen_card'] !== 'new' ) {
+				$default_card = $this->stripe_customer_info['cards'][ $form_data['chosen_card'] ]['id'];
+				S4WC_DB::update_customer( $this->current_user_id, array( 'default_card' => $default_card ) );
+			}
 
 			$stripe_charge_data['description'] = apply_filters( 's4wc_charge_description', $stripe_charge_data['description'], $stripe_charge_data['description'], $form_data );
 
