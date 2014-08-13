@@ -17,7 +17,7 @@ class S4WC_Gateway extends WC_Payment_Gateway {
 	protected $GATEWAY_NAME				= 'S4WC';
 	protected $order					= null;
 	protected $transactionId			= null;
-	protected $transactionErrorMessage	= null;
+	protected $transaction_error_message	= null;
 
 	/**
 	 * Constructor for the gateway.
@@ -375,6 +375,7 @@ class S4WC_Gateway extends WC_Payment_Gateway {
 			return true;
 
 		} catch ( Exception $e ) {
+			$this->transaction_error_message = $e->getMessage();
 			wc_add_notice( __( 'Error:', 'stripe-for-woocommerce' ) . ' ' . $e->getMessage(), 'error' );
 
 			return false;
@@ -474,8 +475,8 @@ class S4WC_Gateway extends WC_Payment_Gateway {
 		$this->order->add_order_note(
 			sprintf(
 				'%s Credit Card Payment Failed with message: "%s"',
-				$this->GATEWAY_NAME,
-				$this->transactionErrorMessage
+				get_class( $this ),
+				$this->transaction_error_message
 			)
 		);
 	}
@@ -499,7 +500,7 @@ class S4WC_Gateway extends WC_Payment_Gateway {
 		$this->order->add_order_note(
 			sprintf(
 				'%s payment completed with Transaction Id of "%s"',
-				$this->GATEWAY_NAME,
+				get_class( $this ),
 				$this->transactionId
 			)
 		);

@@ -71,6 +71,7 @@ class S4WC_Subscriptions_Gateway extends S4WC_Gateway {
 			return true;
 
 		} catch ( Exception $e ) {
+			$this->transaction_error_message = $e->getMessage();
 			wc_add_notice( __( 'Error:', 'stripe-for-woocommerce' ) . ' ' . $e->getMessage(), 'error' );
 
 			return false;
