@@ -14,9 +14,9 @@
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class S4WC_Gateway extends WC_Payment_Gateway {
-	protected $GATEWAY_NAME				= 'S4WC';
-	protected $order					= null;
-	protected $transactionId			= null;
+	protected $GATEWAY_NAME					= 'S4WC';
+	protected $order						= null;
+	protected $transaction_id				= null;
 	protected $transaction_error_message	= null;
 
 	/**
@@ -363,10 +363,10 @@ class S4WC_Gateway extends WC_Payment_Gateway {
 			// Create the charge on Stripe's servers - this will charge the user's card
 			$charge = S4WC_API::create_charge( $stripe_charge_data );
 
-			$this->transactionId = $charge->id;
+			$this->transaction_id = $charge->id;
 
 			// Save data for the "Capture"
-			update_post_meta( $this->order->id, 'transaction_id', $this->transactionId );
+			update_post_meta( $this->order->id, 'transaction_id', $this->transaction_id );
 			update_post_meta( $this->order->id, 'capture', strcmp( $this->charge_type, 'authorize' ) == 0 );
 
 			// Save data for cross-reference between Stripe Dashboard and WooCommerce
@@ -501,7 +501,7 @@ class S4WC_Gateway extends WC_Payment_Gateway {
 			sprintf(
 				'%s payment completed with Transaction Id of "%s"',
 				get_class( $this ),
-				$this->transactionId
+				$this->transaction_id
 			)
 		);
 
