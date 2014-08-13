@@ -57,7 +57,7 @@ class S4WC_Subscriptions_Gateway extends S4WC_Gateway {
 		try {
 			$initial_payment = WC_Subscriptions_Order::get_total_initial_payment( $this->order );
 
-			$charge = $this->process_subscription_payment( $this->order, $initial_payment );
+			$charge = $this->process_subscription_payment( $initial_payment, $this->order );
 
 			$this->transactionId = $charge->id;
 
