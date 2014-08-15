@@ -1,11 +1,13 @@
 === Stripe for WooCommerce ===
 Contributors: stephen.zuniga001
-Tags: woocommerce, stripe, payment gateway, credit card, ecommerce, e-commerce, commerce, cart, checkout
+Tags: woocommerce, stripe, payment gateway, subscriptions, credit card, ecommerce, e-commerce, commerce, cart, checkout
 Requires at least: 3.8.0
 Tested up to: 3.9.2
 Stable tag: trunk
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
+
+A Stripe Payment Gateway for WooCommerce featuring subscriptions, saved cards, and a simple interface.
 
 == Description ==
 
@@ -19,6 +21,7 @@ This plugin exists because the current solutions for Stripe on WooCommerce are i
 
 = Contributing =
 If you'd like to contribute, feel free to tackle a feature or fix a bug on [Github](https://github.com/stezu/stripe-for-woocommerce/) and when you're ready, send a pull request. If you'd like to get more involved than that, please e-mail me at [hello@stephenzuniga.com](mailto:hello@stephenzuniga.com).
+
 
 == Installation ==
 
@@ -38,6 +41,12 @@ The manual installation method involves downloading our eCommerce plugin and upl
 = Updating =
 
 The plugin should automatically update with new features, but you could always download the new version of the plugin and manually update the same way you would manually install.
+
+== Screenshots ==
+1. The standard credit card form on the checkout page.
+2. The form with saved cards and an icon for card identification.
+3. Saved cards displayed on the account page.
+4. Changing payment method for a subscription.
 
 == Changelog ==
 
