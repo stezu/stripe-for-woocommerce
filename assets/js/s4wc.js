@@ -10,7 +10,9 @@ jQuery( function ( $ ) {
     $form.attr('novalidate', 'novalidate');
 
     // Make sure the credit card form exists before we try working with it
-    $(window).on( 'load.s4wc', initCCForm );
+    $(window).on( 'load.s4wc', function() {
+        initCCForm();
+    });
     $body.on( 'updated_checkout.s4wc', function () {
         initCCForm();
     });
@@ -160,7 +162,7 @@ jQuery( function ( $ ) {
             });
 
             $( '.stripe_token, .form_errors' ).remove();
-            $ccForm.append( '<input type="hidden" class="form_errors" name="form_errors" value="1">' );
+            $form.append( '<input type="hidden" class="form_errors" name="form_errors" value="1">' );
 
             $form.unblock();
 
