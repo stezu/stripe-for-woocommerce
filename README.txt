@@ -9,6 +9,7 @@ License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
 A Stripe Payment Gateway for WooCommerce featuring subscriptions, saved cards, and a simple interface.
 
+
 == Description ==
 
 = What is Stripe? =
@@ -42,11 +43,14 @@ The manual installation method involves downloading our eCommerce plugin and upl
 
 The plugin should automatically update with new features, but you could always download the new version of the plugin and manually update the same way you would manually install.
 
+
 == Screenshots ==
+
 1. The standard credit card form on the checkout page.
 2. The form with saved cards and an icon for card identification.
 3. Saved cards displayed on the account page.
 4. Changing payment method for a subscription.
+
 
 == Changelog ==
 
