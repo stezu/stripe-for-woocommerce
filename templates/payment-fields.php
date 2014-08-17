@@ -24,12 +24,12 @@ if( is_user_logged_in() && $stripe_customer_info && isset( $stripe_customer_info
 	foreach ( $stripe_customer_info['cards'] as $i => $credit_card ) : ?>
 
 		<input type="radio" id="stripe_card_<?php echo $i; ?>" name="s4wc_card" value="<?php echo $i; ?>"<?php echo ( $stripe_customer_info['default_card'] == $credit_card['id'] ) ? ' checked' : ''; ?>>
-		<label for="stripe_card_<?php echo $i; ?>">Card ending with <?php echo $credit_card['last4']; ?> (<?php echo $credit_card['exp_month']; ?>/<?php echo $credit_card['exp_year']; ?>)</label><br>
+		<label for="stripe_card_<?php echo $i; ?>"><?php printf(__('Card ending with %s (%s/%s)', 'stripe-for-woocommerce'), $credit_card['last4'], $credit_card['exp_month'], $credit_card['exp_year']); ?></label><br>
 
 	<?php endforeach; ?>
 
 	<input type="radio" id="new_card" name="s4wc_card" value="new">
-	<label for="new_card">Use a new credit card</label>
+	<label for="new_card"><?php _e('Use a new credit card', 'stripe-for-woocommerce'); ?></label>
 
 <?php endif; ?>
 
@@ -39,7 +39,7 @@ if( is_user_logged_in() && $stripe_customer_info && isset( $stripe_customer_info
 	if ( $s4wc->settings['additional_fields'] == 'yes' ) : 
 
 		$billing_name = woocommerce_form_field( 'billing-name', array(
-			'label'				=> 'Name on Card',
+			'label'				=> __('Name on Card', 'stripe-for-woocommerce'),
 			'required'			=> true,
 			'class'				=> array( 'form-row-first' ),
 			'input_class'		=> array( 's4wc-billing-name' ),
@@ -51,7 +51,7 @@ if( is_user_logged_in() && $stripe_customer_info && isset( $stripe_customer_info
 		echo $billing_name;
 
 		$billing_zip = woocommerce_form_field( 'billing-zip', array(
-			'label'				=> 'Billing Zip',
+			'label'				=> __('Billing Zip', 'stripe-for-woocommerce'),
 			'required'			=> true,
 			'class'				=> array( 'form-row-last' ),
 			'input_class'		=> array( 's4wc-billing-zip' ),
@@ -66,7 +66,7 @@ if( is_user_logged_in() && $stripe_customer_info && isset( $stripe_customer_info
 	endif;
 
 	$cc_number = woocommerce_form_field( 'card-number', array(
-		'label'				=> 'Card Number',
+		'label'				=> __('Card Number', 'stripe-for-woocommerce'),
 		'placeholder'		=> '•••• •••• •••• ••••',
 		'maxlength'			=> 20,
 		'required'			=> true,
@@ -81,8 +81,8 @@ if( is_user_logged_in() && $stripe_customer_info && isset( $stripe_customer_info
 	echo $cc_number;
 
 	$cc_expiry = woocommerce_form_field( 'card-expiry', array(
-		'label'				=> 'Expiry (MM/YY)',
-		'placeholder'		=> 'MM / YY',
+		'label'				=> __('Expiry (MM/YY)', 'stripe-for-woocommerce'),
+		'placeholder'		=> __('MM / YY', 'stripe-for-woocommerce'),
 		'required'			=> true,
 		'class'				=> array( 'form-row-first' ),
 		'input_class'		=> array( 's4wc-card-expiry' ),
@@ -96,8 +96,8 @@ if( is_user_logged_in() && $stripe_customer_info && isset( $stripe_customer_info
 	echo $cc_expiry;
 
 	$cc_cvc = woocommerce_form_field( 'card-cvc', array(
-		'label'			=> 'Card Code',
-		'placeholder'		=> 'CVC',
+		'label'			=> __('Card Code', 'stripe-for-woocommerce'),
+		'placeholder'		=> __('CVC', 'stripe-for-woocommerce'),
 		'required'			=> true,
 		'class'				=> array( 'form-row-last' ),
 		'input_class'		=> array( 's4wc-card-cvc' ),
