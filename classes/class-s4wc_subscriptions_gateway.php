@@ -158,7 +158,7 @@ class S4WC_Subscriptions_Gateway extends S4WC_Gateway {
 		$customer = get_user_meta( $order->user_id, $s4wc->settings['stripe_db_location'], true );
 
 		// Charge description
-		$charge_description = 'Payment for ' . $product_name . ' (Order: ' . $order->get_order_number() . ')';
+		$charge_description = sprintf(__('Payment for %s (Order: %s)', 'stripe-for-woocommerce'), $product_name, $order->get_order_number());
 		// Set up basics for charging
 		$charge_data = array(
 			'amount'		=> $amount * 100, // amount in cents
