@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: stripe-for-woocommerce\n"
-"POT-Creation-Date: 2014-08-18 22:48+0100\n"
-"PO-Revision-Date: 2014-08-18 22:48+0100\n"
+"POT-Creation-Date: 2014-08-19 00:05+0100\n"
+"PO-Revision-Date: 2014-08-19 00:05+0100\n"
 "Last-Translator: Malo JAFFRE <malo@jaffre.info>\n"
 "Language-Team: Malo JAFFRE <malo@jaffre.info>\n"
 "Language: fr_FR\n"
@@ -28,6 +28,36 @@ msgstr "Réponse vide."
 #: ../classes/class-s4wc_api.php:211
 msgid "Invalid response."
 msgstr "Réponse invalide."
+
+#: ../classes/class-s4wc_gateway.php:87
+msgid ""
+"Stripe for WooCommerce uses some advanced features introduced in WooCommerce "
+"2.1.0. Please update WooCommerce to continue using Stripe for WooCommerce."
+msgstr ""
+"Stripe pour WooCommerce utilise des fonctionnalités introduites dans "
+"WooCommerce 2.1.0. Merci de mettre à jour WooCommerce pour continuer à "
+"utiliser Stripe pour WooCommerce."
+
+#: ../classes/class-s4wc_gateway.php:93
+msgid ""
+"Stripe needs API Keys to work, please find your secret and publishable keys "
+"in the <a href=\"https://manage.stripe.com/account/apikeys\" target=\"_blank"
+"\">Stripe accounts section</a>."
+msgstr ""
+"Stripe a besoin de clés API pour fonctionner, vous pourrez trouver vos clés "
+"secrètes et publiables dans votre <a href=\"https://manage.stripe.com/"
+"account/apikeys\" target=\"_blank\">compte Stripe</a>."
+
+#: ../classes/class-s4wc_gateway.php:99
+msgid ""
+"Stripe needs SSL in order to be secure. Read mode about forcing SSL on "
+"checkout in <a href=\"http://docs.woothemes.com/document/ssl-and-https/\" "
+"target=\"_blank\">the WooCommerce docs</a>."
+msgstr ""
+"Stripe nécessite que votre site utilise SSL pour la sécurité des "
+"transactions. Pour savoir comment forcer l'utilisation de SSL lors du "
+"paiement, référez-vous à la <a href=\"http://docs.woothemes.com/document/ssl-"
+"and-https/\" target=\"_blank\">documentation WooCommerce</a>."
 
 #: ../classes/class-s4wc_gateway.php:146
 msgid "Enable/Disable"
@@ -66,8 +96,16 @@ msgstr "Type de prélèvement"
 msgid ""
 "Choose to capture payment at checkout, or authorize only to capture later."
 msgstr ""
-"Débiter immédiatement au moment du paiement ou autoriser manuellement le "
-"débit ultérieurement."
+"Débiter immédiatement ou autoriser le paiement seulement et débiter "
+"ultérieurement."
+
+#: ../classes/class-s4wc_gateway.php:167
+msgid "Authorize & Capture"
+msgstr "Autoriser et débiter"
+
+#: ../classes/class-s4wc_gateway.php:168
+msgid "Authorize Only"
+msgstr "Autoriser seulement"
 
 #: ../classes/class-s4wc_gateway.php:174
 msgid "Additional Fields"
@@ -124,6 +162,36 @@ msgstr "API Stripe - Clé publiable Live"
 msgid "Stripe Test Data successfully deleted."
 msgstr "Les données de test Stripe ont bien été supprimées"
 
+#: ../classes/class-s4wc_gateway.php:234
+msgid ""
+"Allows Credit Card payments through <a href=\"https://stripe.com/\">Stripe</"
+"a>. You can find your API Keys in your <a href=\"https://dashboard.stripe."
+"com/account/apikeys\">Stripe Account Settings</a>."
+msgstr ""
+"Permettre les paiement en carte bancaire via <a href=\"https://stripe.com/"
+"\">Stripe</a>. Vous pourrez trouver vos clés API dans les <a href=\"https://"
+"dashboard.stripe.com/account/apikeys\">paramètres de votre compte Stripe</a>."
+
+#: ../classes/class-s4wc_gateway.php:238
+msgid "Delete Stripe Test Data"
+msgstr "Supprimer les données Stripe de test"
+
+#: ../classes/class-s4wc_gateway.php:241
+msgid "Delete all Test Data"
+msgstr "Supprimer toute les données de test"
+
+#: ../classes/class-s4wc_gateway.php:242
+msgid ""
+"Note: This will delete all Stripe test customer data, make sure to back up "
+"your database."
+msgstr ""
+"Attention : Cela va supprimer toutes les données client Stripe de test, "
+"pensez à sauvegarder votre base de données."
+
+#: ../classes/class-s4wc_gateway.php:351
+msgid "Guest"
+msgstr "Invité"
+
 #: ../classes/class-s4wc_gateway.php:381
 #: ../classes/class-s4wc_subscriptions_gateway.php:75
 msgid "Error:"
@@ -132,7 +200,27 @@ msgstr "Erreur :"
 #: ../classes/class-s4wc_gateway.php:466
 #: ../classes/class-s4wc_subscriptions_gateway.php:124
 msgid "Transaction Error: Could not complete your payment."
-msgstr "Erreur de transaction : le paiement n'a pas abouti"
+msgstr "Erreur : le paiement n'a pas abouti"
+
+#: ../classes/class-s4wc_gateway.php:478
+#, php-format
+msgid "%s Credit Card Payment Failed with message: \"%s\""
+msgstr "%s Le paiement par carte bancaire a échoué avec le message : \"%s\""
+
+#: ../classes/class-s4wc_gateway.php:503
+#, php-format
+msgid "%s payment completed with Transaction Id of \"%s\""
+msgstr "%s paiement réussi avec le numéro de transaction \"%s\""
+
+#: ../classes/class-s4wc_gateway.php:524
+#, php-format
+msgid "Charge for %s"
+msgstr "Paiement de %s"
+
+#: ../classes/class-s4wc_subscriptions_gateway.php:161
+#, php-format
+msgid "Payment for %s (Order: %s)"
+msgstr "Paiement de %s (Commande : %s)"
 
 #: ../classes/class-s4wc_subscriptions_gateway.php:173
 #, php-format
@@ -192,7 +280,7 @@ msgstr "MM/AA"
 
 #: ../templates/payment-fields.php:99
 msgid "Card Code"
-msgstr "Numéro de carte"
+msgstr "Cryptogramme visuel (CVV)"
 
 #: ../templates/payment-fields.php:100
 msgid "CVC"
@@ -209,3 +297,7 @@ msgstr "Carte se terminant par ..."
 #: ../templates/saved-cards.php:37
 msgid "Expires"
 msgstr "Date d'expiration"
+
+#: ../templates/saved-cards.php:50
+msgid "Delete card"
+msgstr "Supprimer la carte"
