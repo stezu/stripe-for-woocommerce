@@ -238,7 +238,7 @@ class S4WC_Gateway extends WC_Payment_Gateway {
 				<th><?php _e('Delete Stripe Test Data', 'stripe-for-woocommerce'); ?></th>
 				<td>
 					<p>
-						<a href="<?php echo wp_nonce_url( admin_url('admin.php?page=wc-settings&tab=checkout&section=' . strtolower( get_class( $this ) ) . '&action=delete_test_data' ), 's4wc_action' ); ?>" class="button">Delete all Test Data</a>
+						<a href="<?php echo wp_nonce_url( admin_url('admin.php?page=wc-settings&tab=checkout&section=' . strtolower( get_class( $this ) ) . '&action=delete_test_data' ), 's4wc_action' ); ?>" class="button"><?php _e('Delete all Test Data', 'stripe-for-woocommerce'); ?></a>
 						<span class="description"><strong style="color:red"><?php _e('Note: This will delete all Stripe test customer data, make sure to back up your database.', 'stripe-for-woocommerce'); ?></strong></span>
 					</p>
 				</td>
