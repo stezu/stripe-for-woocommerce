@@ -44,7 +44,7 @@ if ( $credit_cards ) :
 				<td><?php echo esc_html( $credit_card['last4'] ); ?></td>
 				<td><?php echo esc_html( $credit_card['exp_month'] ) . '/' . esc_html( $credit_card['exp_year'] ); ?></td>
 				<td>
-					<form action="#saved-cards" method="POST">
+					<form action="#saved-cards" method="POST" style="display:inline;">
 						<?php wp_nonce_field ( 'stripe_del_card' ); ?>
 						<input type="hidden" name="delete_card" value="<?php echo esc_attr( $i ); ?>">
 						<input type="submit" value="<?php _e('Delete card', 'stripe-for-woocommerce'); ?>">
