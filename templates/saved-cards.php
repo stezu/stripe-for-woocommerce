@@ -47,7 +47,7 @@ if ( $credit_cards ) :
 					<form action="#saved-cards" method="POST">
 						<?php wp_nonce_field ( 'stripe_del_card' ); ?>
 						<input type="hidden" name="delete_card" value="<?php echo esc_attr( $i ); ?>">
-						<input type="submit" value="Delete card">
+						<input type="submit" value="<?php _e('Delete card', 'stripe-for-woocommerce'); ?>">
 					</form>
 				</td>
 			</tr>
