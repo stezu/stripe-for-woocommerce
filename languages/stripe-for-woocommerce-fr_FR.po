@@ -1,0 +1,211 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: stripe-for-woocommerce\n"
+"POT-Creation-Date: 2014-08-18 22:48+0100\n"
+"PO-Revision-Date: 2014-08-18 22:48+0100\n"
+"Last-Translator: Malo JAFFRE <malo@jaffre.info>\n"
+"Language-Team: Malo JAFFRE <malo@jaffre.info>\n"
+"Language: fr_FR\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.6.7\n"
+"X-Poedit-Basepath: .\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-KeywordsList: __;_e;_n;_x;_nx\n"
+"X-Poedit-SearchPath-0: ..\n"
+
+#: ../classes/class-s4wc_api.php:198
+msgid "There was a problem connecting to the payment gateway."
+msgstr ""
+"Il y a eu un problème lors de la connexion à la plateforme de paiement."
+
+#: ../classes/class-s4wc_api.php:202
+msgid "Empty response."
+msgstr "Réponse vide."
+
+#: ../classes/class-s4wc_api.php:211
+msgid "Invalid response."
+msgstr "Réponse invalide."
+
+#: ../classes/class-s4wc_gateway.php:146
+msgid "Enable/Disable"
+msgstr "Activer/Désactiver"
+
+#: ../classes/class-s4wc_gateway.php:147
+msgid "Enable Stripe for WooCommerce"
+msgstr "Activer Stripe pour WooCommerce"
+
+#: ../classes/class-s4wc_gateway.php:152
+msgid "Title"
+msgstr "Titre"
+
+#: ../classes/class-s4wc_gateway.php:153
+msgid "This controls the title which the user sees during checkout."
+msgstr "Nom du mode de paiement affiché à l'utilisateur lors du paiement."
+
+#: ../classes/class-s4wc_gateway.php:154
+msgid "Credit Card Payment"
+msgstr "Carte de paiement"
+
+#: ../classes/class-s4wc_gateway.php:158
+msgid "Description"
+msgstr "Description"
+
+#: ../classes/class-s4wc_gateway.php:159
+msgid "This controls the description which the user sees during checkout."
+msgstr ""
+"Description du mode de paiement  affichée à l'utilisateur lors du paiement."
+
+#: ../classes/class-s4wc_gateway.php:164
+msgid "Charge Type"
+msgstr "Type de prélèvement"
+
+#: ../classes/class-s4wc_gateway.php:165
+msgid ""
+"Choose to capture payment at checkout, or authorize only to capture later."
+msgstr ""
+"Débiter immédiatement au moment du paiement ou autoriser manuellement le "
+"débit ultérieurement."
+
+#: ../classes/class-s4wc_gateway.php:174
+msgid "Additional Fields"
+msgstr "Champs complémentaires"
+
+#: ../classes/class-s4wc_gateway.php:175
+msgid ""
+"Add a Billing ZIP and a Name on Card for Stripe authentication purposes. "
+"This is only neccessary if you check the \"Only ship to the users billing "
+"address\" box on WooCommerce Shipping settings."
+msgstr ""
+"Ajouter le code postal de facturation et le nom du porteur de la carte pour "
+"l'authentification Stripe. Ce n'est nécessaire que si vous cochez l'option "
+"\"Livrer à l'adresse de facturation par défaut\" dans les paramètres de "
+"livraison WooCommerce."
+
+#: ../classes/class-s4wc_gateway.php:176
+msgid "Use Additional Fields"
+msgstr "Utiliser les champs additionnels"
+
+#: ../classes/class-s4wc_gateway.php:181
+msgid "Testing"
+msgstr "Mode test"
+
+#: ../classes/class-s4wc_gateway.php:182
+msgid ""
+"Use the test mode on Stripe's dashboard to verify everything works before "
+"going live."
+msgstr ""
+"Utiliser le mode test de Stripe pour vérifier que tout fonctionne "
+"correctement avant de passer en mode production (Live)"
+
+#: ../classes/class-s4wc_gateway.php:183
+msgid "Turn on testing"
+msgstr "Activer le mode test"
+
+#: ../classes/class-s4wc_gateway.php:188
+msgid "Stripe API Test Secret key"
+msgstr "API Stripe - Clé secrète test"
+
+#: ../classes/class-s4wc_gateway.php:193
+msgid "Stripe API Test Publishable key"
+msgstr "API Stripe - Clé publiable test"
+
+#: ../classes/class-s4wc_gateway.php:198
+msgid "Stripe API Live Secret key"
+msgstr "API Stripe - Clé secrète Live"
+
+#: ../classes/class-s4wc_gateway.php:203
+msgid "Stripe API Live Publishable key"
+msgstr "API Stripe - Clé publiable Live"
+
+#: ../classes/class-s4wc_gateway.php:229
+msgid "Stripe Test Data successfully deleted."
+msgstr "Les données de test Stripe ont bien été supprimées"
+
+#: ../classes/class-s4wc_gateway.php:381
+#: ../classes/class-s4wc_subscriptions_gateway.php:75
+msgid "Error:"
+msgstr "Erreur :"
+
+#: ../classes/class-s4wc_gateway.php:466
+#: ../classes/class-s4wc_subscriptions_gateway.php:124
+msgid "Transaction Error: Could not complete your payment."
+msgstr "Erreur de transaction : le paiement n'a pas abouti"
+
+#: ../classes/class-s4wc_subscriptions_gateway.php:173
+#, php-format
+msgid "Subscription paid (%s)"
+msgstr "Abonnement payé (%s)"
+
+#: ../stripe-for-woocommerce.php:155
+msgid "Credit Card Number"
+msgstr "le numéro de carte"
+
+#: ../stripe-for-woocommerce.php:158
+msgid "Credit Card Expiration"
+msgstr "la date d'expiration"
+
+#: ../stripe-for-woocommerce.php:161
+msgid "Credit Card CVC"
+msgstr "le cryptogramme visuel (CVV)"
+
+#: ../stripe-for-woocommerce.php:167
+#, php-format
+msgid "%s is a required field."
+msgstr "Merci de remplir %s"
+
+#: ../stripe-for-woocommerce.php:170
+#, php-format
+msgid "Please enter a valid %s."
+msgstr "Merci d'entrer une valeur valide pour %s"
+
+#: ../templates/payment-fields.php:27
+#, php-format
+msgid "Card ending with %s (%s/%s)"
+msgstr "Carte se terminant par %s (%s/%s)"
+
+#: ../templates/payment-fields.php:32
+msgid "Use a new credit card"
+msgstr "Utiliser une autre carte de paiement"
+
+#: ../templates/payment-fields.php:42
+msgid "Name on Card"
+msgstr "Nom du porteur"
+
+#: ../templates/payment-fields.php:54
+msgid "Billing Zip"
+msgstr "Code postal"
+
+#: ../templates/payment-fields.php:69
+msgid "Card Number"
+msgstr "Numéro de carte"
+
+#: ../templates/payment-fields.php:84
+msgid "Expiry (MM/YY)"
+msgstr "Date d'expiration (MM/AA)"
+
+#: ../templates/payment-fields.php:85
+msgid "MM / YY"
+msgstr "MM/AA"
+
+#: ../templates/payment-fields.php:99
+msgid "Card Code"
+msgstr "Numéro de carte"
+
+#: ../templates/payment-fields.php:100
+msgid "CVC"
+msgstr "Cryptogramme visuel (CVV)"
+
+#: ../templates/saved-cards.php:32
+msgid "Saved cards"
+msgstr "Cartes enregistrées"
+
+#: ../templates/saved-cards.php:36
+msgid "Card ending in..."
+msgstr "Carte se terminant par ..."
+
+#: ../templates/saved-cards.php:37
+msgid "Expires"
+msgstr "Date d'expiration"
