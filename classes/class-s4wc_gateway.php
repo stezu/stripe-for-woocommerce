@@ -157,7 +157,7 @@ class S4WC_Gateway extends WC_Payment_Gateway {
 				'type'			=> 'textarea',
 				'title'			=> __( 'Description', 'stripe-for-woocommerce' ),
 				'description'	=> __( 'This controls the description which the user sees during checkout.', 'stripe-for-woocommerce' ),
-				'default'		=> __( '', 'stripe-for-woocommerce' )
+				'default'		=> '',
 			),
 			'charge_type' => array(
 				'type'			=> 'select',
