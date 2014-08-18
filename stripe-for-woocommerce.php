@@ -152,13 +152,13 @@ function s4wc_validation_errors() {
 	foreach( $_POST['errors'] as $error ) {
 		switch ( $error['field'] ) {
 			case 'number':
-				$field .= __( 'Credit Card Number', 'stripe-for-woocommerce' );
+				$field = __( 'Credit Card Number', 'stripe-for-woocommerce' );
 				break;
 			case 'expiration':
-				$field .= __( 'Credit Card Expiration', 'stripe-for-woocommerce' );
+				$field = __( 'Credit Card Expiration', 'stripe-for-woocommerce' );
 				break;
 			case 'cvc':
-				$field .= __( 'Credit Card CVC', 'stripe-for-woocommerce' );
+				$field = __( 'Credit Card CVC', 'stripe-for-woocommerce' );
 				break;
 		}
 
