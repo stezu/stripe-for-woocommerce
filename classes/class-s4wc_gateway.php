@@ -84,19 +84,19 @@ class S4WC_Gateway extends WC_Payment_Gateway {
 
 		// We're using the credit card field bundles with WC 2.1.0, and this entire plugin won't work without it
 		if ( $woocommerce->version < '2.1.0' ) {
-			echo '<div class="error"><p>'.__('Stripe for WooCommerce uses some advanced features introduced in WooCommerce 2.1.0. Please update WooCommerce to continue using Stripe for WooCommerce.', 'stripe-for-woocommerce').'</p></div>';
+			echo '<div class="error"><p>' . __( 'Stripe for WooCommerce uses some advanced features introduced in WooCommerce 2.1.0. Please update WooCommerce to continue using Stripe for WooCommerce.', 'stripe-for-woocommerce' ) . '</p></div>';
 			return false;
 		}
 
 		// Check for API Keys
 		if ( ! $s4wc->settings['publishable_key'] && ! $s4wc->settings['secret_key'] ) {
-			echo '<div class="error"><p>'.__('Stripe needs API Keys to work, please find your secret and publishable keys in the <a href="https://manage.stripe.com/account/apikeys" target="_blank">Stripe accounts section</a>.', 'stripe-for-woocommerce').'</p></div>';
+			echo '<div class="error"><p>' . __( 'Stripe needs API Keys to work, please find your secret and publishable keys in the <a href="https://manage.stripe.com/account/apikeys" target="_blank">Stripe accounts section</a>.', 'stripe-for-woocommerce' ) . '</p></div>';
 			return false;
 		}
 
 		// Force SSL on production
 		if ( $this->testmode == 'no' && get_option( 'woocommerce_force_ssl_checkout' ) == 'no' ) {
-			echo '<div class="error"><p>'.__('Stripe needs SSL in order to be secure. Read mode about forcing SSL on checkout in <a href="http://docs.woothemes.com/document/ssl-and-https/" target="_blank">the WooCommerce docs</a>.', 'stripe-for-woocommerce').'</p></div>';
+			echo '<div class="error"><p>' . __( 'Stripe needs SSL in order to be secure. Read mode about forcing SSL on checkout in <a href="http://docs.woothemes.com/document/ssl-and-https/" target="_blank">the WooCommerce docs</a>.', 'stripe-for-woocommerce' ) . '</p></div>';
 			return false;
 		}
 	}
@@ -164,8 +164,8 @@ class S4WC_Gateway extends WC_Payment_Gateway {
 				'title'			=> __( 'Charge Type', 'stripe-for-woocommerce' ),
 				'description'	=> __( 'Choose to capture payment at checkout, or authorize only to capture later.', 'stripe-for-woocommerce' ),
 				'options'		=> array(
-					'capture'	=> __('Authorize & Capture', 'stripe-for-woocommerce'),
-					'authorize'	=> __('Authorize Only', 'stripe-for-woocommerce')
+					'capture'	=> __( 'Authorize & Capture', 'stripe-for-woocommerce' ),
+					'authorize'	=> __( 'Authorize Only', 'stripe-for-woocommerce' )
 				),
 				'default'		=> 'capture'
 			),
@@ -231,15 +231,15 @@ class S4WC_Gateway extends WC_Payment_Gateway {
 		}
 		?>
 		<h3>Stripe Payment</h3>
-		<p><?php _e('Allows Credit Card payments through <a href="https://stripe.com/">Stripe</a>. You can find your API Keys in your <a href="https://dashboard.stripe.com/account/apikeys">Stripe Account Settings</a>.', 'stripe-for-woocommerce'); ?></p>
+		<p><?php _e( 'Allows Credit Card payments through <a href="https://stripe.com/">Stripe</a>. You can find your API Keys in your <a href="https://dashboard.stripe.com/account/apikeys">Stripe Account Settings</a>.', 'stripe-for-woocommerce' ); ?></p>
 		<table class="form-table">
 			<?php $this->generate_settings_html(); ?>
 			<tr>
-				<th><?php _e('Delete Stripe Test Data', 'stripe-for-woocommerce'); ?></th>
+				<th><?php _e( 'Delete Stripe Test Data', 'stripe-for-woocommerce' ); ?></th>
 				<td>
 					<p>
-						<a href="<?php echo wp_nonce_url( admin_url('admin.php?page=wc-settings&tab=checkout&section=' . strtolower( get_class( $this ) ) . '&action=delete_test_data' ), 's4wc_action' ); ?>" class="button"><?php _e('Delete all Test Data', 'stripe-for-woocommerce'); ?></a>
-						<span class="description"><strong style="color:red"><?php _e('Note: This will delete all Stripe test customer data, make sure to back up your database.', 'stripe-for-woocommerce'); ?></strong></span>
+						<a href="<?php echo wp_nonce_url( admin_url('admin.php?page=wc-settings&tab=checkout&section=' . strtolower( get_class( $this ) ) . '&action=delete_test_data' ), 's4wc_action' ); ?>" class="button"><?php _e( 'Delete all Test Data', 'stripe-for-woocommerce' ); ?></a>
+						<span class="description"><?php _e( '<strong class="red">Warning:</strong> This will delete all Stripe test customer data, make sure to back up your database.', 'stripe-for-woocommerce' ); ?></span>
 					</p>
 				</td>
 			</tr>
@@ -348,7 +348,7 @@ class S4WC_Gateway extends WC_Payment_Gateway {
 				$stripe_charge_data['card'] = $customer['card'];
 				$stripe_charge_data['customer'] = $customer['id'];
 			} else {
-				$stripe_charge_data['description'] = __('Guest', 'stripe-for-woocommerce').' (' . $this->order->billing_email . ') ' . $form_data['card']['name']; // Guest (user_email) Full Name
+				$stripe_charge_data['description'] = __( 'Guest', 'stripe-for-woocommerce' ) . ' (' . $this->order->billing_email . ') ' . $form_data['card']['name']; // Guest (user_email) Full Name
 
 				// Set up one time charge
 				$stripe_charge_data['card'] = $form_data['token'];
@@ -475,7 +475,8 @@ class S4WC_Gateway extends WC_Payment_Gateway {
 	 */
 	protected function payment_failed() {
 		$this->order->add_order_note(
-			sprintf(__('%s Credit Card Payment Failed with message: "%s"', 'stripe-for-woocommerce'),
+			sprintf(
+				__( '%s Credit Card Payment Failed with message: "%s"', 'stripe-for-woocommerce' ),
 				get_class( $this ),
 				$this->transaction_error_message
 			)
@@ -500,7 +501,7 @@ class S4WC_Gateway extends WC_Payment_Gateway {
 
 		$this->order->add_order_note(
 			sprintf(
-				__('%s payment completed with Transaction Id of "%s"', 'stripe-for-woocommerce'),
+				__( '%s payment completed with Transaction Id of "%s"', 'stripe-for-woocommerce' ),
 				get_class( $this ),
 				$this->transaction_id
 			)
@@ -521,7 +522,7 @@ class S4WC_Gateway extends WC_Payment_Gateway {
 				'amount'		=> (float) $this->order->get_total() * 100,
 				'currency'		=> strtolower( get_woocommerce_currency() ),
 				'token'			=> isset( $_POST['stripe_token'] ) ? $_POST['stripe_token'] : '',
-				'description'	=> __('Charge for %s', 'stripe-for-woocommerce') . $this->order->billing_email,
+				'description'	=> sprintf( __( 'Charge for %s', 'stripe-for-woocommerce' ), $this->order->billing_email ),
 				'chosen_card'	=> isset( $_POST['s4wc_card'] ) ? $_POST['s4wc_card'] : 0,
 				'card'			=> array(
 					'name'				=> $this->order->billing_first_name . ' ' . $this->order->billing_last_name,

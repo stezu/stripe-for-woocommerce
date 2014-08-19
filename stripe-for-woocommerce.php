@@ -164,13 +164,12 @@ function s4wc_validation_errors() {
 
 		switch ( $error['type'] ) {
 			case 'undefined':
-				$message = sprintf( __( '%s is a required field.', 'stripe-for-woocommerce' ), $field);
+				$message = sprintf( __( '%s is a required field.', 'stripe-for-woocommerce' ), "<strong>$field</strong>" );
 				break;
 			case 'invalid':
-				$message = sprintf( __( 'Please enter a valid %s.', 'stripe-for-woocommerce' ), $field);
+				$message = sprintf( __( 'Please enter a valid %s.', 'stripe-for-woocommerce' ), "<strong>$field</strong>" );
 				break;
 		}
-		$message = "<strong>$message</strong>";
 
 		wc_add_notice( $message, 'error' );
 	}

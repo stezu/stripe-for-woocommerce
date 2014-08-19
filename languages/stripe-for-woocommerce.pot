@@ -159,7 +159,7 @@ msgstr ""
 
 #: ../classes/class-s4wc_gateway.php:242
 msgid ""
-"Note: This will delete all Stripe test customer data, make sure to back up "
+"<strong class=\"red\">Warning:</strong> This will delete all Stripe test customer data, make sure to back up "
 "your database."
 msgstr ""
 
