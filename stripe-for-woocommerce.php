@@ -150,31 +150,26 @@ add_action( 'woocommerce_order_status_processing_to_completed', 's4wc_order_stat
 function s4wc_validation_errors() {
 
 	foreach( $_POST['errors'] as $error ) {
-		$message = '';
-
-		$message .= '<strong>';
 		switch ( $error['field'] ) {
 			case 'number':
-				$message .= __( 'Credit Card Number', 'stripe-for-woocommerce' );
+				$field = __( 'Credit Card Number', 'stripe-for-woocommerce' );
 				break;
 			case 'expiration':
-				$message .= __( 'Credit Card Expiration', 'stripe-for-woocommerce' );
+				$field = __( 'Credit Card Expiration', 'stripe-for-woocommerce' );
 				break;
 			case 'cvc':
-				$message .= __( 'Credit Card CVC', 'stripe-for-woocommerce' );
+				$field = __( 'Credit Card CVC', 'stripe-for-woocommerce' );
 				break;
 		}
-		$message .= '</strong>';
 
 		switch ( $error['type'] ) {
 			case 'undefined':
-				$message .= ' ' . __( 'is a required field', 'stripe-for-woocommerce' );
+				$message = sprintf( __( '%s is a required field.', 'stripe-for-woocommerce' ), "<strong>$field</strong>" );
 				break;
 			case 'invalid':
-				$message = __( 'Please enter a valid', 'stripe-for-woocommerce' ) . ' ' . $message;
+				$message = sprintf( __( 'Please enter a valid %s.', 'stripe-for-woocommerce' ), "<strong>$field</strong>" );
 				break;
 		}
-		$message .= '.';
 
 		wc_add_notice( $message, 'error' );
 	}

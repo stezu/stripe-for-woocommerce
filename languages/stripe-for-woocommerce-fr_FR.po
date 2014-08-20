@@ -1,0 +1,322 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Stripe for WooCommerce v1.22\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2014-08-19 00:05+0100\n"
+"PO-Revision-Date: 2014-08-19 00:13:32+0000\n"
+"Last-Translator: Malo JAFFRE <malo@jaffre.info>\n"
+"Language-Team: Malo JAFFRE <malo@jaffre.info>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n>1;\n"
+"X-Generator: Poedit 1.6.7\n"
+"X-Poedit-Language: \n"
+"X-Poedit-Country: \n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-KeywordsList: __;_e;__ngettext:1,2;_n:1,2;__ngettext_noop:1,2;_n_noop:1,2;_c,_nc:4c,1,2;_x:1,2c;_ex:1,2c;_nx:4c,1,2;_nx_noop:4c,1,2;\n"
+"X-Poedit-Basepath: .\n"
+"X-Poedit-Bookmarks: \n"
+"X-Poedit-SearchPath-0: ..\n"
+"X-Textdomain-Support: yes"
+
+#: classes/class-s4wc_api.php:198
+#@ stripe-for-woocommerce
+msgid "There was a problem connecting to the payment gateway."
+msgstr "Il y a eu un problème lors de la connexion à la plateforme de paiement."
+
+#: classes/class-s4wc_api.php:202
+#@ stripe-for-woocommerce
+msgid "Empty response."
+msgstr "Réponse vide."
+
+#: classes/class-s4wc_api.php:211
+#@ stripe-for-woocommerce
+msgid "Invalid response."
+msgstr "Réponse invalide."
+
+#: classes/class-s4wc_gateway.php:87
+#@ stripe-for-woocommerce
+msgid "Stripe for WooCommerce uses some advanced features introduced in WooCommerce 2.1.0. Please update WooCommerce to continue using Stripe for WooCommerce."
+msgstr "Stripe pour WooCommerce utilise des fonctionnalités introduites dans WooCommerce 2.1.0. Merci de mettre à jour WooCommerce pour continuer à utiliser Stripe pour WooCommerce."
+
+#: classes/class-s4wc_gateway.php:93
+#@ stripe-for-woocommerce
+msgid "Stripe needs API Keys to work, please find your secret and publishable keys in the <a href=\"https://manage.stripe.com/account/apikeys\" target=\"_blank\">Stripe accounts section</a>."
+msgstr "Stripe a besoin de clés API pour fonctionner, vous pourrez trouver vos clés secrètes et publiables dans votre <a href=\"https://manage.stripe.com/account/apikeys\" target=\"_blank\">compte Stripe</a>."
+
+#: classes/class-s4wc_gateway.php:99
+#@ stripe-for-woocommerce
+msgid "Stripe needs SSL in order to be secure. Read mode about forcing SSL on checkout in <a href=\"http://docs.woothemes.com/document/ssl-and-https/\" target=\"_blank\">the WooCommerce docs</a>."
+msgstr "Stripe nécessite que votre site utilise SSL pour la sécurité des transactions. Pour savoir comment forcer l'utilisation de SSL lors du paiement, référez-vous à la <a href=\"http://docs.woothemes.com/document/ssl-and-https/\" target=\"_blank\">documentation WooCommerce</a>."
+
+#: classes/class-s4wc_gateway.php:146
+#@ stripe-for-woocommerce
+msgid "Enable/Disable"
+msgstr "Activer/Désactiver"
+
+#: classes/class-s4wc_gateway.php:147
+#@ stripe-for-woocommerce
+msgid "Enable Stripe for WooCommerce"
+msgstr "Activer Stripe pour WooCommerce"
+
+#: classes/class-s4wc_gateway.php:152
+#@ stripe-for-woocommerce
+msgid "Title"
+msgstr "Titre"
+
+#: classes/class-s4wc_gateway.php:153
+#@ stripe-for-woocommerce
+msgid "This controls the title which the user sees during checkout."
+msgstr "Nom du mode de paiement affiché à l'utilisateur lors du paiement."
+
+#: classes/class-s4wc_gateway.php:154
+#@ stripe-for-woocommerce
+msgid "Credit Card Payment"
+msgstr "Carte de paiement"
+
+#: classes/class-s4wc_gateway.php:158
+#@ stripe-for-woocommerce
+msgid "Description"
+msgstr "Description"
+
+#: classes/class-s4wc_gateway.php:159
+#@ stripe-for-woocommerce
+msgid "This controls the description which the user sees during checkout."
+msgstr "Description du mode de paiement  affichée à l'utilisateur lors du paiement."
+
+#: classes/class-s4wc_gateway.php:164
+#@ stripe-for-woocommerce
+msgid "Charge Type"
+msgstr "Type de prélèvement"
+
+#: classes/class-s4wc_gateway.php:165
+#@ stripe-for-woocommerce
+msgid "Choose to capture payment at checkout, or authorize only to capture later."
+msgstr "Débiter immédiatement ou autoriser le paiement seulement et débiter ultérieurement."
+
+#: classes/class-s4wc_gateway.php:167
+#@ stripe-for-woocommerce
+msgid "Authorize & Capture"
+msgstr "Autoriser et débiter"
+
+#: classes/class-s4wc_gateway.php:168
+#@ stripe-for-woocommerce
+msgid "Authorize Only"
+msgstr "Autoriser seulement"
+
+#: classes/class-s4wc_gateway.php:174
+#@ stripe-for-woocommerce
+msgid "Additional Fields"
+msgstr "Champs complémentaires"
+
+#: classes/class-s4wc_gateway.php:175
+#@ stripe-for-woocommerce
+msgid "Add a Billing ZIP and a Name on Card for Stripe authentication purposes. This is only neccessary if you check the \"Only ship to the users billing address\" box on WooCommerce Shipping settings."
+msgstr "Ajouter le code postal de facturation et le nom du porteur de la carte pour l'authentification Stripe. Ce n'est nécessaire que si vous cochez l'option \"Livrer à l'adresse de facturation par défaut\" dans les paramètres de livraison WooCommerce."
+
+#: classes/class-s4wc_gateway.php:176
+#@ stripe-for-woocommerce
+msgid "Use Additional Fields"
+msgstr "Utiliser les champs additionnels"
+
+#: classes/class-s4wc_gateway.php:181
+#@ stripe-for-woocommerce
+msgid "Testing"
+msgstr "Mode test"
+
+#: classes/class-s4wc_gateway.php:182
+#@ stripe-for-woocommerce
+msgid "Use the test mode on Stripe's dashboard to verify everything works before going live."
+msgstr "Utiliser le mode test de Stripe pour vérifier que tout fonctionne correctement avant de passer en mode production (Live)"
+
+#: classes/class-s4wc_gateway.php:183
+#@ stripe-for-woocommerce
+msgid "Turn on testing"
+msgstr "Activer le mode test"
+
+#: classes/class-s4wc_gateway.php:188
+#@ stripe-for-woocommerce
+msgid "Stripe API Test Secret key"
+msgstr "API Stripe - Clé secrète test"
+
+#: classes/class-s4wc_gateway.php:193
+#@ stripe-for-woocommerce
+msgid "Stripe API Test Publishable key"
+msgstr "API Stripe - Clé publiable test"
+
+#: classes/class-s4wc_gateway.php:198
+#@ stripe-for-woocommerce
+msgid "Stripe API Live Secret key"
+msgstr "API Stripe - Clé secrète Live"
+
+#: classes/class-s4wc_gateway.php:203
+#@ stripe-for-woocommerce
+msgid "Stripe API Live Publishable key"
+msgstr "API Stripe - Clé publiable Live"
+
+#: classes/class-s4wc_gateway.php:229
+#@ stripe-for-woocommerce
+msgid "Stripe Test Data successfully deleted."
+msgstr "Les données de test Stripe ont bien été supprimées"
+
+#: classes/class-s4wc_gateway.php:234
+#@ stripe-for-woocommerce
+msgid "Allows Credit Card payments through <a href=\"https://stripe.com/\">Stripe</a>. You can find your API Keys in your <a href=\"https://dashboard.stripe.com/account/apikeys\">Stripe Account Settings</a>."
+msgstr "Permettre les paiement en carte bancaire via <a href=\"https://stripe.com/\">Stripe</a>. Vous pourrez trouver vos clés API dans les <a href=\"https://dashboard.stripe.com/account/apikeys\">paramètres de votre compte Stripe</a>."
+
+#: classes/class-s4wc_gateway.php:238
+#@ stripe-for-woocommerce
+msgid "Delete Stripe Test Data"
+msgstr "Supprimer les données Stripe de test"
+
+#: classes/class-s4wc_gateway.php:241
+#@ stripe-for-woocommerce
+msgid "Delete all Test Data"
+msgstr "Supprimer toute les données de test"
+
+#: classes/class-s4wc_gateway.php:351
+#@ stripe-for-woocommerce
+msgid "Guest"
+msgstr "Invité"
+
+#: classes/class-s4wc_gateway.php:381
+#: classes/class-s4wc_subscriptions_gateway.php:75
+#@ stripe-for-woocommerce
+msgid "Error:"
+msgstr "Erreur :"
+
+#: classes/class-s4wc_gateway.php:466
+#: classes/class-s4wc_subscriptions_gateway.php:124
+#@ stripe-for-woocommerce
+msgid "Transaction Error: Could not complete your payment."
+msgstr "Erreur : le paiement n'a pas abouti"
+
+#: classes/class-s4wc_gateway.php:479
+#, php-format
+#@ stripe-for-woocommerce
+msgid "%s Credit Card Payment Failed with message: \"%s\""
+msgstr "%s Le paiement par carte bancaire a échoué avec le message : \"%s\""
+
+#: classes/class-s4wc_gateway.php:504
+#, php-format
+#@ stripe-for-woocommerce
+msgid "%s payment completed with Transaction Id of \"%s\""
+msgstr "%s paiement réussi avec le numéro de transaction \"%s\""
+
+#: classes/class-s4wc_gateway.php:525
+#, php-format
+#@ stripe-for-woocommerce
+msgid "Charge for %s"
+msgstr "Paiement de %s"
+
+#: classes/class-s4wc_subscriptions_gateway.php:162
+#, php-format
+#@ stripe-for-woocommerce
+msgid "Payment for %s (Order: %s)"
+msgstr "Paiement de %s (Commande : %s)"
+
+#: classes/class-s4wc_subscriptions_gateway.php:178
+#, php-format
+#@ stripe-for-woocommerce
+msgid "Subscription paid (%s)"
+msgstr "Abonnement payé (%s)"
+
+#: stripe-for-woocommerce.php:155
+#@ stripe-for-woocommerce
+msgid "Credit Card Number"
+msgstr "le numéro de carte"
+
+#: stripe-for-woocommerce.php:158
+#@ stripe-for-woocommerce
+msgid "Credit Card Expiration"
+msgstr "la date d'expiration"
+
+#: stripe-for-woocommerce.php:161
+#@ stripe-for-woocommerce
+msgid "Credit Card CVC"
+msgstr "le cryptogramme visuel (CVV)"
+
+#: stripe-for-woocommerce.php:167
+#, php-format
+#@ stripe-for-woocommerce
+msgid "%s is a required field."
+msgstr "Merci de remplir %s"
+
+#: stripe-for-woocommerce.php:170
+#, php-format
+#@ stripe-for-woocommerce
+msgid "Please enter a valid %s."
+msgstr "Merci d'entrer une valeur valide pour %s"
+
+#: templates/payment-fields.php:27
+#, php-format
+#@ stripe-for-woocommerce
+msgid "Card ending with %s (%s/%s)"
+msgstr "Carte se terminant par %s (%s/%s)"
+
+#: templates/payment-fields.php:32
+#@ stripe-for-woocommerce
+msgid "Use a new credit card"
+msgstr "Utiliser une autre carte de paiement"
+
+#: templates/payment-fields.php:42
+#@ stripe-for-woocommerce
+msgid "Name on Card"
+msgstr "Nom du porteur"
+
+#: templates/payment-fields.php:54
+#@ stripe-for-woocommerce
+msgid "Billing Zip"
+msgstr "Code postal"
+
+#: templates/payment-fields.php:69
+#@ stripe-for-woocommerce
+msgid "Card Number"
+msgstr "Numéro de carte"
+
+#: templates/payment-fields.php:84
+#@ stripe-for-woocommerce
+msgid "Expiry (MM/YY)"
+msgstr "Date d'expiration (MM/AA)"
+
+#: templates/payment-fields.php:85
+#@ stripe-for-woocommerce
+msgid "MM / YY"
+msgstr "MM/AA"
+
+#: templates/payment-fields.php:99
+#@ stripe-for-woocommerce
+msgid "Card Code"
+msgstr "Cryptogramme visuel (CVV)"
+
+#: templates/payment-fields.php:100
+#@ stripe-for-woocommerce
+msgid "CVC"
+msgstr "Cryptogramme visuel (CVV)"
+
+#: templates/saved-cards.php:32
+#@ stripe-for-woocommerce
+msgid "Saved cards"
+msgstr "Cartes enregistrées"
+
+#: templates/saved-cards.php:36
+#@ stripe-for-woocommerce
+msgid "Card ending in..."
+msgstr "Carte se terminant par ..."
+
+#: templates/saved-cards.php:37
+#@ stripe-for-woocommerce
+msgid "Expires"
+msgstr "Date d'expiration"
+
+#: templates/saved-cards.php:50
+#@ stripe-for-woocommerce
+msgid "Delete card"
+msgstr "Supprimer la carte"
+
+#: classes/class-s4wc_gateway.php:242
+#@ stripe-for-woocommerce
+msgid "<strong class=\"red\">Warning:</strong> This will delete all Stripe test customer data, make sure to back up your database."
+msgstr "<strong class=\"red\">Attention :</strong> Cela va supprimer toutes les données client Stripe de test, pensez à sauvegarder votre base de données."
+

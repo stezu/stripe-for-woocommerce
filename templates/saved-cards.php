@@ -29,12 +29,12 @@ $credit_cards = isset( $user_meta['cards'] ) ? $user_meta['cards'] : false;
 
 if ( $credit_cards ) :
 ?>
-	<h2 id="saved-cards">Saved cards</h2>
+	<h2 id="saved-cards"><?php _e( 'Saved cards', 'stripe-for-woocommerce' ); ?></h2>
 	<table class="shop_table">
 		<thead>
 			<tr>
-				<th>Card ending in...</th>
-				<th>Expires</th>
+				<th><?php _e( 'Card ending in...', 'stripe-for-woocommerce' ); ?></th>
+				<th><?php _e( 'Expires', 'stripe-for-woocommerce' ); ?></th>
 				<th></th>
 			</tr>
 		</thead>
@@ -47,7 +47,7 @@ if ( $credit_cards ) :
 					<form action="#saved-cards" method="POST">
 						<?php wp_nonce_field ( 'stripe_del_card' ); ?>
 						<input type="hidden" name="delete_card" value="<?php echo esc_attr( $i ); ?>">
-						<input type="submit" value="Delete card">
+						<input type="submit" value="<?php _e( 'Delete card', 'stripe-for-woocommerce' ); ?>">
 					</form>
 				</td>
 			</tr>
