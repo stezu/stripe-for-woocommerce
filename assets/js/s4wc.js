@@ -126,42 +126,18 @@ jQuery( function ( $ ) {
         // Validate form fields
         var message = fieldValidator( stripeData );
 
-        // Action that we trigger
-        message.action = 'stripe_form_validation';
-
         // If there are errors, display them using wc_add_notice on the backend
         if ( message.errors.length ) {
-            $.post( s4wc_info.ajaxurl, message, function ( code ) {
-                if ( code.indexOf( '<!--S4WC_START-->' ) >= 0 ) {
-                    code = code.split( '<!--S4WC_START-->' )[1]; // Strip off anything before S4WC_START
-                }
-                if ( code.indexOf( '<!--S4WC_END-->' ) >= 0 ) {
-                    code = code.split( '<!--S4WC_END-->' )[0]; // Strip off anything after S4WC_END
-                }
-                var result = $.parseJSON( code );
-
-                // Clear out event handlers to make sure they only fire once.
-                $( 'body' ).off( '.s4wc' );
-
-                // Add new errors if errors already exist
-                $( 'body' ).on( 'checkout_error.s4wc', function () {
-
-                    if ( result.messages.indexOf( '<ul class="woocommerce-error">' ) >= 0 ) {
-                        result.messages = result.messages.split( '<ul class="woocommerce-error">' )[1]; // Strip off anything before ul.woocommerce-error
-                    }
-                    if ( result.messages.indexOf( '</ul>' ) >= 0 ) {
-                        result.messages = result.messages.split( '</ul>' )[0]; // Strip off anything after ul.woocommerce-error
-                    }
-
-                    $( '.woocommerce-error' ).append( result.messages );
-                });
-
-                // Add errors the normal way
-                $( '.woocommerce-error' ).remove();
-                $form.prepend( result.messages );
-            });
 
             $( '.stripe_token, .form_errors' ).remove();
+
+            for ( var i = 0, len = message.errors.length; i < len; i++ ) {
+                var field = message.errors[i].field,
+                    type = message.errors[i].type;
+
+                $form.append( '<input type="hidden" class="form_errors" name="' + field + '" value="' + type + '">' );
+            }
+
             $form.append( '<input type="hidden" class="form_errors" name="form_errors" value="1">' );
 
             $form.unblock();
@@ -190,12 +166,12 @@ jQuery( function ( $ ) {
         // Card number validation
         if ( ! stripeData.number ) {
             message.errors.push({
-                'field': 'number',
+                'field': 's4wc-card-number',
                 'type': 'undefined'
             });
         } else if ( ! $.payment.validateCardNumber( stripeData.number ) ) {
             message.errors.push({
-                'field': 'number',
+                'field': 's4wc-card-number',
                 'type': 'invalid'
             });
         }
@@ -203,12 +179,12 @@ jQuery( function ( $ ) {
         // Card expiration validation
         if ( ! stripeData.exp_month || ! stripeData.exp_year ) {
             message.errors.push({
-                'field': 'expiration',
+                'field': 's4wc-card-expiry',
                 'type': 'undefined'
             });
         } else if ( ! $.payment.validateCardExpiry( stripeData.exp_month, stripeData.exp_year ) ) {
             message.errors.push({
-                'field': 'expiration',
+                'field': 's4wc-card-expiry',
                 'type': 'invalid'
             });
         }
@@ -216,12 +192,12 @@ jQuery( function ( $ ) {
         // Card CVC validation
         if ( ! stripeData.cvc ) {
             message.errors.push({
-                'field': 'cvc',
+                'field': 's4wc-card-cvc',
                 'type': 'undefined'
             });
         } else if ( ! $.payment.validateCardCVC( stripeData.cvc, $.payment.cardType( stripeData.number ) ) ) {
             message.errors.push({
-                'field': 'cvc',
+                'field': 's4wc-card-cvc',
                 'type': 'invalid'
             });
         }
