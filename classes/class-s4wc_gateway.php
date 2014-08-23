@@ -65,7 +65,7 @@ class S4WC_Gateway extends WC_Payment_Gateway {
 		add_action( 'woocommerce_update_options_payment_gateways', array( $this, 'process_admin_options' ) );
 		add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array( $this, 'process_admin_options' ) );
 		add_action( 'admin_notices', array( $this, 'perform_checks' ) );
-		add_action( 'wp_enqueue_scripts', array( &$this, 'load_scripts' ) );
+		add_action( 'wp_enqueue_scripts', array( $this, 'load_scripts' ) );
 	}
 
 	/**
