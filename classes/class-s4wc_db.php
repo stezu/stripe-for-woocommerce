@@ -80,13 +80,17 @@ class S4WC_DB {
 
 				$newObject['customer_id']	= $customer_id;
 				$newObject['cards']			= array();
-				$newObject['cards'][]		= array(
-					'id'		=> $card_id,
-					'last4'		=> $card_last4,
-					'brand'		=> $card_brand,
-					'exp_month'	=> $card_exp_month,
-					'exp_year'	=> $card_exp_year
-				);
+
+				// Add a new card to the object
+				if ( isset( $customer_data['card'] ) ) {
+					$newObject['cards'][]		= array(
+						'id'		=> $card_id,
+						'last4'		=> $card_last4,
+						'brand'		=> $card_brand,
+						'exp_month'	=> $card_exp_month,
+						'exp_year'	=> $card_exp_year
+					);
+				}
 				$newObject['default_card'] = $default_card;
 			}
 
