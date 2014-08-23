@@ -12,6 +12,11 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 global $s4wc;
 
+// Add notification to the user that this will fail miserably if they attempt it.
+echo '<noscript>';
+	printf( __( '%s payment does not work without Javascript. Please enable Javascript or use a different payment method.', 'stripe-for-woocommerce' ), $s4wc->settings['title'] );
+echo '</noscript>';
+
 if ( $s4wc->settings['description'] ) : ?>
 	<p class="s4wc-description"><?php echo $s4wc->settings['description']; ?></p>
 <?php endif;
