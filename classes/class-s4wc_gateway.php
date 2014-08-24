@@ -377,11 +377,67 @@ class S4WC_Gateway extends WC_Payment_Gateway {
 			return true;
 
 		} catch ( Exception $e ) {
-			$this->transaction_error_message = $e->getMessage();
-			wc_add_notice( __( 'Error:', 'stripe-for-woocommerce' ) . ' ' . $e->getMessage(), 'error' );
+			$this->parse_stripe_error( $e );
 
 			return false;
 		}
+	}
+
+	/**
+	 * Localize Stripe error messages then post errors in appropriate places
+	 *
+	 * @access public
+	 * @param Exception $e
+	 * @return void
+	 */
+	public function parse_stripe_error( $e ) {
+		$body	= $e->getMessage();
+		$error	= $body['error'];
+
+		switch ( $error['code'] ) {
+			case 'incorrect_number':
+				$message = __( 'The card number is incorrect.', 'stripe-for-woocommerce' );
+				break;
+			case 'invalid_number':
+				$message = __( 'The card number is not a valid credit card number.', 'stripe-for-woocommerce' );
+				break;
+			case 'invalid_expiry_month':
+				$message = __( 'The card\'s expiration month is invalid.', 'stripe-for-woocommerce' );
+				break;
+			case 'invalid_expiry_year':
+				$message = __( 'The card\'s expiration year is invalid.', 'stripe-for-woocommerce' );
+				break;
+			case 'invalid_cvc':
+				$message = __( 'The card\'s security code is invalid.', 'stripe-for-woocommerce' );
+				break;
+			case 'expired_card':
+				$message = __( 'The card has expired.', 'stripe-for-woocommerce' );
+				break;
+			case 'incorrect_cvc':
+				$message = __( 'The card\'s security code is incorrect.', 'stripe-for-woocommerce' );
+				break;
+			case 'incorrect_zip':
+				$message = __( 'The card\'s zip code failed validation.', 'stripe-for-woocommerce' );
+				break;
+			case 'card_declined':
+				$message = __( 'The card was declined.', 'stripe-for-woocommerce' );
+				break;
+			case 'missing':
+				$message = __( 'There is no card on a customer that is being charged.', 'stripe-for-woocommerce' );
+				break;
+			case 'processing_error':
+				$message = __( 'An error occurred while processing the card.', 'stripe-for-woocommerce' );
+				break;
+			case 'rate_limit':
+				$message = __( 'An error occurred due to requests hitting the API too quickly. Please let us know if you\'re consistently running into this error.', 'stripe-for-woocommerce' );
+				break;
+			default:
+				$message = __( 'Generic error', 'stripe-for-woocommerce' );
+		}
+		$message = $body;
+
+		$this->transaction_error_message = $message;
+		wc_add_notice( __( 'Error:', 'stripe-for-woocommerce' ) . ' ' . $message, 'error' );
 	}
 
 	/**
