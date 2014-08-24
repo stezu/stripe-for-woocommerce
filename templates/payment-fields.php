@@ -5,7 +5,7 @@
  * Override this template by copying it to yourtheme/woocommerce/woocommerce-stripe/payment-fields.php
  *
  * @author		Stephen Zuniga
- * @version		1.22
+ * @version		1.23
  */
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly

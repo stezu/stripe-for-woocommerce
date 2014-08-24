@@ -54,6 +54,11 @@ The plugin should automatically update with new features, but you could always d
 
 == Changelog ==
 
+= 1.23 =
+* Feature: French translation courtesy of Malo Jaffre
+* Fix: Checkout with account creation was failing
+* Fix: Error with setting default cards
+
 = 1.22 =
 * Fix: New customers were returning an invalid string error
 * Fix: Backend error messages were bad
