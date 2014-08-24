@@ -196,3 +196,23 @@ add_action( 'woocommerce_checkout_process', 's4wc_validate_form' );
 function s4wc_get_template( $template_name ) {
 	return wc_get_template( $template_name, array(), WC()->template_path() . '/woocommerce-stripe', plugin_dir_path( __FILE__ ) . '/templates/' );
 }
+
+/**
+ * Helper function to find the key of a nested value
+ *
+ * @param string $needle
+ * @param array $haystack
+ * @return mixed
+ */
+if ( ! function_exists( 'recursive_array_search' ) ) {
+	function recursive_array_search( $needle, $haystack ) {
+
+		foreach ( $haystack as $key => $value ) {
+
+			if ( $needle === $value || ( is_array( $value ) && recursive_array_search( $needle, $value ) !== false ) ) {
+				return $key;
+			}
+		}
+		return false;
+	}
+}
