@@ -335,7 +335,7 @@ class S4WC_Gateway extends WC_Payment_Gateway {
 			$stripe_charge_data = array(
 				'amount'		=> $form_data['amount'], // amount in cents
 				'currency'		=> $form_data['currency'],
-				'capture'		=> ($this->charge_type == 'capture') ? 'true' : 'false'
+				'capture'		=> ( $this->charge_type == 'capture' ) ? 'true' : 'false'
 			);
 
 			// Make sure we only create customers if a user is logged in
@@ -343,7 +343,7 @@ class S4WC_Gateway extends WC_Payment_Gateway {
 				$stripe_charge_data['description'] = $this->current_user->user_login . ' (#' . $this->current_user_id . ' - ' . $this->current_user->user_email . ') ' . $form_data['card']['name']; // username (user_id - user_email) Full Name
 
 				// Add a customer or retrieve an existing one
-				$customer = $this->get_customer( $stripe_charge_data, $form_data );
+				$customer = $this->get_customer( $stripe_charge_data['description'], $form_data );
 
 				$stripe_charge_data['card'] = $customer['card'];
 				$stripe_charge_data['customer'] = $customer['id'];
@@ -390,15 +390,15 @@ class S4WC_Gateway extends WC_Payment_Gateway {
 	 * Add a card to a customer if necessary
 	 *
 	 * @access public
-	 * @param array $stripe_charge_data
+	 * @param string $description
 	 * @param array $form_data
 	 * @return array
 	 */
-	public function get_customer( $stripe_charge_data, $form_data ) {
+	public function get_customer( $description, $form_data ) {
 		$output = array();
 
 		if ( ! $this->stripe_customer_info ) {
-			$customer = S4WC_API::create_customer( $form_data, $stripe_charge_data['description'] );
+			$customer = S4WC_API::create_customer( $form_data, $description );
 
 			$output['card'] = $customer->default_card;
 		} else {
