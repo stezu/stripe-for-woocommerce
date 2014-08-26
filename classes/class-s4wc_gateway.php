@@ -287,11 +287,11 @@ class S4WC_Gateway extends WC_Payment_Gateway {
 
 			if ( $order->id == $order_id && $order->order_key == $order_key ) {
 				$s4wc_info['billing_first_name']	= $order->billing_first_name;
-				$s4wc_info['billing_last_name']	= $order->billing_last_name;
-				$s4wc_info['billing_address_1']	= $order->billing_address_1;
-				$s4wc_info['billing_address_2']	= $order->billing_address_2;
+				$s4wc_info['billing_last_name']		= $order->billing_last_name;
+				$s4wc_info['billing_address_1']		= $order->billing_address_1;
+				$s4wc_info['billing_address_2']		= $order->billing_address_2;
 				$s4wc_info['billing_city']			= $order->billing_city;
-				$s4wc_info['billing_state']		= $order->billing_state;
+				$s4wc_info['billing_state']			= $order->billing_state;
 				$s4wc_info['billing_postcode']		= $order->billing_postcode;
 				$s4wc_info['billing_country']		= $order->billing_country;
 			}
@@ -346,7 +346,7 @@ class S4WC_Gateway extends WC_Payment_Gateway {
 				$customer = $this->get_customer( $stripe_charge_data['description'], $form_data );
 
 				$stripe_charge_data['card'] = $customer['card'];
-				$stripe_charge_data['customer'] = $customer['id'];
+				$stripe_charge_data['customer'] = $customer['customer_id'];
 			} else {
 				$stripe_charge_data['description'] = __( 'Guest', 'stripe-for-woocommerce' ) . ' (' . $this->order->billing_email . ') ' . $form_data['card']['name']; // Guest (user_email) Full Name
 
@@ -372,7 +372,7 @@ class S4WC_Gateway extends WC_Payment_Gateway {
 			update_post_meta( $this->order->id, 'capture', strcmp( $this->charge_type, 'authorize' ) == 0 );
 
 			// Save data for cross-reference between Stripe Dashboard and WooCommerce
-			update_post_meta( $this->order->id, 'customer_id', $customer['id'] );
+			update_post_meta( $this->order->id, 'customer_id', $customer['customer_id'] );
 
 			return true;
 
@@ -437,7 +437,7 @@ class S4WC_Gateway extends WC_Payment_Gateway {
 			}
 		}
 		// Set up charging data to include customer information
-		$output['id'] = $customer->id;
+		$output['customer_id'] = $customer->id;
 
 		return $output;
 	}
