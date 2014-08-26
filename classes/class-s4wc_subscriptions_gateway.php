@@ -46,15 +46,27 @@ class S4WC_Subscriptions_Gateway extends S4WC_Gateway {
 			return;
 		}
 
-		// Get customer id
-		$customer = get_user_meta( $this->current_user_id, $s4wc->settings['stripe_db_location'], true );
-
-		// Update default card
-		$default_card = $customer['cards'][ $form_data['chosen_card'] ]['id'];
-		S4WC_DB::update_customer( $this->current_user_id, array( 'default_card' => $default_card ) );
-
 		// Set up the charge for Stripe's servers
 		try {
+
+			// Create a customer if we need to
+			if ( ! $this->stripe_customer_info ) {
+
+				$description = $this->current_user->user_login . ' (#' . $this->current_user_id . ' - ' . $this->current_user->user_email . ') ' . $form_data['card']['name']; // username (user_id - user_email) Full Name
+
+				// Add a customer
+				$customer = $this->get_customer( $description, $form_data );
+			} else {
+				// Retrieve existing customer
+				$customer = get_user_meta( $this->current_user_id, $s4wc->settings['stripe_db_location'], true );
+			}
+
+			// Update default card
+			if ( $form_data['chosen_card'] !== 'new' ) {
+				$default_card = $this->stripe_customer_info['cards'][ $form_data['chosen_card'] ]['id'];
+				S4WC_DB::update_customer( $this->current_user_id, array( 'default_card' => $default_card ) );
+			}
+
 			$initial_payment = WC_Subscriptions_Order::get_total_initial_payment( $this->order );
 
 			$charge = $this->process_subscription_payment( $initial_payment, $this->order );
@@ -105,6 +117,7 @@ class S4WC_Subscriptions_Gateway extends S4WC_Gateway {
 	 * @return array
 	 */
 	public function process_payment( $order_id ) {
+
 		if ( WC_Subscriptions_Order::order_contains_subscription( $order_id ) ) {
 			$this->order = new WC_Order( $order_id );
 
