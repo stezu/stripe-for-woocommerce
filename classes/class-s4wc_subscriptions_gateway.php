@@ -48,17 +48,9 @@ class S4WC_Subscriptions_Gateway extends S4WC_Gateway {
 		// Set up the charge for Stripe's servers
 		try {
 
-			// Create a customer if we need to
-			if ( ! $this->stripe_customer_info ) {
-
-				$description = $this->current_user->user_login . ' (#' . $this->current_user_id . ' - ' . $this->current_user->user_email . ') ' . $form_data['card']['name']; // username (user_id - user_email) Full Name
-
-				// Add a customer
-				$customer = $this->get_customer( $description, $form_data );
-			} else {
-				// Retrieve existing customer
-				$customer = get_user_meta( $this->current_user_id, $s4wc->settings['stripe_db_location'], true );
-			}
+			// Add a customer or retrieve an existing one
+			$description = $this->current_user->user_login . ' (#' . $this->current_user_id . ' - ' . $this->current_user->user_email . ') ' . $form_data['card']['name']; // username (user_id - user_email) Full Name
+			$customer = $this->get_customer( $description, $form_data );
 
 			// Update default card
 			if ( $form_data['chosen_card'] !== 'new' ) {
