@@ -20,7 +20,6 @@ class S4WC_API {
 	 * @return array
 	 */
 	public static function create_customer( $form_data, $customer_description ) {
-		global $s4wc;
 
 		$post_body = array(
 			'description'	=> apply_filters( 's4wc_customer_description', $customer_description, $customer_description, $form_data ),
