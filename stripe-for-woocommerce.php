@@ -121,15 +121,12 @@ function s4wc_order_status_completed( $order_id = null ) {
 		$order_id = $_POST['order_id'];
 	}
 
-	$data = get_post_meta( $order_id );
-	$total = $data['_order_total'][0] * 100;
+	if ( get_post_meta( $order_id, 'capture', true ) ) {
 
-	$params = array();
-	if( isset( $_POST['amount'] ) && $amount = $_POST['amount'] ) {
-		$params['amount'] = round( $amount );
-	}
-
-	if( get_post_meta( $order_id, 'capture', true ) ) {
+		$params = array();
+		if ( isset( $_POST['amount'] )  ) {
+			$params['amount'] = round( $_POST['amount'] );
+		}
 
 		$transaction_id = get_post_meta( $order_id, 'transaction_id', true );
 
