@@ -147,11 +147,7 @@ jQuery( function ( $ ) {
 
         // Create the token if we don't have any errors
         else {
-            var clearErrors = {
-                'errors': []
-            };
             // Clear out notices
-            $.post( s4wc_info.ajaxurl, clearErrors );
             $form.find( '.woocommerce-error' ).remove();
 
             return true;

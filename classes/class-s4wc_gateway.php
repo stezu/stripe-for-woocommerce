@@ -33,7 +33,7 @@ class S4WC_Gateway extends WC_Payment_Gateway {
 		$this->method_title				= 'Stripe for WooCommerce';
 		$this->has_fields				= true;
 		$this->api_endpoint				= 'https://api.stripe.com/';
-		$this->supports 				= array(
+		$this->supports					= array(
 			'products',
 			'subscriptions',
 			'subscription_cancellation',
@@ -274,16 +274,15 @@ class S4WC_Gateway extends WC_Payment_Gateway {
 
 		// Add data that s4wc.js needs
 		$s4wc_info = array(
-			'ajaxurl'			=> admin_url( 'admin-ajax.php' ),
 			'publishableKey'	=> $s4wc->settings['publishable_key'],
 			'hasCard'			=> ( $this->stripe_customer_info && count( $this->stripe_customer_info['cards'] ) ) ? true : false
 		);
 
 		// If we're on the pay page, Stripe needs the address
 		if ( is_checkout_pay_page() ) {
-			$order_key = urldecode( $_GET['key'] );
-			$order_id  = absint( get_query_var( 'order-pay' ) );
-			$order     = new WC_Order( $order_id );
+			$order_key	= urldecode( $_GET['key'] );
+			$order_id 	= absint( get_query_var( 'order-pay' ) );
+			$order		= new WC_Order( $order_id );
 
 			if ( $order->id == $order_id && $order->order_key == $order_key ) {
 				$s4wc_info['billing_first_name']	= $order->billing_first_name;
