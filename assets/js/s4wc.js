@@ -28,7 +28,7 @@ jQuery( function ( $ ) {
     });
 
     // Both Forms
-    $form.on( 'keyup change', '#card-number, #card-expiry, #card-cvc, input[name="s4wc_card"]', function () {
+    $form.on( 'keyup change', '#card-number, #card-expiry, #card-cvc, input[name="s4wc_card"], input[name="payment_method"]', function () {
         $( '.woocommerce_error, .woocommerce-error, .woocommerce-message, .woocommerce_message, .stripe_token, .form_errors' ).remove();
     });
 

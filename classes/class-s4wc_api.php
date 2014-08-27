@@ -86,9 +86,9 @@ class S4WC_API {
 
 		$user_meta = get_user_meta( $user_id, $s4wc->settings['stripe_db_location'], true );
 
-		S4WC_DB::delete_customer( get_current_user_id(), array( 'card' => $user_meta['cards'][$position]['id'] ) );
+		S4WC_DB::delete_customer( get_current_user_id(), array( 'card' => $user_meta['cards'][ $position ]['id'] ) );
 
-		return S4WC_API::delete_data( 'customers/' . $user_meta['customer_id'] . '/cards/' . $user_meta['cards'][$position]['id'] );
+		return S4WC_API::delete_data( 'customers/' . $user_meta['customer_id'] . '/cards/' . $user_meta['cards'][ $position ]['id'] );
 	}
 
 	/**
