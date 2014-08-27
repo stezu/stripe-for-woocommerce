@@ -76,14 +76,14 @@ class S4WC_Gateway extends WC_Payment_Gateway {
 	 * @return bool
 	 */
 	public function perform_checks() {
-		global $woocommerce, $s4wc;
+		global $s4wc;
 
 		if ( $this->enabled == 'no') {
 			return false;
 		}
 
 		// We're using the credit card field bundles with WC 2.1.0, and this entire plugin won't work without it
-		if ( $woocommerce->version < '2.1.0' ) {
+		if ( WC()->version < '2.1.0' ) {
 			echo '<div class="error"><p>' . __( 'Stripe for WooCommerce uses some advanced features introduced in WooCommerce 2.1.0. Please update WooCommerce to continue using Stripe for WooCommerce.', 'stripe-for-woocommerce' ) . '</p></div>';
 			return false;
 		}
@@ -109,14 +109,14 @@ class S4WC_Gateway extends WC_Payment_Gateway {
 	 * @return bool
 	 */
 	public function is_available() {
-		global $woocommerce, $s4wc;
+		global $s4wc;
 
 		if ( $this->enabled == 'no' ) {
 			return false;
 		}
 
 		// We're using the credit card field bundles with WC 2.1.0, and this entire plugin won't work without it
-		if ( $woocommerce->version < '2.1.0' ) {
+		if ( WC()->version < '2.1.0' ) {
 			return false;
 		}
 
@@ -317,7 +317,6 @@ class S4WC_Gateway extends WC_Payment_Gateway {
 	 * @return boolean
 	 */
 	protected function send_to_stripe() {
-		global $woocommerce;
 
 		// Get the credit card details submitted by the form
 		$form_data = $this->get_form_data();
@@ -449,7 +448,6 @@ class S4WC_Gateway extends WC_Payment_Gateway {
 	 * @return array
 	 */
 	public function process_payment( $order_id ) {
-		global $woocommerce;
 
 		$this->order = new WC_Order( $order_id );
 
@@ -491,14 +489,13 @@ class S4WC_Gateway extends WC_Payment_Gateway {
 	 * @return void
 	 */
 	protected function order_complete() {
-		global $woocommerce;
 
 		if ( $this->order->status == 'completed' ) {
 			return;
 		}
 
 		$this->order->payment_complete();
-		$woocommerce->cart->empty_cart();
+		WC()->cart->empty_cart();
 
 		$this->order->add_order_note(
 			sprintf(

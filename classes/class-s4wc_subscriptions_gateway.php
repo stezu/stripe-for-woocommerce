@@ -36,7 +36,6 @@ class S4WC_Subscriptions_Gateway extends S4WC_Gateway {
 	 * @return boolean
 	 */
 	protected function subscription_to_stripe() {
-		global $woocommerce, $s4wc;
 
 		// Get the credit card details submitted by the form
 		$form_data = $this->get_form_data();
