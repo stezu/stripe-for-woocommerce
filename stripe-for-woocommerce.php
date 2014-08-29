@@ -181,7 +181,7 @@ function s4wc_validate_form() {
 		wc_add_notice( s4wc_get_form_error_message( $field, $form['card-cvc'] ), 'error' );
 	}
 }
-add_action( 'woocommerce_after_checkout_valdation', 's4wc_validate_form' );
+add_action( 'woocommerce_after_checkout_validation', 's4wc_validate_form' );
 
 /**
  * Wrapper of wc_get_template to relate directly to woocommerce-stripe
