@@ -26,6 +26,9 @@ class S4WC {
 		// Include Database Manipulation Methods
 		include_once( 'classes/class-s4wc_db.php' );
 
+		// Include Customer Profile Methods
+		include_once( 'classes/class-s4wc_customer.php' );
+
 		// Transition to new namespace
 		if ( ! get_option( 'woocommerce_s4wc_settings' ) ) {
 
@@ -63,8 +66,7 @@ class S4WC {
 		$this->settings['stripe_db_location']		= $this->settings['testmode'] == 'yes' ? '_stripe_test_customer_info' : '_stripe_live_customer_info';
 
 		// Hooks
-		add_filter( 'woocommerce_payment_gateways', array( $this, 'woocommerce_stripe_gateway' ) );
-		add_action( 'woocommerce_after_my_account', array( $this, 'account_saved_cards' ) );
+		add_filter( 'woocommerce_payment_gateways', array( $this, 'add_stripe_gateway' ) );
 
 		// Localization
 		load_plugin_textdomain( 'stripe-for-woocommerce', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
@@ -77,7 +79,7 @@ class S4WC {
 	 * @param array $methods
 	 * @return array
 	 */
-	public function woocommerce_stripe_gateway( $methods ) {
+	public function add_stripe_gateway( $methods ) {
 		if ( ! class_exists( 'WC_Payment_Gateway' ) ) {
 			return;
 		}
@@ -94,19 +96,6 @@ class S4WC {
 		}
 
 		return $methods;
-	}
-
-	/**
-	 * Gives front-end view of saved cards in the account page
-	 *
-	 * @access public
-	 * @return void
-	 */
-	public function account_saved_cards() {
-
-		if ( $this->settings['saved_cards'] === 'yes' ) {
-			s4wc_get_template( 'saved-cards.php' );
-		}
 	}
 }
 
