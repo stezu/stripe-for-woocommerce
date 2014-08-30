@@ -60,7 +60,7 @@ class S4WC_Subscriptions_Gateway extends S4WC_Gateway {
 
 			$initial_payment = WC_Subscriptions_Order::get_total_initial_payment( $this->order );
 
-			$charge = $this->process_subscription_payment( $initial_payment, $this->order );
+			$charge = $this->process_subscription_payment( $this->order, $initial_payment );
 
 			$this->transaction_id = $charge->id;
 
@@ -91,7 +91,7 @@ class S4WC_Subscriptions_Gateway extends S4WC_Gateway {
 	 * @return void
 	 */
 	public function scheduled_subscription_payment( $amount_to_charge, $order, $product_id ) {
-		$charge = $this->process_subscription_payment( $amount_to_charge, $order );
+		$charge = $this->process_subscription_payment( $order, $amount_to_charge );
 
 		if ( $charge ) {
 			WC_Subscriptions_Manager::process_subscription_payments_on_order( $order );
@@ -140,11 +140,11 @@ class S4WC_Subscriptions_Gateway extends S4WC_Gateway {
 	 * Process the subscription payment and return the result
 	 *
 	 * @access public
-	 * @param int $amount
 	 * @param WC_Order $order
+	 * @param int $amount
 	 * @return array
 	 */
-	public function process_subscription_payment( $amount = 0, $order ) {
+	public function process_subscription_payment( $order, $amount = 0 ) {
 		global $s4wc;
 
 		// Can't send to stripe without a value, assume it's good to go.
