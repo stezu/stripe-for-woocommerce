@@ -104,7 +104,6 @@ $GLOBALS['s4wc'] = new S4WC();
 /**
  * Process the captured payment when changing order status to completed
  *
- * @access public
  * @param int $order_id
  * @return bool
  */

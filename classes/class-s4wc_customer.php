@@ -28,11 +28,50 @@ class S4WC_Customer {
 	 * @return void
 	 */
 	public function admin_notices() {
-		global $pagenow;
+		global $pagenow, $profileuser;
 
 		// If we're on the profile page
 		if ( $pagenow === 'profile.php' ) {
-			var_dump( 'helloworld' );
+
+			if ( ! empty( $_GET['action'] ) && ! empty( $_REQUEST['_wpnonce'] ) && wp_verify_nonce( $_REQUEST['_wpnonce'], 's4wc_action' ) ) {
+
+				// Delete test data
+				if ( $_GET['action'] === 'delete_test_data' ) {
+
+					// Delete test data if the action has been confirmed
+					if ( ! empty( $_GET['confirm'] ) && $_GET['confirm'] === 'yes' ) {
+
+						$result = delete_user_meta( $profileuser->ID, '_stripe_test_customer_info' );
+
+						if ( $result ) {
+							?>
+							<div class="updated">
+								<p><?php _e( 'Stripe Customer Data successfully deleted.', 'stripe-for-woocommerce' ); ?></p>
+							</div>
+							<?php
+						} else {
+							?>
+							<div class="error">
+								<p><?php _e( 'Unable to delete Stripe Customer Data', 'stripe-for-woocommerce' ); ?></p>
+							</div>
+							<?php
+						}
+					}
+
+					// Ask for confimation before we actually delete data
+					else {
+						?>
+						<div class="error">
+							<p><?php _e( 'Are you sure you want to delete all test data? This action cannot be undone.', 'stripe-for-woocommerce' ); ?></p>
+							<p>
+								<a href="<?php echo wp_nonce_url( admin_url( 'profile.php?action=delete_test_data&confirm=yes' ), 's4wc_action' ); ?>" class="button"><?php _e( 'Delete', 'stripe-for-woocommerce' ); ?></a>
+								<a href="<?php echo admin_url( 'profile.php' ); ?>" class="button"><?php _e( 'Cancel', 'stripe-for-woocommerce' ); ?></a>
+							</p>
+						</div>
+						<?php
+					}
+				}
+			}
 		}
 	}
 
