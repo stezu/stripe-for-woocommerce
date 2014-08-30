@@ -73,7 +73,7 @@ jQuery( function ( $ ) {
 
         // Add in lost data
         if ( savedFieldValues.number ) {
-            $ccNumber.val( savedFieldValues.number.val ).attr( 'class', savedFieldValues.number['classes'] );
+            $ccNumber.val( savedFieldValues.number.val ).attr( 'class', savedFieldValues.number.classes );
         }
         if ( savedFieldValues.expiry ) {
             $ccExpiry.val( savedFieldValues.expiry.val );
@@ -102,7 +102,7 @@ jQuery( function ( $ ) {
 
             if ( ! $( 'input.stripe_token' ).length ) {
                 var cardExpiry = $( '.s4wc-card-expiry' ).payment( 'cardExpiryVal' ),
-                    name = ( s4wc_info.billing_first_name || s4wc_info.billing_last_name ) ? s4wc_info.billing_first_name + ' ' + s4wc_info.billing_last_name : $( '#billing_first_name' ).val() + ' ' + $( '#billing_last_name' ).val();
+                    name = ( $( '#billing_first_name' ).val() || $( '#billing_last_name' ).val() ) ? $( '#billing_first_name' ).val() + ' ' + $( '#billing_last_name' ).val() : s4wc_info.billing_first_name + ' ' + s4wc_info.billing_last_name;
 
                 var stripeData = {
                     number          : $( '.s4wc-card-number' ).val() || '',
