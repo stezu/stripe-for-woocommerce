@@ -46,13 +46,13 @@ class S4WC_Customer {
 						if ( $result ) {
 							?>
 							<div class="updated">
-								<p><?php _e( 'Stripe Customer Data successfully deleted.', 'stripe-for-woocommerce' ); ?></p>
+								<p><?php _e( 'Stripe customer data successfully deleted.', 'stripe-for-woocommerce' ); ?></p>
 							</div>
 							<?php
 						} else {
 							?>
 							<div class="error">
-								<p><?php _e( 'Unable to delete Stripe Customer Data', 'stripe-for-woocommerce' ); ?></p>
+								<p><?php _e( 'Unable to delete Stripe customer data', 'stripe-for-woocommerce' ); ?></p>
 							</div>
 							<?php
 						}
@@ -62,9 +62,43 @@ class S4WC_Customer {
 					else {
 						?>
 						<div class="error">
-							<p><?php _e( 'Are you sure you want to delete all test data? This action cannot be undone.', 'stripe-for-woocommerce' ); ?></p>
+							<p><?php _e( 'Are you sure you want to delete customer test data? This action cannot be undone.', 'stripe-for-woocommerce' ); ?></p>
 							<p>
 								<a href="<?php echo wp_nonce_url( admin_url( 'profile.php?action=delete_test_data&confirm=yes' ), 's4wc_action' ); ?>" class="button"><?php _e( 'Delete', 'stripe-for-woocommerce' ); ?></a>
+								<a href="<?php echo admin_url( 'profile.php' ); ?>" class="button"><?php _e( 'Cancel', 'stripe-for-woocommerce' ); ?></a>
+							</p>
+						</div>
+						<?php
+					}
+				} elseif ( $_GET['action'] === 'delete_live_data' ) {
+
+					// Delete live data if the action has been confirmed
+					if ( ! empty( $_GET['confirm'] ) && $_GET['confirm'] === 'yes' ) {
+
+						$result = delete_user_meta( $profileuser->ID, '_stripe_live_customer_info' );
+
+						if ( $result ) {
+							?>
+							<div class="updated">
+								<p><?php _e( 'Stripe customer data successfully deleted.', 'stripe-for-woocommerce' ); ?></p>
+							</div>
+							<?php
+						} else {
+							?>
+							<div class="error">
+								<p><?php _e( 'Unable to delete Stripe customer data', 'stripe-for-woocommerce' ); ?></p>
+							</div>
+							<?php
+						}
+					}
+
+					// Ask for confimation before we actually delete data
+					else {
+						?>
+						<div class="error">
+							<p><?php _e( 'Are you sure you want to delete customer live data? This action cannot be undone.', 'stripe-for-woocommerce' ); ?></p>
+							<p>
+								<a href="<?php echo wp_nonce_url( admin_url( 'profile.php?action=delete_live_data&confirm=yes' ), 's4wc_action' ); ?>" class="button"><?php _e( 'Delete', 'stripe-for-woocommerce' ); ?></a>
 								<a href="<?php echo admin_url( 'profile.php' ); ?>" class="button"><?php _e( 'Cancel', 'stripe-for-woocommerce' ); ?></a>
 							</p>
 						</div>
@@ -74,7 +108,6 @@ class S4WC_Customer {
 			}
 		}
 	}
-
 
 	/**
 	 * Add to the customer profile
