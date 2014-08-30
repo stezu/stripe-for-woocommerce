@@ -128,7 +128,7 @@ class S4WC_Subscriptions_Gateway extends S4WC_Gateway {
 
 				// Add a generic error message if we don't currently have any others
 				if ( wc_notice_count( 'error' ) == 0 ) {
-					wc_add_notice( __( 'Transaction Error: Could not complete your payment.', 'stripe-for-woocommerce' ), 'error' );
+					wc_add_notice( __( 'Transaction Error: Could not complete your subscription payment.', 'stripe-for-woocommerce' ), 'error' );
 				}
 			}
 		} else {
