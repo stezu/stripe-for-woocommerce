@@ -64,41 +64,8 @@ class S4WC_Gateway extends WC_Payment_Gateway {
 		// Hooks
 		add_action( 'woocommerce_update_options_payment_gateways', array( $this, 'process_admin_options' ) );
 		add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array( $this, 'process_admin_options' ) );
-		add_action( 'admin_notices', array( $this, 'perform_checks' ) );
+		add_action( 'admin_notices', array( $this, 'admin_notices' ) );
 		add_action( 'wp_enqueue_scripts', array( $this, 'load_scripts' ) );
-	}
-
-	/**
-	 * Check if this gateway is enabled and all dependencies are fine.
-	 * Warn the user if any of the requirements fail.
-	 *
-	 * @access public
-	 * @return bool
-	 */
-	public function perform_checks() {
-		global $s4wc;
-
-		if ( $this->enabled == 'no') {
-			return false;
-		}
-
-		// We're using the credit card field bundles with WC 2.1.0, and this entire plugin won't work without it
-		if ( WC()->version < '2.1.0' ) {
-			echo '<div class="error"><p>' . __( 'Stripe for WooCommerce uses some advanced features introduced in WooCommerce 2.1.0. Please update WooCommerce to continue using Stripe for WooCommerce.', 'stripe-for-woocommerce' ) . '</p></div>';
-			return false;
-		}
-
-		// Check for API Keys
-		if ( ! $s4wc->settings['publishable_key'] && ! $s4wc->settings['secret_key'] ) {
-			echo '<div class="error"><p>' . __( 'Stripe needs API Keys to work, please find your secret and publishable keys in the <a href="https://manage.stripe.com/account/apikeys" target="_blank">Stripe accounts section</a>.', 'stripe-for-woocommerce' ) . '</p></div>';
-			return false;
-		}
-
-		// Force SSL on production
-		if ( $this->testmode == 'no' && get_option( 'woocommerce_force_ssl_checkout' ) == 'no' ) {
-			echo '<div class="error"><p>' . __( 'Stripe needs SSL in order to be secure. Read mode about forcing SSL on checkout in <a href="http://docs.woothemes.com/document/ssl-and-https/" target="_blank">the WooCommerce docs</a>.', 'stripe-for-woocommerce' ) . '</p></div>';
-			return false;
-		}
 	}
 
 	/**
@@ -115,11 +82,6 @@ class S4WC_Gateway extends WC_Payment_Gateway {
 			return false;
 		}
 
-		// We're using the credit card field bundles with WC 2.1.0, and this entire plugin won't work without it
-		if ( WC()->version < '2.1.0' ) {
-			return false;
-		}
-
 		// Stripe won't work without keys
 		if ( ! $s4wc->settings['publishable_key'] && ! $s4wc->settings['secret_key'] ) {
 			return false;
@@ -131,6 +93,77 @@ class S4WC_Gateway extends WC_Payment_Gateway {
 		}
 
 		return true;
+	}
+
+	/**
+	 * Send notices to users if requirements fail, or for any other reason
+	 *
+	 * @access public
+	 * @return bool
+	 */
+	public function admin_notices() {
+		global $s4wc, $pagenow, $wpdb;
+
+		if ( $this->enabled == 'no') {
+			return false;
+		}
+
+		// Check for API Keys
+		if ( ! $s4wc->settings['publishable_key'] && ! $s4wc->settings['secret_key'] ) {
+			echo '<div class="error"><p>' . __( 'Stripe needs API Keys to work, please find your secret and publishable keys in the <a href="https://manage.stripe.com/account/apikeys" target="_blank">Stripe accounts section</a>.', 'stripe-for-woocommerce' ) . '</p></div>';
+			return false;
+		}
+
+		// Force SSL on production
+		if ( $this->testmode == 'no' && get_option( 'woocommerce_force_ssl_checkout' ) == 'no' ) {
+			echo '<div class="error"><p>' . __( 'Stripe needs SSL in order to be secure. Read mode about forcing SSL on checkout in <a href="http://docs.woothemes.com/document/ssl-and-https/" target="_blank">the WooCommerce docs</a>.', 'stripe-for-woocommerce' ) . '</p></div>';
+			return false;
+		}
+
+		// Add notices for admin page
+		if ( $pagenow === 'admin.php' ) {
+			$options_base = 'admin.php?page=wc-settings&tab=checkout&section=' . strtolower( get_class( $this ) );
+
+			if ( ! empty( $_GET['action'] ) && ! empty( $_REQUEST['_wpnonce'] ) && wp_verify_nonce( $_REQUEST['_wpnonce'], 's4wc_action' ) ) {
+
+				// Delete all test data
+				if ( $_GET['action'] === 'delete_test_data' ) {
+
+					// Delete test data if the action has been confirmed
+					if ( ! empty( $_GET['confirm'] ) && $_GET['confirm'] === 'yes' ) {
+
+						$result = $wpdb->delete( $wpdb->usermeta, array( 'meta_key' => '_stripe_test_customer_info' ) );
+
+						if ( $result !== false ) :
+							?>
+							<div class="updated">
+								<p><?php _e( 'Stripe Test Data successfully deleted.', 'stripe-for-woocommerce' ); ?></p>
+							</div>
+							<?php
+						else :
+							?>
+							<div class="error">
+								<p><?php _e( 'Unable to delete Stripe Test Data', 'stripe-for-woocommerce' ); ?></p>
+							</div>
+							<?php
+						endif;
+					}
+
+					// Ask for confimation before we actually delete data
+					else {
+						?>
+						<div class="error">
+							<p><?php _e( 'Are you sure you want to delete all test data? This action cannot be undone.', 'stripe-for-woocommerce' ); ?></p>
+							<p>
+								<a href="<?php echo wp_nonce_url( admin_url( $options_base . '&action=delete_test_data&confirm=yes' ), 's4wc_action' ); ?>" class="button"><?php _e( 'Delete', 'stripe-for-woocommerce' ); ?></a>
+								<a href="<?php echo admin_url( $options_base ); ?>" class="button"><?php _e( 'Cancel', 'stripe-for-woocommerce' ); ?></a>
+							</p>
+						</div>
+						<?php
+					}
+				}
+			}
+		}
 	}
 
 	/**
@@ -220,50 +253,8 @@ class S4WC_Gateway extends WC_Payment_Gateway {
 	 * @return void
 	 */
 	public function admin_options() {
-		global $wpdb;
 
 		$options_base = 'admin.php?page=wc-settings&tab=checkout&section=' . strtolower( get_class( $this ) );
-
-		// If the user hit a button at the bottom of the page that caused an action
-		if ( ! empty( $_GET['action'] ) && ! empty( $_REQUEST['_wpnonce'] ) && wp_verify_nonce( $_REQUEST['_wpnonce'], 's4wc_action' ) ) {
-
-			// Delete all test data
-			if ( $_GET['action'] === 'delete_test_data' ) {
-
-				// Delete test data if the action has been confirmed
-				if ( ! empty( $_GET['confirm'] ) && $_GET['confirm'] === 'yes' ) {
-
-					$result = $wpdb->delete( $wpdb->usermeta, array( 'meta_key' => '_stripe_test_customer_info' ) );
-
-					if ( $result !== false ) :
-					?>
-					<div class="updated">
-						<p><?php _e( 'Stripe Test Data successfully deleted.', 'stripe-for-woocommerce' ); ?></p>
-					</div>
-					<?php
-					else :
-					?>
-					<div class="error">
-						<p><?php _e( 'Unable to delete Stripe Test Data', 'stripe-for-woocommerce' ); ?></p>
-					</div>
-					<?php
-					endif;
-				}
-
-				// Ask for confimation before we actually delete data
-				else {
-					?>
-					<div class="error">
-						<p><?php _e( 'Are you sure you want to delete all test data? This action cannot be undone.', 'stripe-for-woocommerce' ); ?></p>
-						<p>
-							<a href="<?php echo wp_nonce_url( admin_url( $options_base . '&action=delete_test_data&confirm=yes' ), 's4wc_action' ); ?>" class="button"><?php _e( 'Delete', 'stripe-for-woocommerce' ); ?></a>
-							<a href="<?php echo admin_url( $options_base ); ?>" class="button"><?php _e( 'Cancel', 'stripe-for-woocommerce' ); ?></a>
-						</p>
-					</div>
-					<?php
-				}
-			}
-		}
 		?>
 		<h3>Stripe Payment</h3>
 		<p><?php _e( 'Allows Credit Card payments through <a href="https://stripe.com/">Stripe</a>. You can find your API Keys in your <a href="https://dashboard.stripe.com/account/apikeys">Stripe Account Settings</a>.', 'stripe-for-woocommerce' ); ?></p>
