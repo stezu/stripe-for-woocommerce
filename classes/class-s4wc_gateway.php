@@ -375,6 +375,10 @@ class S4WC_Gateway extends WC_Payment_Gateway {
 			return true;
 
 		} catch ( Exception $e ) {
+
+			// Stop page reload if we have errors to show
+			unset( WC()->session->reload_checkout );
+
 			$this->transaction_error_message = $e->getMessage();
 			wc_add_notice( __( 'Error:', 'stripe-for-woocommerce' ) . ' ' . $e->getMessage(), 'error' );
 
