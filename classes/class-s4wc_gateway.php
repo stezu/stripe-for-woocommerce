@@ -222,17 +222,46 @@ class S4WC_Gateway extends WC_Payment_Gateway {
 	public function admin_options() {
 		global $wpdb;
 
+		$options_base = 'admin.php?page=wc-settings&tab=checkout&section=' . strtolower( get_class( $this ) );
+
 		// If the user hit a button at the bottom of the page that caused an action
 		if ( ! empty( $_GET['action'] ) && ! empty( $_REQUEST['_wpnonce'] ) && wp_verify_nonce( $_REQUEST['_wpnonce'], 's4wc_action' ) ) {
 
-			// Delete test data
-			if ( $_GET['action'] = 'delete_test_data' ) {
-				$wpdb->query( "
-					DELETE FROM {$wpdb->usermeta}
-					WHERE `meta_key` = '_stripe_test_customer_info'
-				" );
+			// Delete all test data
+			if ( $_GET['action'] === 'delete_test_data' ) {
 
-				echo '<div class="updated"><p>' . __( 'Stripe Test Data successfully deleted.', 'stripe-for-woocommerce' ) . '</p></div>';
+				// Delete test data if the action has been confirmed
+				if ( ! empty( $_GET['confirm'] ) && $_GET['confirm'] === 'yes' ) {
+
+					$result = $wpdb->delete( $wpdb->usermeta, array( 'meta_key' => '_stripe_test_customer_info' ) );
+
+					if ( $result !== false ) :
+					?>
+					<div class="updated">
+						<p><?php _e( 'Stripe Test Data successfully deleted.', 'stripe-for-woocommerce' ); ?></p>
+					</div>
+					<?php
+					else :
+					?>
+					<div class="error">
+						<p><?php _e( 'Unable to delete Stripe Test Data', 'stripe-for-woocommerce' ); ?></p>
+					</div>
+					<?php
+					endif;
+				}
+
+				// Ask for confimation before we actually delete data
+				else {
+					?>
+					<div class="error">
+						<p><?php _e( 'Are you sure you want to delete all test data? This action cannot be undone.', 'stripe-for-woocommerce' ); ?></p>
+						<p>
+							<a href="<?php echo wp_nonce_url( admin_url( $options_base . '&action=delete_test_data&confirm=yes' ), 's4wc_action' ); ?>" class="button"><?php _e( 'Delete', 'stripe-for-woocommerce' ); ?></a>
+							<a href="<?php echo admin_url( $options_base ); ?>" class="button"><?php _e( 'Cancel', 'stripe-for-woocommerce' ); ?></a>
+						</p>
+					</div>
+					<?php
+				}
 			}
 		}
 		?>
@@ -244,7 +273,7 @@ class S4WC_Gateway extends WC_Payment_Gateway {
 				<th><?php _e( 'Delete Stripe Test Data', 'stripe-for-woocommerce' ); ?></th>
 				<td>
 					<p>
-						<a href="<?php echo wp_nonce_url( admin_url('admin.php?page=wc-settings&tab=checkout&section=' . strtolower( get_class( $this ) ) . '&action=delete_test_data' ), 's4wc_action' ); ?>" class="button"><?php _e( 'Delete all Test Data', 'stripe-for-woocommerce' ); ?></a>
+						<a href="<?php echo wp_nonce_url( admin_url( $options_base . '&action=delete_test_data' ), 's4wc_action' ); ?>" class="button"><?php _e( 'Delete all Test Data', 'stripe-for-woocommerce' ); ?></a>
 						<span class="description"><?php _e( '<strong class="red">Warning:</strong> This will delete all Stripe test customer data, make sure to back up your database.', 'stripe-for-woocommerce' ); ?></span>
 					</p>
 				</td>
