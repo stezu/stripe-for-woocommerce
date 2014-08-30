@@ -203,6 +203,12 @@ class S4WC_Gateway extends WC_Payment_Gateway {
 				'title'			=> __( 'Stripe API Live Publishable key', 'stripe-for-woocommerce' ),
 				'default'		=> '',
 			),
+			'saved_cards' => array(
+				'type'			=> 'checkbox',
+				'title'			=> __( 'Saved Cards', 'stripe-for-woocommerce' ),
+				'description'	=> __( 'Allow customers to use saved cards for future purchases.', 'stripe-for-woocommerce' ),
+				'default'		=> 'yes',
+			),
 		);
 	}
 
@@ -275,6 +281,7 @@ class S4WC_Gateway extends WC_Payment_Gateway {
 		// Add data that s4wc.js needs
 		$s4wc_info = array(
 			'publishableKey'	=> $s4wc->settings['publishable_key'],
+			'savedCardsEnabled'	=> $s4wc->settings['saved_cards'] === 'yes' ? true : false,
 			'hasCard'			=> ( $this->stripe_customer_info && count( $this->stripe_customer_info['cards'] ) ) ? true : false
 		);
 
@@ -317,6 +324,7 @@ class S4WC_Gateway extends WC_Payment_Gateway {
 	 * @return boolean
 	 */
 	protected function send_to_stripe() {
+		global $s4wc;
 
 		// Get the credit card details submitted by the form
 		$form_data = $this->get_form_data();
@@ -337,7 +345,7 @@ class S4WC_Gateway extends WC_Payment_Gateway {
 			);
 
 			// Make sure we only create customers if a user is logged in
-			if ( is_user_logged_in() ) {
+			if ( is_user_logged_in() && $s4wc->settings['saved_cards'] === 'yes' ) {
 				$stripe_charge_data['description'] = $this->current_user->user_login . ' (#' . $this->current_user_id . ' - ' . $this->current_user->user_email . ') ' . $form_data['card']['name']; // username (user_id - user_email) Full Name
 
 				// Add a customer or retrieve an existing one
@@ -345,17 +353,18 @@ class S4WC_Gateway extends WC_Payment_Gateway {
 
 				$stripe_charge_data['card'] = $customer['card'];
 				$stripe_charge_data['customer'] = $customer['customer_id'];
+
+				// Update default card
+				if ( $form_data['chosen_card'] !== 'new' ) {
+					$default_card = $this->stripe_customer_info['cards'][ $form_data['chosen_card'] ]['id'];
+					S4WC_DB::update_customer( $this->current_user_id, array( 'default_card' => $default_card ) );
+				}
+
 			} else {
 				$stripe_charge_data['description'] = __( 'Guest', 'stripe-for-woocommerce' ) . ' (' . $this->order->billing_email . ') ' . $form_data['card']['name']; // Guest (user_email) Full Name
 
 				// Set up one time charge
 				$stripe_charge_data['card'] = $form_data['token'];
-			}
-
-			// Update default card
-			if ( $form_data['chosen_card'] !== 'new' ) {
-				$default_card = $this->stripe_customer_info['cards'][ $form_data['chosen_card'] ]['id'];
-				S4WC_DB::update_customer( $this->current_user_id, array( 'default_card' => $default_card ) );
 			}
 
 			$stripe_charge_data['description'] = apply_filters( 's4wc_charge_description', $stripe_charge_data['description'], $stripe_charge_data['description'], $form_data );

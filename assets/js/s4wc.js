@@ -36,7 +36,7 @@ jQuery( function ( $ ) {
         $ccForm = $( '#s4wc-creditcard-form' );
 
         // Hide the CC form if the user has a saved card.
-        if ( s4wc_info.hasCard ) {
+        if ( s4wc_info.hasCard && s4wc_info.savedCardsEnabled ) {
             $ccForm.hide();
         }
 

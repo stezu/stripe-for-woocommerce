@@ -52,6 +52,7 @@ class S4WC {
 		$this->settings['test_secret_key']			= isset( $this->settings['test_secret_key'] ) ? $this->settings['test_secret_key'] : '';
 		$this->settings['live_publishable_key']		= isset( $this->settings['live_publishable_key'] ) ? $this->settings['live_publishable_key'] : '';
 		$this->settings['live_secret_key']			= isset( $this->settings['live_secret_key'] ) ? $this->settings['live_secret_key'] : '';
+		$this->settings['saved_cards']				= isset( $this->settings['saved_cards'] ) ? $this->settings['saved_cards'] : 'yes';
 
 		// API Info
 		$this->settings['api_endpoint']				= 'https://api.stripe.com/';
@@ -102,7 +103,10 @@ class S4WC {
 	 * @return void
 	 */
 	public function account_saved_cards() {
-		s4wc_get_template( 'saved-cards.php' );
+
+		if ( $this->settings['saved_cards'] === 'yes' ) {
+			s4wc_get_template( 'saved-cards.php' );
+		}
 	}
 }
 
