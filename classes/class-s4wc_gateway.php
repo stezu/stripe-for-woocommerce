@@ -6,7 +6,7 @@
  *
  * @class		S4WC_Gateway
  * @extends		WC_Payment_Gateway
- * @version		1.23
+ * @version		1.24
  * @package		WooCommerce/Classes/Payment
  * @author		Stephen Zuniga
  */
@@ -267,16 +267,16 @@ class S4WC_Gateway extends WC_Payment_Gateway {
 		global $s4wc;
 
 		// Main stripe js
-		wp_enqueue_script( 'stripe', 'https://js.stripe.com/v2/', '', '1.23', true );
+		wp_enqueue_script( 'stripe', 'https://js.stripe.com/v2/', '', '1.24', true );
 
 		// jQuery Payment
 		wp_enqueue_script( 'paymentjs', plugins_url( 'assets/js/jquery.payment.min.js', dirname( __FILE__ ) ), array( 'jquery' ), '1.4.0', true );
 
 		// Plugin js
-		wp_enqueue_script( 's4wc_js', plugins_url( 'assets/js/s4wc.min.js', dirname( __FILE__ ) ), array( 'stripe', 'paymentjs' ), '1.23', true );
+		wp_enqueue_script( 's4wc_js', plugins_url( 'assets/js/s4wc.min.js', dirname( __FILE__ ) ), array( 'stripe', 'paymentjs' ), '1.24', true );
 
 		// Plugin css
-		wp_enqueue_style( 's4wc_css', plugins_url( 'assets/css/s4wc.css', dirname( __FILE__ ) ), false, '1.23');
+		wp_enqueue_style( 's4wc_css', plugins_url( 'assets/css/s4wc.css', dirname( __FILE__ ) ), false, '1.24');
 
 		// Add data that s4wc.js needs
 		$s4wc_info = array(

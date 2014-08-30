@@ -3,7 +3,7 @@
  * Functions for interfacing with the database
  *
  * @class 		S4WC_DB
- * @version		1.23
+ * @version		1.24
  * @author 		Stephen Zuniga
  */
 

@@ -55,6 +55,13 @@ The plugin should automatically update with new features, but you could always d
 
 == Changelog ==
 
+= 1.24 =
+* Tweak: Saved cards are now optional
+* Tweak: CC Data is saved when changing address
+* Fix: Invalid card with account creation
+* Fix: Switching payment methods gave validation errors
+* Fix: Removed double error messages, it was obnoxious
+
 = 1.23 =
 * Feature: French translation courtesy of Malo Jaffre
 * Fix: Checkout with account creation was failing

@@ -1,5 +1,5 @@
 # Stripe for WooCommerce
-Plugin version: 1.23
+Plugin version: 1.24
 
 Requires at least:
 - WordPress 3.8.0
