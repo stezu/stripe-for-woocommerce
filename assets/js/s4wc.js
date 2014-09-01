@@ -19,7 +19,7 @@ jQuery( function ( $ ) {
     });
 
     // Checkout Form
-    $( 'form.checkout' ).on( 'checkout_place_order_s4wc', function () {
+    $( 'form.checkout' ).on( 'checkout_place_order', function () {
         return stripeFormHandler();
     });
 
