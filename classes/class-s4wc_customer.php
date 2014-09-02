@@ -2,9 +2,9 @@
 /**
  * Customer related modifications and templates
  *
- * @class 		S4WC_Customer
+ * @class		S4WC_Customer
  * @version		1.24
- * @author 		Stephen Zuniga
+ * @author		Stephen Zuniga
  */
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
@@ -24,8 +24,8 @@ class S4WC_Customer {
 	 * Complete necessary actions and display
 	 * notifications at the top of the page
 	 *
-	 * @access public
-	 * @return void
+	 * @access		public
+	 * @return		void
 	 */
 	public function admin_notices() {
 		global $pagenow, $profileuser;
@@ -112,9 +112,9 @@ class S4WC_Customer {
 	/**
 	 * Add to the customer profile
 	 *
-	 * @access public
-	 * @param WP_User $user
-	 * @return void
+	 * @access		public
+	 * @param		WP_User $user
+	 * @return		void
 	 */
 	public function add_customer_profile( $user ) {
 
@@ -148,8 +148,8 @@ class S4WC_Customer {
 	/**
 	 * Gives front-end view of saved cards in the account page
 	 *
-	 * @access public
-	 * @return void
+	 * @access		public
+	 * @return		void
 	 */
 	public function account_saved_cards() {
 		global $s4wc;

@@ -15,12 +15,6 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class S4WC_Subscriptions_Gateway extends S4WC_Gateway {
 
-	/**
-	 * Constructor for the gateway.
-	 *
-	 * @access public
-	 * @return void
-	 */
 	public function __construct() {
 		parent::__construct();
 
@@ -32,8 +26,8 @@ class S4WC_Subscriptions_Gateway extends S4WC_Gateway {
 	 * Send subscription form data to Stripe
 	 * Handles sending the charge to an existing customer, a new customer (that's logged in), or a guest
 	 *
-	 * @access protected
-	 * @return boolean
+	 * @access		protected
+	 * @return		bool
 	 */
 	protected function subscription_to_stripe() {
 
@@ -88,11 +82,11 @@ class S4WC_Subscriptions_Gateway extends S4WC_Gateway {
 	/**
 	 * Process a scheduled payment
 	 *
-	 * @access public
-	 * @param float $amount_to_charge
-	 * @param WC_Order $order
-	 * @param int $product_id
-	 * @return void
+	 * @access		public
+	 * @param		float $amount_to_charge
+	 * @param		WC_Order $order
+	 * @param		int $product_id
+	 * @return		void
 	 */
 	public function scheduled_subscription_payment( $amount_to_charge, $order, $product_id ) {
 		$charge = $this->process_subscription_payment( $order, $amount_to_charge );
@@ -107,9 +101,9 @@ class S4WC_Subscriptions_Gateway extends S4WC_Gateway {
 	/**
 	 * Process the payment and return the result
 	 *
-	 * @access public
-	 * @param int $order_id
-	 * @return array
+	 * @access		public
+	 * @param		int $order_id
+	 * @return		array
 	 */
 	public function process_payment( $order_id ) {
 
@@ -143,10 +137,10 @@ class S4WC_Subscriptions_Gateway extends S4WC_Gateway {
 	/**
 	 * Process the subscription payment and return the result
 	 *
-	 * @access public
-	 * @param WC_Order $order
-	 * @param int $amount
-	 * @return array
+	 * @access		public
+	 * @param		WC_Order $order
+	 * @param		int $amount
+	 * @return		array
 	 */
 	public function process_subscription_payment( $order, $amount = 0 ) {
 		global $s4wc;

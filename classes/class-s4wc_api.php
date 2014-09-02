@@ -2,9 +2,9 @@
 /**
  * Functions for interfacing with Stripe's API
  *
- * @class 		S4WC_API
+ * @class		S4WC_API
  * @version		1.24
- * @author 		Stephen Zuniga
+ * @author		Stephen Zuniga
  */
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
@@ -14,10 +14,10 @@ class S4WC_API {
 	/**
 	 * Create customer on stripe servers
 	 *
-	 * @access public
-	 * @param array $form_data
-	 * @param string $customer_description
-	 * @return array
+	 * @access		public
+	 * @param		array $form_data
+	 * @param		string $customer_description
+	 * @return		array
 	 */
 	public static function create_customer( $form_data, $customer_description ) {
 
@@ -51,9 +51,9 @@ class S4WC_API {
 	/**
 	 * Get customer from stripe servers
 	 *
-	 * @access public
-	 * @param string $customer_id
-	 * @return array
+	 * @access		public
+	 * @param		string $customer_id
+	 * @return		array
 	 */
 	public static function get_customer( $customer_id ) {
 		return S4WC_API::get_data( 'customers/' . $customer_id );
@@ -62,10 +62,10 @@ class S4WC_API {
 	/**
 	 * Update customer on stripe servers
 	 *
-	 * @access public
-	 * @param string $customer_id
-	 * @param array $request
-	 * @return array
+	 * @access		public
+	 * @param		string $customer_id
+	 * @param		array $request
+	 * @return		array
 	 */
 	public static function update_customer( $customer_id, $customer_data ) {
 		return S4WC_API::post_data( $customer_data, 'customers/' . $customer_id );
@@ -74,10 +74,10 @@ class S4WC_API {
 	/**
 	 * Delete card from stripe servers
 	 *
-	 * @access public
-	 * @param integer $user_id
-	 * @param integer $position
-	 * @return array
+	 * @access		public
+	 * @param		int $user_id
+	 * @param		int $position
+	 * @return		array
 	 */
 	public static function delete_card( $user_id, $position ) {
 		global $s4wc;
@@ -95,9 +95,9 @@ class S4WC_API {
 	/**
 	 * Create charge on stripe servers
 	 *
-	 * @access public
-	 * @param array $charge_data
-	 * @return array
+	 * @access		public
+	 * @param		array $charge_data
+	 * @return		array
 	 */
 	public static function create_charge( $charge_data ) {
 		return S4WC_API::post_data( $charge_data );
@@ -106,10 +106,10 @@ class S4WC_API {
 	/**
 	 * Capture charge on stripe servers
 	 *
-	 * @access public
-	 * @param string $transaction_id
-	 * @param array $charge_data
-	 * @return array
+	 * @access		public
+	 * @param		string $transaction_id
+	 * @param		array $charge_data
+	 * @return		array
 	 */
 	public static function capture_charge( $transaction_id, $charge_data ) {
 		return S4WC_API::post_data( $charge_data, 'charges/' . $transaction_id . '/capture' );
@@ -118,21 +118,21 @@ class S4WC_API {
 	/**
 	 * Get data from Stripe's servers by passing an API endpoint
 	 *
-	 * @access public
-	 * @param string $get_location
-	 * @return array
+	 * @access		public
+	 * @param		string $get_location
+	 * @return		array
 	 */
 	public static function get_data( $get_location ) {
 		global $s4wc;
 
 		$response = wp_remote_get( 'https://api.stripe.com/' . 'v1/' . $get_location, array(
 			'method'		=> 'GET',
-			'headers' 		=> array(
+			'headers'		=> array(
 				'Authorization' => 'Basic ' . base64_encode( $s4wc->settings['secret_key'] . ':' ),
 			),
-			'timeout' 		=> 70,
-			'sslverify' 	=> false,
-			'user-agent' 	=> 'WooCommerce-Stripe',
+			'timeout'		=> 70,
+			'sslverify'		=> false,
+			'user-agent'	=> 'WooCommerce-Stripe',
 		) );
 
 		return S4WC_API::parse_response( $response );
@@ -141,23 +141,23 @@ class S4WC_API {
 	/**
 	 * Post data to Stripe's servers by passing data and an API endpoint
 	 *
-	 * @access public
-	 * @param array $post_data
-	 * @param string $post_location
-	 * @return array
+	 * @access		public
+	 * @param		array $post_data
+	 * @param		string $post_location
+	 * @return		array
 	 */
 	public static function post_data( $post_data, $post_location = 'charges' ) {
 		global $s4wc;
 
 		$response = wp_remote_post( $s4wc->settings['api_endpoint'] . 'v1/' . $post_location, array(
 			'method'		=> 'POST',
-			'headers' 		=> array(
+			'headers'		=> array(
 				'Authorization' => 'Basic ' . base64_encode( $s4wc->settings['secret_key'] . ':' ),
 			),
 			'body'			=> $post_data,
-			'timeout' 		=> 70,
-			'sslverify' 	=> false,
-			'user-agent' 	=> 'WooCommerce-Stripe',
+			'timeout'		=> 70,
+			'sslverify'		=> false,
+			'user-agent'	=> 'WooCommerce-Stripe',
 		) );
 
 		return S4WC_API::parse_response( $response );
@@ -166,21 +166,21 @@ class S4WC_API {
 	/**
 	 * Delete data from Stripe's servers by passing an API endpoint
 	 *
-	 * @access public
-	 * @param string $delete_location
-	 * @return array
+	 * @access		public
+	 * @param		string $delete_location
+	 * @return		array
 	 */
 	public static function delete_data( $delete_location ) {
 		global $s4wc;
 
 		$response = wp_remote_post( $s4wc->settings['api_endpoint'] . 'v1/' . $delete_location, array(
 			'method'		=> 'DELETE',
-			'headers' 		=> array(
+			'headers'		=> array(
 				'Authorization' => 'Basic ' . base64_encode( $s4wc->settings['secret_key'] . ':' ),
 			),
-			'timeout' 		=> 70,
-			'sslverify' 	=> false,
-			'user-agent' 	=> 'WooCommerce-Stripe',
+			'timeout'		=> 70,
+			'sslverify'		=> false,
+			'user-agent'	=> 'WooCommerce-Stripe',
 		) );
 
 		return S4WC_API::parse_response( $response );
@@ -189,9 +189,9 @@ class S4WC_API {
 	/**
 	 * Parse Stripe's response after interacting with the API
 	 *
-	 * @access public
-	 * @param array $response
-	 * @return array
+	 * @access		public
+	 * @param		array $response
+	 * @return		array
 	 */
 	public static function parse_response( $response ) {
 		if ( is_wp_error( $response ) ) {

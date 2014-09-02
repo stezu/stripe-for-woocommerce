@@ -2,9 +2,9 @@
 /**
  * Functions for interfacing with the database
  *
- * @class 		S4WC_DB
+ * @class		S4WC_DB
  * @version		1.24
- * @author 		Stephen Zuniga
+ * @author		Stephen Zuniga
  */
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
@@ -14,10 +14,10 @@ class S4WC_DB {
 	/**
 	 * Add/Update the customer database object
 	 *
-	 * @access public
-	 * @param integer $user_id
-	 * @param array $customer_data
-	 * @return mixed
+	 * @access		public
+	 * @param		int $user_id
+	 * @param		array $customer_data
+	 * @return		mixed
 	 */
 	public static function update_customer( $user_id, $customer_data ) {
 		global $s4wc;
@@ -102,10 +102,10 @@ class S4WC_DB {
 	/**
 	 * Delete from the customer database object
 	 *
-	 * @access public
-	 * @param integer $user_id
-	 * @param array $customer_data
-	 * @return mixed
+	 * @access		public
+	 * @param		int $user_id
+	 * @param		array $customer_data
+	 * @return		mixed
 	 */
 	public static function delete_customer( $user_id, $customer_data ) {
 		global $s4wc;

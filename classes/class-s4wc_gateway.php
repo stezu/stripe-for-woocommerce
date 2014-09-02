@@ -19,12 +19,6 @@ class S4WC_Gateway extends WC_Payment_Gateway {
 	protected $transaction_id				= null;
 	protected $transaction_error_message	= null;
 
-	/**
-	 * Constructor for the gateway.
-	 *
-	 * @access public
-	 * @return void
-	 */
 	public function __construct() {
 		global $s4wc;
 
@@ -72,8 +66,8 @@ class S4WC_Gateway extends WC_Payment_Gateway {
 	 * Check if this gateway is enabled and all dependencies are fine.
 	 * Disable the plugin if dependencies fail.
 	 *
-	 * @access public
-	 * @return bool
+	 * @access		public
+	 * @return		bool
 	 */
 	public function is_available() {
 		global $s4wc;
@@ -98,8 +92,8 @@ class S4WC_Gateway extends WC_Payment_Gateway {
 	/**
 	 * Send notices to users if requirements fail, or for any other reason
 	 *
-	 * @access public
-	 * @return bool
+	 * @access		public
+	 * @return		bool
 	 */
 	public function admin_notices() {
 		global $s4wc, $pagenow, $wpdb;
@@ -169,8 +163,8 @@ class S4WC_Gateway extends WC_Payment_Gateway {
 	/**
 	 * Initialise Gateway Settings Form Fields
 	 *
-	 * @access public
-	 * @return void
+	 * @access		public
+	 * @return		void
 	 */
 	public function init_form_fields() {
 		$this->form_fields = array(
@@ -249,8 +243,8 @@ class S4WC_Gateway extends WC_Payment_Gateway {
 	 * Admin Panel Options
 	 * - Options for bits like 'title' and availability on a country-by-country basis
 	 *
-	 * @access public
-	 * @return void
+	 * @access		public
+	 * @return		void
 	 */
 	public function admin_options() {
 
@@ -280,8 +274,8 @@ class S4WC_Gateway extends WC_Payment_Gateway {
 	 * - jquery.payment.js for styling the form fields
 	 * - s4wc.js for handling the data to submit to stripe
 	 *
-	 * @access public
-	 * @return void
+	 * @access		public
+	 * @return		void
 	 */
 	public function load_scripts() {
 		global $s4wc;
@@ -308,7 +302,7 @@ class S4WC_Gateway extends WC_Payment_Gateway {
 		// If we're on the pay page, Stripe needs the address
 		if ( is_checkout_pay_page() ) {
 			$order_key	= urldecode( $_GET['key'] );
-			$order_id 	= absint( get_query_var( 'order-pay' ) );
+			$order_id	= absint( get_query_var( 'order-pay' ) );
 			$order		= new WC_Order( $order_id );
 
 			if ( $order->id == $order_id && $order->order_key == $order_key ) {
@@ -329,8 +323,8 @@ class S4WC_Gateway extends WC_Payment_Gateway {
 	/**
 	 * Payment fields
 	 *
-	 * @access public
-	 * @return void
+	 * @access		public
+	 * @return		void
 	 */
 	public function payment_fields() {
 		s4wc_get_template( 'payment-fields.php' );
@@ -340,8 +334,8 @@ class S4WC_Gateway extends WC_Payment_Gateway {
 	 * Send form data to Stripe
 	 * Handles sending the charge to an existing customer, a new customer (that's logged in), or a guest
 	 *
-	 * @access protected
-	 * @return boolean
+	 * @access		protected
+	 * @return		bool
 	 */
 	protected function send_to_stripe() {
 		global $s4wc;
@@ -438,10 +432,10 @@ class S4WC_Gateway extends WC_Payment_Gateway {
 	 * Retrieve a customer if one already exists
 	 * Add a card to a customer if necessary
 	 *
-	 * @access public
-	 * @param string $description
-	 * @param array $form_data
-	 * @return array
+	 * @access		public
+	 * @param		string $description
+	 * @param		array $form_data
+	 * @return		array
 	 */
 	public function get_customer( $description, $form_data ) {
 		$output = array();
@@ -494,9 +488,9 @@ class S4WC_Gateway extends WC_Payment_Gateway {
 	/**
 	 * Process the payment and return the result
 	 *
-	 * @access public
-	 * @param int $order_id
-	 * @return array
+	 * @access		public
+	 * @param		int $order_id
+	 * @return		array
 	 */
 	public function process_payment( $order_id ) {
 
@@ -524,8 +518,8 @@ class S4WC_Gateway extends WC_Payment_Gateway {
 	/**
 	 * Mark the payment as failed in the order notes
 	 *
-	 * @access protected
-	 * @return void
+	 * @access		protected
+	 * @return		void
 	 */
 	protected function payment_failed() {
 		$this->order->add_order_note(
@@ -540,8 +534,8 @@ class S4WC_Gateway extends WC_Payment_Gateway {
 	/**
 	 * Mark the payment as completed in the order notes
 	 *
-	 * @access protected
-	 * @return void
+	 * @access		protected
+	 * @return		void
 	 */
 	protected function order_complete() {
 
@@ -566,10 +560,11 @@ class S4WC_Gateway extends WC_Payment_Gateway {
 	/**
 	 * Retrieve the form fields
 	 *
-	 * @access protected
-	 * @return mixed
+	 * @access		protected
+	 * @return		mixed
 	 */
 	protected function get_form_data() {
+
 		if ( $this->order && $this->order != null ) {
 			return array(
 				'amount'		=> (float) $this->order->get_total() * 100,
