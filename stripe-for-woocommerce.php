@@ -75,9 +75,9 @@ class S4WC {
 	/**
 	 * Add Stripe Gateway to WooCommerces list of Gateways
 	 *
-	 * @access public
-	 * @param array $methods
-	 * @return array
+	 * @access		public
+	 * @param		array $methods
+	 * @return		array
 	 */
 	public function add_stripe_gateway( $methods ) {
 		if ( ! class_exists( 'WC_Payment_Gateway' ) ) {
@@ -104,8 +104,8 @@ $GLOBALS['s4wc'] = new S4WC();
 /**
  * Process the captured payment when changing order status to completed
  *
- * @param int $order_id
- * @return bool
+ * @param		int $order_id
+ * @return		mixed
  */
 function s4wc_order_status_completed( $order_id = null ) {
 
@@ -132,9 +132,9 @@ add_action( 'woocommerce_order_status_processing_to_completed', 's4wc_order_stat
 /**
  * Get error message for form validator given field name and type of error
  *
- * @param $field
- * @param $type
- * @return string
+ * @param		string $field
+ * @param		string $type
+ * @return		string
  */
 function s4wc_get_form_error_message( $field, $type = 'undefined' ) {
 
@@ -148,7 +148,7 @@ function s4wc_get_form_error_message( $field, $type = 'undefined' ) {
 /**
  * Validate credit card form fields
  *
- * @return void
+ * @return		void
  */
 function s4wc_validate_form() {
 	$form = array(
@@ -176,21 +176,31 @@ function s4wc_validate_form() {
 add_action( 'woocommerce_after_checkout_validation', 's4wc_validate_form' );
 
 /**
- * Wrapper of wc_get_template to relate directly to woocommerce-stripe
+ * Wrapper of wc_get_template to relate directly to s4wc
  *
- * @param string $template_name
- * @return string
+ * @param		string $template_name
+ * @param		array $args
+ * @return		string
  */
-function s4wc_get_template( $template_name ) {
-	return wc_get_template( $template_name, array(), WC()->template_path() . '/woocommerce-stripe', plugin_dir_path( __FILE__ ) . '/templates/' );
+function s4wc_get_template( $template_name, $args = array() ) {
+	$template_path = WC()->template_path();
+	$default_path = plugin_dir_path( __FILE__ ) . '/templates/';
+
+	if ( wc_locate_template( $template_name, $template_path . '/s4wc', $default_path ) ) {
+		$template_path .= '/s4wc';
+	} else {
+		$template_path .= '/woocommerce-stripe';
+	}
+
+	return wc_get_template( $template_name, $args, $template_path, $default_path );
 }
 
 /**
  * Helper function to find the key of a nested value
  *
- * @param string $needle
- * @param array $haystack
- * @return mixed
+ * @param		string $needle
+ * @param		array $haystack
+ * @return		mixed
  */
 if ( ! function_exists( 'recursive_array_search' ) ) {
 	function recursive_array_search( $needle, $haystack ) {
