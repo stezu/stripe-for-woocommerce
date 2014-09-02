@@ -366,10 +366,12 @@ class S4WC_Gateway extends WC_Payment_Gateway {
 
 			// Make sure we only create customers if a user is logged in
 			if ( is_user_logged_in() && $s4wc->settings['saved_cards'] === 'yes' ) {
-				$stripe_charge_data['description'] = $this->current_user->user_login . ' (#' . $this->current_user_id . ' - ' . $this->current_user->user_email . ') ' . $form_data['card']['name']; // username (user_id - user_email) Full Name
+				$customer_description = $this->current_user->user_login . ' (#' . $this->current_user_id . ' - ' . $this->current_user->user_email . ') ' . $form_data['card']['name']; // username (user_id - user_email) Full Name
+
+				$customer_description = apply_filters( 's4wc_customer_description', $customer_description, $form_data, $this->order );
 
 				// Add a customer or retrieve an existing one
-				$customer = $this->get_customer( $stripe_charge_data['description'], $form_data );
+				$customer = $this->get_customer( $customer_description, $form_data );
 
 				$stripe_charge_data['card'] = $customer['card'];
 				$stripe_charge_data['customer'] = $customer['customer_id'];
@@ -381,13 +383,29 @@ class S4WC_Gateway extends WC_Payment_Gateway {
 				}
 
 			} else {
-				$stripe_charge_data['description'] = __( 'Guest', 'stripe-for-woocommerce' ) . ' (' . $this->order->billing_email . ') ' . $form_data['card']['name']; // Guest (user_email) Full Name
 
 				// Set up one time charge
 				$stripe_charge_data['card'] = $form_data['token'];
 			}
 
-			$stripe_charge_data['description'] = apply_filters( 's4wc_charge_description', $stripe_charge_data['description'], $stripe_charge_data['description'], $form_data );
+			// Set a default name, override with a product name if it exists for Stripe's dashboard
+			$product_name = __( 'Purchases', 'stripe-for-woocommerce' );
+			$order_items = $this->order->get_items();
+
+			// Grab first product name and use it
+			foreach ( $order_items as $key => $item ) {
+				$product_name = $item['name'];
+				break;
+			}
+
+			// Charge description
+			$charge_description = sprintf(
+				__( 'Payment for %s (Order: %s)', 'stripe-for-woocommerce' ),
+				$product_name,
+				$this->order->get_order_number()
+			);
+
+			$stripe_charge_data['description'] = apply_filters( 's4wc_charge_description', $charge_description, $form_data, $this->order );
 
 			// Create the charge on Stripe's servers - this will charge the user's card
 			$charge = S4WC_API::create_charge( $stripe_charge_data );
