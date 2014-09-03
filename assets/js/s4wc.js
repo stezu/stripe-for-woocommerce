@@ -5,7 +5,7 @@ jQuery( function ( $ ) {
     var $body = $( 'body' ),
         $form = $( 'form.checkout, form#order_review' ),
         savedFieldValues = {},
-        $ccForm;
+        $ccForm, $ccNumber, $ccExpiry, $ccCvc;
 
     // Make sure the form doesn't use html validation
     $form.attr('novalidate', 'novalidate');
@@ -30,9 +30,6 @@ jQuery( function ( $ ) {
 
     // Both Forms
     $form.on( 'keyup change', '#card-number, #card-expiry, #card-cvc, input[name="s4wc_card"], input[name="payment_method"]', function () {
-        var $ccNumber = $( '.s4wc-card-number' ),
-            $ccExpiry = $( '.s4wc-card-expiry' ),
-            $ccCvc    = $( '.s4wc-card-cvc' );
 
         // Save credit card details in case the address changes (or something else)
         savedFieldValues.number = {
@@ -50,11 +47,11 @@ jQuery( function ( $ ) {
     });
 
     function initCCForm() {
-        var $ccNumber = $( '.s4wc-card-number' ),
-            $ccExpiry = $( '.s4wc-card-expiry' ),
-            $ccCvc    = $( '.s4wc-card-cvc' );
 
-        $ccForm = $( '#s4wc-creditcard-form' );
+        $ccForm   = $( '#s4wc-creditcard-form' );
+        $ccNumber = $ccForm.find( '.s4wc-card-number' );
+        $ccExpiry = $ccForm.find( '.s4wc-card-expiry' );
+        $ccCvc    = $ccForm.find( '.s4wc-card-cvc' );
 
         // Hide the CC form if the user has a saved card.
         if ( s4wc_info.hasCard && s4wc_info.savedCardsEnabled ) {
