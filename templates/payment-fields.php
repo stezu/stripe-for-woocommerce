@@ -23,12 +23,18 @@ if ( $s4wc->settings['description'] ) : ?>
 
 $stripe_customer_info = get_user_meta( get_current_user_id(), $s4wc->settings['stripe_db_location'], true );
 
-if( is_user_logged_in() && $stripe_customer_info && isset( $stripe_customer_info['cards'] ) && count( $stripe_customer_info['cards'] ) && $s4wc->settings['saved_cards'] === 'yes' ) :
+if ( is_user_logged_in() && $stripe_customer_info && isset( $stripe_customer_info['cards'] ) && count( $stripe_customer_info['cards'] ) && $s4wc->settings['saved_cards'] === 'yes' ) :
 
 	// Add option to use a saved card
-	foreach ( $stripe_customer_info['cards'] as $i => $credit_card ) : ?>
+	foreach ( $stripe_customer_info['cards'] as $i => $credit_card ) :
+		$checked = ( $stripe_customer_info['default_card'] == $credit_card['id'] ) ? ' checked' : '';
 
-		<input type="radio" id="stripe_card_<?php echo $i; ?>" name="s4wc_card" value="<?php echo $i; ?>"<?php echo ( $stripe_customer_info['default_card'] == $credit_card['id'] ) ? ' checked' : ''; ?>>
+		if ( $i === 0 && $stripe_customer_info['default_card'] === '' ) {
+			$checked = ' checked';
+		}
+	?>
+
+		<input type="radio" id="stripe_card_<?php echo $i; ?>" name="s4wc_card" value="<?php echo $i; ?>"<?php echo $checked; ?>>
 		<label for="stripe_card_<?php echo $i; ?>"><?php printf( __( 'Card ending with %s (%s/%s)', 'stripe-for-woocommerce' ), $credit_card['last4'], $credit_card['exp_month'], $credit_card['exp_year'] ); ?></label><br>
 
 	<?php endforeach; ?>
