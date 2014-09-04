@@ -1,3 +1,8 @@
+// Define globals if they don't exist to prevent errors
+var s4wc_info = ( s4wc_info ) ? s4wc_info : {},
+    Stripe = ( Stripe ) ? Stripe : {},
+    woocommerce_params = ( woocommerce_params ) ? woocommerce_params : {};
+
 // Set API key
 Stripe.setPublishableKey( s4wc_info.publishableKey );
 
