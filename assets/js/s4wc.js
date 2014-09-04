@@ -1,7 +1,5 @@
-// Define globals if they don't exist to prevent errors
-var s4wc_info = ( s4wc_info ) ? s4wc_info : {},
-    Stripe = ( Stripe ) ? Stripe : {},
-    woocommerce_params = ( woocommerce_params ) ? woocommerce_params : {};
+// Let jsHint know about the globals that it should stop pestering me about
+/* global Stripe, s4wc_info, woocommerce_params */
 
 // Set API key
 Stripe.setPublishableKey( s4wc_info.publishableKey );
