@@ -3,7 +3,7 @@
  * Plugin Name: Stripe for WooCommerce
  * Plugin URI: https://wordpress.org/plugins/stripe-for-woocommerce
  * Description: Use Stripe for collecting credit card payments on WooCommerce.
- * Version: 1.22
+ * Version: 1.24
  * Author: Stephen Zuniga
  * Author URI: http://stephenzuniga.com
  *
@@ -25,6 +25,9 @@ class S4WC {
 
 		// Include Database Manipulation Methods
 		include_once( 'classes/class-s4wc_db.php' );
+
+		// Include Customer Profile Methods
+		include_once( 'classes/class-s4wc_customer.php' );
 
 		// Transition to new namespace
 		if ( ! get_option( 'woocommerce_s4wc_settings' ) ) {
@@ -52,6 +55,7 @@ class S4WC {
 		$this->settings['test_secret_key']			= isset( $this->settings['test_secret_key'] ) ? $this->settings['test_secret_key'] : '';
 		$this->settings['live_publishable_key']		= isset( $this->settings['live_publishable_key'] ) ? $this->settings['live_publishable_key'] : '';
 		$this->settings['live_secret_key']			= isset( $this->settings['live_secret_key'] ) ? $this->settings['live_secret_key'] : '';
+		$this->settings['saved_cards']				= isset( $this->settings['saved_cards'] ) ? $this->settings['saved_cards'] : 'yes';
 
 		// API Info
 		$this->settings['api_endpoint']				= 'https://api.stripe.com/';
@@ -62,8 +66,7 @@ class S4WC {
 		$this->settings['stripe_db_location']		= $this->settings['testmode'] == 'yes' ? '_stripe_test_customer_info' : '_stripe_live_customer_info';
 
 		// Hooks
-		add_filter( 'woocommerce_payment_gateways', array( &$this, 'woocommerce_stripe_gateway' ) );
-		add_action( 'woocommerce_after_my_account', array( &$this, 'account_saved_cards' ) );
+		add_filter( 'woocommerce_payment_gateways', array( $this, 'add_stripe_gateway' ) );
 
 		// Localization
 		load_plugin_textdomain( 'stripe-for-woocommerce', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
@@ -72,11 +75,11 @@ class S4WC {
 	/**
 	 * Add Stripe Gateway to WooCommerces list of Gateways
 	 *
-	 * @access public
-	 * @param array $methods
-	 * @return array
+	 * @access		public
+	 * @param		array $methods
+	 * @return		array
 	 */
-	public function woocommerce_stripe_gateway( $methods ) {
+	public function add_stripe_gateway( $methods ) {
 		if ( ! class_exists( 'WC_Payment_Gateway' ) ) {
 			return;
 		}
@@ -94,16 +97,6 @@ class S4WC {
 
 		return $methods;
 	}
-
-	/**
-	 * Gives front-end view of saved cards in the account page
-	 *
-	 * @access public
-	 * @return void
-	 */
-	public function account_saved_cards() {
-		s4wc_get_template( 'saved-cards.php' );
-	}
 }
 
 $GLOBALS['s4wc'] = new S4WC();
@@ -111,26 +104,21 @@ $GLOBALS['s4wc'] = new S4WC();
 /**
  * Process the captured payment when changing order status to completed
  *
- * @access public
- * @param int $order_id
- * @return bool
+ * @param		int $order_id
+ * @return		mixed
  */
 function s4wc_order_status_completed( $order_id = null ) {
-	global $woocommerce, $s4wc;
 
 	if ( ! $order_id ) {
 		$order_id = $_POST['order_id'];
 	}
 
-	$data = get_post_meta( $order_id );
-	$total = $data['_order_total'][0] * 100;
+	if ( get_post_meta( $order_id, 'capture', true ) ) {
 
-	$params = array();
-	if( isset( $_POST['amount'] ) && $amount = $_POST['amount'] ) {
-		$params['amount'] = round( $amount );
-	}
-
-	if( get_post_meta( $order_id, 'capture', true ) ) {
+		$params = array();
+		if ( isset( $_POST['amount'] )  ) {
+			$params['amount'] = round( $_POST['amount'] );
+		}
 
 		$transaction_id = get_post_meta( $order_id, 'transaction_id', true );
 
@@ -144,9 +132,9 @@ add_action( 'woocommerce_order_status_processing_to_completed', 's4wc_order_stat
 /**
  * Get error message for form validator given field name and type of error
  *
- * @param $field
- * @param $type
- * @return string
+ * @param		string $field
+ * @param		string $type
+ * @return		string
  */
 function s4wc_get_form_error_message( $field, $type = 'undefined' ) {
 
@@ -160,7 +148,7 @@ function s4wc_get_form_error_message( $field, $type = 'undefined' ) {
 /**
  * Validate credit card form fields
  *
- * @return void
+ * @return		void
  */
 function s4wc_validate_form() {
 	$form = array(
@@ -185,14 +173,44 @@ function s4wc_validate_form() {
 		wc_add_notice( s4wc_get_form_error_message( $field, $form['card-cvc'] ), 'error' );
 	}
 }
-add_action( 'woocommerce_checkout_process', 's4wc_validate_form' );
+add_action( 'woocommerce_after_checkout_validation', 's4wc_validate_form' );
 
 /**
- * Wrapper of wc_get_template to relate directly to woocommerce-stripe
+ * Wrapper of wc_get_template to relate directly to s4wc
  *
- * @param string $template_name
- * @return string
+ * @param		string $template_name
+ * @param		array $args
+ * @return		string
  */
-function s4wc_get_template( $template_name ) {
-	return wc_get_template( $template_name, array(), WC()->template_path() . '/woocommerce-stripe', plugin_dir_path( __FILE__ ) . '/templates/' );
+function s4wc_get_template( $template_name, $args = array() ) {
+	$template_path = WC()->template_path();
+	$default_path = plugin_dir_path( __FILE__ ) . '/templates/';
+
+	if ( wc_locate_template( $template_name, $template_path . '/s4wc', $default_path ) ) {
+		$template_path .= '/s4wc';
+	} else {
+		$template_path .= '/woocommerce-stripe';
+	}
+
+	return wc_get_template( $template_name, $args, $template_path, $default_path );
+}
+
+/**
+ * Helper function to find the key of a nested value
+ *
+ * @param		string $needle
+ * @param		array $haystack
+ * @return		mixed
+ */
+if ( ! function_exists( 'recursive_array_search' ) ) {
+	function recursive_array_search( $needle, $haystack ) {
+
+		foreach ( $haystack as $key => $value ) {
+
+			if ( $needle === $value || ( is_array( $value ) && recursive_array_search( $needle, $value ) !== false ) ) {
+				return $key;
+			}
+		}
+		return false;
+	}
 }

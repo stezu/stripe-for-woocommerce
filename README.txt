@@ -1,6 +1,7 @@
 === Stripe for WooCommerce ===
 Contributors: stephen.zuniga001
 Tags: woocommerce, stripe, payment gateway, subscriptions, credit card, ecommerce, e-commerce, commerce, cart, checkout
+Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=3489V46ZRBQMC&lc=US&item_name=Thank%20You%20Beer%20for%20Stripe%20for%20WooCommerce&currency_code=USD
 Requires at least: 3.8.0
 Tested up to: 3.9.2
 Stable tag: trunk
@@ -53,6 +54,18 @@ The plugin should automatically update with new features, but you could always d
 
 
 == Changelog ==
+
+= 1.24 =
+* Tweak: Saved cards are now optional
+* Tweak: CC Data is saved when changing address
+* Fix: Invalid card with account creation
+* Fix: Switching payment methods gave validation errors
+* Fix: Removed double error messages, it was obnoxious
+
+= 1.23 =
+* Feature: French translation courtesy of Malo Jaffre
+* Fix: Checkout with account creation was failing
+* Fix: Error with setting default cards
 
 = 1.22 =
 * Fix: New customers were returning an invalid string error

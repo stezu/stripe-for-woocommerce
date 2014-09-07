@@ -1,10 +1,14 @@
+// Let jsHint know about the globals that it should stop pestering me about
+/* global Stripe, s4wc_info, woocommerce_params */
+
 // Set API key
 Stripe.setPublishableKey( s4wc_info.publishableKey );
 
 jQuery( function ( $ ) {
     var $body = $( 'body' ),
         $form = $( 'form.checkout, form#order_review' ),
-        $ccForm;
+        savedFieldValues = {},
+        $ccForm, $ccNumber, $ccExpiry, $ccCvc;
 
     // Make sure the form doesn't use html validation
     $form.attr('novalidate', 'novalidate');
@@ -18,7 +22,7 @@ jQuery( function ( $ ) {
     });
 
     // Checkout Form
-    $( 'form.checkout' ).on( 'checkout_place_order_s4wc', function () {
+    $( 'form.checkout' ).on( 'checkout_place_order', function () {
         return stripeFormHandler();
     });
 
@@ -28,15 +32,32 @@ jQuery( function ( $ ) {
     });
 
     // Both Forms
-    $form.on( 'keyup change', '#card-number, #card-expiry, #card-cvc, input[name="s4wc_card"]', function () {
+    $form.on( 'keyup change', '#card-number, #card-expiry, #card-cvc, input[name="s4wc_card"], input[name="payment_method"]', function () {
+
+        // Save credit card details in case the address changes (or something else)
+        savedFieldValues.number = {
+            'val': $ccNumber.val(),
+            'classes': $ccNumber.attr( 'class' )
+        };
+        savedFieldValues.expiry = {
+            'val': $ccExpiry.val()
+        };
+        savedFieldValues.cvc = {
+            'val': $ccCvc.val()
+        };
+
         $( '.woocommerce_error, .woocommerce-error, .woocommerce-message, .woocommerce_message, .stripe_token, .form_errors' ).remove();
     });
 
     function initCCForm() {
-        $ccForm = $( '#s4wc-creditcard-form' );
+
+        $ccForm   = $( '#s4wc-creditcard-form' );
+        $ccNumber = $ccForm.find( '.s4wc-card-number' );
+        $ccExpiry = $ccForm.find( '.s4wc-card-expiry' );
+        $ccCvc    = $ccForm.find( '.s4wc-card-cvc' );
 
         // Hide the CC form if the user has a saved card.
-        if ( s4wc_info.hasCard ) {
+        if ( s4wc_info.hasCard && s4wc_info.savedCardsEnabled ) {
             $ccForm.hide();
         }
 
@@ -50,11 +71,23 @@ jQuery( function ( $ ) {
             }
         });
 
-        $( '.s4wc-card-number' )
+        // Add in lost data
+        if ( savedFieldValues.number ) {
+            $ccNumber.val( savedFieldValues.number.val ).attr( 'class', savedFieldValues.number.classes );
+        }
+        if ( savedFieldValues.expiry ) {
+            $ccExpiry.val( savedFieldValues.expiry.val );
+        }
+        if ( savedFieldValues.cvc ) {
+            $ccCvc.val( savedFieldValues.cvc.val );
+        }
+
+        // Format fields
+        $ccNumber
             .payment( 'formatCardNumber' )
             .after( '<span class="s4wc-card-image"></span>' );
-        $( '.s4wc-card-expiry' ).payment( 'formatCardExpiry' );
-        $( '.s4wc-card-cvc' )
+        $ccExpiry.payment( 'formatCardExpiry' );
+        $ccCvc
             .payment( 'formatCardCVC' )
             .focus( function () {
                 $( '.s4wc-card-number' ).addClass( 'cvc' );
@@ -69,7 +102,7 @@ jQuery( function ( $ ) {
 
             if ( ! $( 'input.stripe_token' ).length ) {
                 var cardExpiry = $( '.s4wc-card-expiry' ).payment( 'cardExpiryVal' ),
-                    name = ( s4wc_info.billing_first_name || s4wc_info.billing_last_name ) ? s4wc_info.billing_first_name + ' ' + s4wc_info.billing_last_name : $( '#billing_first_name' ).val() + ' ' + $( '#billing_last_name' ).val();
+                    name = ( $( '#billing_first_name' ).val() || $( '#billing_last_name' ).val() ) ? $( '#billing_first_name' ).val() + ' ' + $( '#billing_last_name' ).val() : s4wc_info.billing_first_name + ' ' + s4wc_info.billing_last_name;
 
                 var stripeData = {
                     number          : $( '.s4wc-card-number' ).val() || '',
@@ -77,12 +110,12 @@ jQuery( function ( $ ) {
                     exp_month       : cardExpiry.month || '',
                     exp_year        : cardExpiry.year || '',
                     name            : $( '.s4wc-billing-name' ).val() || name,
-                    address_line1   : s4wc_info.billing_address_1 || $( '#billing_address_1' ).val() || '',
-                    address_line2   : s4wc_info.billing_address_2 || $( '#billing_address_2' ).val() || '',
-                    address_city    : s4wc_info.billing_city || $('#billing_city').val() || '',
-                    address_state   : s4wc_info.billing_state || $( '#billing_state' ).val() || '',
-                    address_zip     : s4wc_info.billing_postcode || $( '.s4wc-billing-zip' ).val() || $( '#billing_postcode' ).val() || '',
-                    address_country : s4wc_info.billing_country || $( '#billing_country' ).val() || ''
+                    address_line1   : $( '#billing_address_1' ).val() || s4wc_info.billing_address_1 || '',
+                    address_line2   : $( '#billing_address_2' ).val() || s4wc_info.billing_address_2 || '',
+                    address_city    : $( '#billing_city' ).val() || s4wc_info.billing_city || '',
+                    address_state   : $( '#billing_state' ).val() || s4wc_info.billing_state || '',
+                    address_zip     : $( '.s4wc-billing-zip' ).val() || $( '#billing_postcode' ).val() || s4wc_info.billing_postcode || '',
+                    address_country : $( '#billing_country' ).val() || s4wc_info.billing_country || ''
                 };
 
                 $form.block({
@@ -97,8 +130,6 @@ jQuery( function ( $ ) {
                 if ( stripeFormValidator( stripeData ) ) {
                     Stripe.createToken( stripeData, stripeResponseHandler );
                     return false;
-                } else {
-                    return true;
                 }
             }
         }
@@ -124,16 +155,16 @@ jQuery( function ( $ ) {
     function stripeFormValidator ( stripeData ) {
 
         // Validate form fields
-        var message = fieldValidator( stripeData );
+        var errors = fieldValidator( stripeData );
 
         // If there are errors, display them using wc_add_notice on the backend
-        if ( message.errors.length ) {
+        if ( errors.length ) {
 
             $( '.stripe_token, .form_errors' ).remove();
 
-            for ( var i = 0, len = message.errors.length; i < len; i++ ) {
-                var field = message.errors[i].field,
-                    type = message.errors[i].type;
+            for ( var i = 0, len = errors.length; i < len; i++ ) {
+                var field = errors[i].field,
+                    type = errors[i].type;
 
                 $form.append( '<input type="hidden" class="form_errors" name="' + field + '" value="' + type + '">' );
             }
@@ -147,11 +178,7 @@ jQuery( function ( $ ) {
 
         // Create the token if we don't have any errors
         else {
-            var clearErrors = {
-                'errors': []
-            };
             // Clear out notices
-            $.post( s4wc_info.ajaxurl, clearErrors );
             $form.find( '.woocommerce-error' ).remove();
 
             return true;
@@ -159,18 +186,16 @@ jQuery( function ( $ ) {
     }
 
     function fieldValidator ( stripeData ) {
-        var message = {
-            'errors': []
-        };
+        var errors = [];
 
         // Card number validation
         if ( ! stripeData.number ) {
-            message.errors.push({
+            errors.push({
                 'field': 's4wc-card-number',
                 'type': 'undefined'
             });
         } else if ( ! $.payment.validateCardNumber( stripeData.number ) ) {
-            message.errors.push({
+            errors.push({
                 'field': 's4wc-card-number',
                 'type': 'invalid'
             });
@@ -178,12 +203,12 @@ jQuery( function ( $ ) {
 
         // Card expiration validation
         if ( ! stripeData.exp_month || ! stripeData.exp_year ) {
-            message.errors.push({
+            errors.push({
                 'field': 's4wc-card-expiry',
                 'type': 'undefined'
             });
         } else if ( ! $.payment.validateCardExpiry( stripeData.exp_month, stripeData.exp_year ) ) {
-            message.errors.push({
+            errors.push({
                 'field': 's4wc-card-expiry',
                 'type': 'invalid'
             });
@@ -191,18 +216,18 @@ jQuery( function ( $ ) {
 
         // Card CVC validation
         if ( ! stripeData.cvc ) {
-            message.errors.push({
+            errors.push({
                 'field': 's4wc-card-cvc',
                 'type': 'undefined'
             });
         } else if ( ! $.payment.validateCardCVC( stripeData.cvc, $.payment.cardType( stripeData.number ) ) ) {
-            message.errors.push({
+            errors.push({
                 'field': 's4wc-card-cvc',
                 'type': 'invalid'
             });
         }
 
-        // Send the message back
-        return message;
+        // Send the errors back
+        return errors;
     }
 });
