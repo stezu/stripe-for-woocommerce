@@ -72,8 +72,9 @@ class S4WC_Subscriptions_Gateway extends S4WC_Gateway {
 			// Stop page reload if we have errors to show
 			unset( WC()->session->reload_checkout );
 
-			$this->transaction_error_message = $e->getMessage();
-			wc_add_notice( __( 'Subscription Error:', 'stripe-for-woocommerce' ) . ' ' . $e->getMessage(), 'error' );
+			$message = $this->get_stripe_error_message( $e );
+
+			wc_add_notice( __( 'Subscription Error:', 'stripe-for-woocommerce' ) . ' ' . $message, 'error' );
 
 			return false;
 		}

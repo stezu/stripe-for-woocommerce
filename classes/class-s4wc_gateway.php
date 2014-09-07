@@ -420,11 +420,59 @@ class S4WC_Gateway extends WC_Payment_Gateway {
 			// Stop page reload if we have errors to show
 			unset( WC()->session->reload_checkout );
 
-			$this->transaction_error_message = $e->getMessage();
-			wc_add_notice( __( 'Error:', 'stripe-for-woocommerce' ) . ' ' . $e->getMessage(), 'error' );
+			$message = $this->get_stripe_error_message( $e );
+
+			wc_add_notice( __( 'Error:', 'stripe-for-woocommerce' ) . ' ' . $message, 'error' );
 
 			return false;
 		}
+	}
+
+	/**
+	 * Localize Stripe error messages
+	 *
+	 * @access		public
+	 * @param		Exception $e
+	 * @return		string
+	 */
+	public function get_stripe_error_message( $e ) {
+		$error	= $e->getCode();
+
+		switch ( $error ) {
+			case 'incorrect_number':
+				$message = __( 'Your card number is incorrect.', 'stripe-for-woocommerce' );
+				break;
+			case 'invalid_number':
+				$message = __( 'Your card number is not a valid credit card number.', 'stripe-for-woocommerce' );
+				break;
+			case 'invalid_expiry_month':
+				$message = __( 'Your card\'s expiration month is invalid.', 'stripe-for-woocommerce' );
+				break;
+			case 'invalid_expiry_year':
+				$message = __( 'Your card\'s expiration year is invalid.', 'stripe-for-woocommerce' );
+				break;
+			case 'invalid_cvc':
+				$message = __( 'Your card\'s security code is invalid.', 'stripe-for-woocommerce' );
+				break;
+			case 'expired_card':
+				$message = __( 'Your card has expired.', 'stripe-for-woocommerce' );
+				break;
+			case 'incorrect_cvc':
+				$message = __( 'Your card\'s security code is incorrect.', 'stripe-for-woocommerce' );
+				break;
+			case 'incorrect_zip':
+				$message = __( 'Your zip code failed validation.', 'stripe-for-woocommerce' );
+				break;
+			case 'card_declined':
+				$message = __( 'Your card was declined.', 'stripe-for-woocommerce' );
+				break;
+			default:
+				$message = __( 'Failed to process the order, please try again later.', 'stripe-for-woocommerce' );
+		}
+
+		$this->transaction_error_message = $message;
+
+		return $message;
 	}
 
 	/**
