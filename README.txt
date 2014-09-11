@@ -3,7 +3,7 @@ Contributors: stephen.zuniga001
 Tags: woocommerce, stripe, payment gateway, subscriptions, credit card, ecommerce, e-commerce, commerce, cart, checkout
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=3489V46ZRBQMC&lc=US&item_name=Thank%20You%20Beer%20for%20Stripe%20for%20WooCommerce&currency_code=USD
 Requires at least: 3.8.0
-Tested up to: 3.9.2
+Tested up to: 4.0.0
 Stable tag: trunk
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
@@ -54,6 +54,15 @@ The plugin should automatically update with new features, but you could always d
 
 
 == Changelog ==
+
+= 1.25 =
+* Feature: Error messages are now localized for translations
+* Feature: Ability to delete stripe account data per individual customer
+* Tweak: Deleting data now opens a confirmation to prevent accidental data deletion
+* Fix: Stripe customer didn't have an email attached so Stripe couldn't send receipts
+* Fix: Some templates broke the Javascript, that should be fixed now
+* Dev: Move templates to /s4wc from /woocommerce-stripe
+* Dev: Include filters for charge and customer descriptions
 
 = 1.24 =
 * Tweak: Saved cards are now optional
