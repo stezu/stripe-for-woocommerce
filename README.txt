@@ -1,7 +1,7 @@
 === Stripe for WooCommerce ===
 Contributors: stephen.zuniga001
 Tags: woocommerce, stripe, payment gateway, subscriptions, credit card, ecommerce, e-commerce, commerce, cart, checkout
-Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=3489V46ZRBQMC&lc=US&item_name=Thank%20You%20Beer%20for%20Stripe%20for%20WooCommerce&currency_code=USD
+Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=3489V46ZRBQMC&lc=US&item_name=Thank%20You%20Coffee%20for%20Stripe%20for%20WooCommerce&currency_code=USD
 Requires at least: 3.8.0
 Tested up to: 4.0.0
 Stable tag: trunk
@@ -51,6 +51,37 @@ The plugin should automatically update with new features, but you could always d
 2. The form with saved cards and an icon for card identification.
 3. Saved cards displayed on the account page.
 4. Changing payment method for a subscription.
+
+
+== Frequently Asked Questions ==
+
+= Does I need to have an SSL Certificate? =
+
+Yes you do. For any transaction involving sensitive information, you should take security seriously, and credit card information is incredibly sensitive. This plugin disables itself if you try to process live transactions without an SSL certificate. You can read [Stripe's reasaoning for using SSL here](https://stripe.com/help/ssl).
+
+= Does this plugin work with Subscriptions? =
+
+Yes. In order to process subscription payments, you'll need to have the [WooCommerce Subscriptions plugin](http://www.woothemes.com/products/woocommerce-subscriptions/). I'm not planning on adding the subscription funcionality to this plugin because the aforementioned plugin is well worth the money.
+
+= How do I get support or request a feature? =
+
+If you're having trouble with this plugin in particular, the [Stripe for WooCommerce support forum](http://wordpress.org/support/plugin/stripe-for-woocommerce) is a good place to start, or you can also visit the [Stripe For WooCommerce GitHub repository](https://github.com/stezu/stripe-for-woocommerce). Please don't post your issues in both because that's annoying.
+
+= I love this plugin, how can I help improve it? =
+
+You're the best. The [Stripe for WooCommerce GitHub repository](https://github.com/stezu/stripe-for-woocommerce) is a great place to start. Feel free to look through the issues already reported, or add your own. If you feel like you can fix something or improve the code, feel free to send a pull request and explain what's going on and I'll be glad to merge it into the plugin.
+
+= I have money burning a hole in my pocket, where can I send it? =
+
+I'll take it off your hands! This plugin is completely open-source and completely free and will remain that way for it's entire life. With that said, this plugin is free and you're not required to pay a penny, but if this plugin helped you and your business and you feel it's worth some spare change, [send it here](https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=3489V46ZRBQMC&lc=US&item_name=Thank%20You%20Coffee%20for%20Stripe%20for%20WooCommerce&currency_code=USD). Thank you.
+
+= My Question isn't on this list, what do I do now? =
+
+Holler at the [Stripe For WooCommerce support forum](http://wordpress.org/support/plugin/stripe-for-woocommerce). Hopefully you can find your question has already been answered there, but if not open up a new thread and you'll probably get a wothwhile response.
+
+= Is there good documentation somewhere? =
+
+Not yet. I've been meaning to go through the code and develop some solid documentation on how to not only set it up, but also tweak and customize it to your liking. There are features that most people probably don't know about and they should, so I'm going to try and get that set up ASAP, but I'm a one-man-band so I don't necessarily have a lot of free time to devote to mind-numbing documentation.
 
 
 == Changelog ==
