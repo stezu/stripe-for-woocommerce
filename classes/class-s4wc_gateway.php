@@ -26,6 +26,7 @@ class S4WC_Gateway extends WC_Payment_Gateway {
         $this->method_title             = 'Stripe for WooCommerce';
         $this->has_fields               = true;
         $this->supports                 = array(
+            'default_credit_card_form',
             'products',
             'subscriptions',
             'subscription_cancellation',
@@ -325,13 +326,49 @@ class S4WC_Gateway extends WC_Payment_Gateway {
     }
 
     /**
-     * Payment fields
+     * Output payment fields, optional additional fields and woocommerce cc form
      *
      * @access      public
      * @return      void
      */
     public function payment_fields() {
+        global $s4wc;
+
         s4wc_get_template( 'payment-fields.php' );
+
+        if ( $s4wc->settings['additional_fields'] == 'yes' ) : 
+
+            $billing_name = woocommerce_form_field( 'billing-name', array(
+                'label'             => __( 'Name on Card', 'stripe-for-woocommerce' ),
+                'required'          => true,
+                'class'             => array( 'form-row-first' ),
+                'input_class'       => array( 's4wc-billing-name' ),
+                'return'            => true,
+                'custom_attributes' => array(
+                    'autocomplete'  => 'off'
+                )
+            ) );
+            echo $billing_name;
+
+            $billing_zip = woocommerce_form_field( 'billing-zip', array(
+                'label'             => __( 'Billing Zip', 'stripe-for-woocommerce' ),
+                'required'          => true,
+                'class'             => array( 'form-row-last' ),
+                'input_class'       => array( 's4wc-billing-zip' ),
+                'return'            => true,
+                'clear'             => true,
+                'custom_attributes' => array(
+                    'autocomplete'  => 'off'
+                )
+            ) );
+            echo $billing_zip;
+
+        endif;
+
+        // Output WooCommerce 2.1+ cc form
+        $this->credit_card_form( array(
+            'fields_have_names' => false,
+        ) );
     }
 
     /**
