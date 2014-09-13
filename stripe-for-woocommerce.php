@@ -73,7 +73,6 @@ class S4WC {
         $this->settings['saved_cards']              = isset( $this->settings['saved_cards'] ) ? $this->settings['saved_cards'] : 'yes';
 
         // API Info
-        $this->settings['api_endpoint']             = 'https://api.stripe.com/';
         $this->settings['publishable_key']          = $this->settings['testmode'] == 'yes' ? $this->settings['test_publishable_key'] : $this->settings['live_publishable_key'];
         $this->settings['secret_key']               = $this->settings['testmode'] == 'yes' ? $this->settings['test_secret_key'] : $this->settings['live_secret_key'];
 

@@ -25,7 +25,6 @@ class S4WC_Gateway extends WC_Payment_Gateway {
         $this->id                       = 's4wc';
         $this->method_title             = 'Stripe for WooCommerce';
         $this->has_fields               = true;
-        $this->api_endpoint             = 'https://api.stripe.com/';
         $this->supports                 = array(
             'products',
             'subscriptions',
