@@ -120,7 +120,7 @@ function s4wc_order_status_completed( $order_id = null ) {
 			$params['amount'] = round( $_POST['amount'] );
 		}
 
-		$transaction_id = get_post_meta( $order_id, 'transaction_id', true );
+		$transaction_id = get_post_meta( $order_id, '_transaction_id', true );
 
 		$charge = S4WC_API::capture_charge( $transaction_id, $params );
 

@@ -59,7 +59,7 @@ class S4WC_Subscriptions_Gateway extends S4WC_Gateway {
 			$this->transaction_id = $charge->id;
 
 			// Save data for the "Capture"
-			update_post_meta( $this->order->id, 'transaction_id', $this->transaction_id );
+			update_post_meta( $this->order->id, '_transaction_id', $this->transaction_id );
 			update_post_meta( $this->order->id, 'capture', strcmp( $this->charge_type, 'authorize' ) == 0 );
 
 			// Save data for cross-reference between Stripe Dashboard and WooCommerce
