@@ -23,7 +23,6 @@ class S4WC_Gateway extends WC_Payment_Gateway {
 		global $s4wc;
 
 		$this->id						= 's4wc';
-		$this->icon						= plugins_url( 'assets/images/credits.png', dirname(__FILE__) );
 		$this->method_title				= 'Stripe for WooCommerce';
 		$this->has_fields				= true;
 		$this->api_endpoint				= 'https://api.stripe.com/';
@@ -37,6 +36,12 @@ class S4WC_Gateway extends WC_Payment_Gateway {
 			'subscription_date_changes',
 			'subscription_payment_method_change'
 		);
+
+		// Add an icon with a filter for customization
+		$icon_url = apply_filters( 's4wc_icon_url', plugins_url( 'assets/images/credits.png', dirname(__FILE__) ) );
+		if ( $icon_url ) {
+			$this->icon = $icon_url;
+		}
 
 		// Init settings
 		$this->init_form_fields();
