@@ -46,6 +46,21 @@ class S4WC {
 			);
 		}
 
+		// Update transaction id's to new version so we don't break capturing
+		if ( ! get_option( 'woocommerce_s4wc_update_transaction_id' ) ) {
+
+			$wpdb->query(
+				"
+				UPDATE $wpdb->postmeta
+					SET `meta_key` = '_transaction_id'
+					WHERE `meta_key` = 'transaction_id'
+				"
+			);
+
+			// Make sure we only do this once
+			update_option( 'woocommerce_s4wc_update_transaction_id', true );
+		}
+
 		// Grab settings
 		$this->settings = get_option( 'woocommerce_s4wc_settings', array() );
 
