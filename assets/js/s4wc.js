@@ -11,7 +11,7 @@ jQuery( function ( $ ) {
         $ccForm, $ccNumber, $ccExpiry, $ccCvc;
 
     // Make sure the form doesn't use html validation
-    $form.attr('novalidate', 'novalidate');
+    $form.attr( 'novalidate', 'novalidate' );
 
     // Make sure the credit card form exists before we try working with it
     $(window).on( 'load.s4wc', function() {
@@ -32,7 +32,7 @@ jQuery( function ( $ ) {
     });
 
     // Both Forms
-    $form.on( 'keyup change', '#card-number, #card-expiry, #card-cvc, input[name="s4wc_card"], input[name="payment_method"]', function () {
+    $form.on( 'keyup change', '#s4wc-card-number, #s4wc-card-expiry, #s4wc-card-cvc, input[name="s4wc_card"], input[name="payment_method"]', function () {
 
         // Save credit card details in case the address changes (or something else)
         savedFieldValues.number = {
