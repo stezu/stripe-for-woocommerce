@@ -2,7 +2,7 @@
 /**
  * The Template for displaying the credit card form on the checkout page
  *
- * Override this template by copying it to yourtheme/woocommerce/woocommerce-stripe/payment-fields.php
+ * Override this template by copying it to yourtheme/woocommerce/s4wc/payment-fields.php
  *
  * @author      Stephen Zuniga
  * @version     1.25
@@ -17,10 +17,12 @@ echo '<noscript>';
     printf( __( '%s payment does not work without Javascript. Please enable Javascript or use a different payment method.', 'stripe-for-woocommerce' ), $s4wc->settings['title'] );
 echo '</noscript>';
 
-if ( $s4wc->settings['description'] ) : ?>
-    <p class="s4wc-description"><?php echo $s4wc->settings['description']; ?></p>
-<?php endif;
+// Payment method description
+if ( $s4wc->settings['description'] ) {
+    echo '<p class="s4wc-description">' .  $s4wc->settings['description'] . '</p>';
+}
 
+// Get user database object
 $stripe_customer_info = get_user_meta( get_current_user_id(), $s4wc->settings['stripe_db_location'], true );
 
 if ( is_user_logged_in() && $stripe_customer_info && isset( $stripe_customer_info['cards'] ) && count( $stripe_customer_info['cards'] ) && $s4wc->settings['saved_cards'] === 'yes' ) :
