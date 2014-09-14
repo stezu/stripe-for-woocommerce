@@ -425,7 +425,7 @@ class S4WC_Gateway extends WC_Payment_Gateway {
 
             // Make sure we only create customers if a user is logged in
             if ( is_user_logged_in() && $s4wc->settings['saved_cards'] === 'yes' ) {
-                $customer_description = $this->current_user->user_login . ' (#' . $this->current_user_id . ' - ' . $this->current_user->user_email . ') ' . $form_data['card']['name']; // username (user_id - user_email) Full Name
+                $customer_description = $this->current_user->user_login . ' (#' . $this->current_user_id . ' - ' . $this->current_user->user_email . ') ' . $form_data['customer']['name']; // username (user_id - user_email) Full Name
 
                 $customer_description = apply_filters( 's4wc_customer_description', $customer_description, $form_data, $this->order );
 
@@ -603,14 +603,9 @@ class S4WC_Gateway extends WC_Payment_Gateway {
                 'currency'      => strtolower( get_woocommerce_currency() ),
                 'token'         => isset( $_POST['stripe_token'] ) ? $_POST['stripe_token'] : '',
                 'chosen_card'   => isset( $_POST['s4wc_card'] ) ? $_POST['s4wc_card'] : 0,
-                'card'          => array(
+                'customer'      => array(
                     'name'              => $this->order->billing_first_name . ' ' . $this->order->billing_last_name,
                     'billing_email'     => $this->order->billing_email,
-                    'address_line1'     => $this->order->billing_address_1,
-                    'address_line2'     => $this->order->billing_address_2,
-                    'address_zip'       => $this->order->billing_postcode,
-                    'address_state'     => $this->order->billing_state,
-                    'address_country'   => $this->order->billing_country,
                 ),
                 'errors'        => isset( $_POST['form_errors'] ) ? $_POST['form_errors'] : ''
             );

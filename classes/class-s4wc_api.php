@@ -24,7 +24,7 @@ class S4WC_API {
 
         $post_body = array(
             'description'   => $customer_description,
-            'email'         => $form_data['card']['billing_email'],
+            'email'         => $form_data['customer']['billing_email'],
             'card'          => $form_data['token'],
         );
 
