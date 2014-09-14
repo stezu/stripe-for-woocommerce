@@ -155,7 +155,21 @@ class S4WC_Customer {
         global $s4wc;
 
         if ( $s4wc->settings['saved_cards'] === 'yes' ) {
-            s4wc_get_template( 'saved-cards.php' );
+
+            // If user requested to delete a card, delete it
+            if ( isset( $_POST['delete_card'] ) && wp_verify_nonce( $_POST['_wpnonce'], 's4wc_delete_card' ) ) {
+                S4WC_API::delete_card( get_current_user_id(), $_POST['delete_card'] );
+            }
+
+            $user_meta    = get_user_meta( get_current_user_id(), $s4wc->settings['stripe_db_location'], true );
+            $credit_cards = isset( $user_meta['cards'] ) ? $user_meta['cards'] : false;
+
+            $args = array(
+                'user_meta'    => $user_meta,
+                'credit_cards' => $credit_cards,
+            );
+
+            s4wc_get_template( 'saved-cards.php', $args );
         }
     }
 }
