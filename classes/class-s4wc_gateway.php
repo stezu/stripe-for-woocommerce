@@ -300,8 +300,7 @@ class S4WC_Gateway extends WC_Payment_Gateway {
             $order      = new WC_Order( $order_id );
 
             if ( $order->id == $order_id && $order->order_key == $order_key ) {
-                $s4wc_info['billing_first_name']    = $order->billing_first_name;
-                $s4wc_info['billing_last_name']     = $order->billing_last_name;
+                $s4wc_info['billing_name']          = $order->billing_first_name . ' ' . $order->billing_last_name;
                 $s4wc_info['billing_address_1']     = $order->billing_address_1;
                 $s4wc_info['billing_address_2']     = $order->billing_address_2;
                 $s4wc_info['billing_city']          = $order->billing_city;
@@ -603,7 +602,6 @@ class S4WC_Gateway extends WC_Payment_Gateway {
                 'amount'        => (float) $this->order->get_total() * 100,
                 'currency'      => strtolower( get_woocommerce_currency() ),
                 'token'         => isset( $_POST['stripe_token'] ) ? $_POST['stripe_token'] : '',
-                'description'   => sprintf( __( 'Charge for %s', 'stripe-for-woocommerce' ), $this->order->billing_email ),
                 'chosen_card'   => isset( $_POST['s4wc_card'] ) ? $_POST['s4wc_card'] : 0,
                 'card'          => array(
                     'name'              => $this->order->billing_first_name . ' ' . $this->order->billing_last_name,
@@ -629,9 +627,8 @@ class S4WC_Gateway extends WC_Payment_Gateway {
      * @return      string
      */
     protected function get_stripe_error_message( $e ) {
-        $error  = $e->getCode();
 
-        switch ( $error ) {
+        switch ( $e->getCode(); ) {
             case 'incorrect_number':
                 $message = __( 'Your card number is incorrect.', 'stripe-for-woocommerce' );
                 break;

@@ -93,7 +93,7 @@ jQuery( function ( $ ) {
 
             if ( ! $( 'input.stripe_token' ).length ) {
                 var cardExpiry = $ccExpiry.payment( 'cardExpiryVal' ),
-                    name = ( $( '#billing_first_name' ).val() || $( '#billing_last_name' ).val() ) ? $( '#billing_first_name' ).val() + ' ' + $( '#billing_last_name' ).val() : s4wc_info.billing_first_name + ' ' + s4wc_info.billing_last_name;
+                    name = ( $( '#billing_first_name' ).val() || $( '#billing_last_name' ).val() ) ? $( '#billing_first_name' ).val() + ' ' + $( '#billing_last_name' ).val() : s4wc_info.billing_name;
 
                 var stripeData = {
                     number          : $ccNumber.val() || '',
