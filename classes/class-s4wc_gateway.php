@@ -276,7 +276,6 @@ class S4WC_Gateway extends WC_Payment_Gateway {
     /**
      * Load dependent scripts
      * - stripe.js from the stripe servers
-     * - jquery.payment.js for styling the form fields
      * - s4wc.js for handling the data to submit to stripe
      *
      * @access      public
