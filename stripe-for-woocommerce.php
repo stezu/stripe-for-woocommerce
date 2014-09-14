@@ -81,6 +81,8 @@ class S4WC {
 
         // Hooks
         add_filter( 'woocommerce_payment_gateways', array( $this, 'add_stripe_gateway' ) );
+        add_action( 'woocommerce_order_status_processing_to_completed', array( $this, 'order_status_completed' ) );
+        add_action( 'woocommerce_after_checkout_validation', array( $this, 'validate_form' ) );
 
         // Localization
         load_plugin_textdomain( 'stripe-for-woocommerce', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
@@ -111,83 +113,84 @@ class S4WC {
 
         return $methods;
     }
+
+    /**
+     * Process the captured payment when changing order status to completed
+     *
+     * @access      public
+     * @param       int $order_id
+     * @return      mixed
+     */
+    public function order_status_completed( $order_id = null ) {
+
+        if ( ! $order_id ) {
+            $order_id = $_POST['order_id'];
+        }
+
+        if ( get_post_meta( $order_id, 'capture', true ) ) {
+
+            $params = array();
+            if ( isset( $_POST['amount'] )  ) {
+                $params['amount'] = round( $_POST['amount'] );
+            }
+
+            $transaction_id = get_post_meta( $order_id, '_transaction_id', true );
+
+            $charge = S4WC_API::capture_charge( $transaction_id, $params );
+
+            return $charge;
+        }
+    }
+
+    /**
+     * Validate credit card form fields
+     *
+     * @access      public
+     * @return      void
+     */
+    public function validate_form() {
+        $form = array(
+            'card-number'   => isset( $_POST['s4wc-card-number'] ) ? $_POST['s4wc-card-number'] : null,
+            'card-expiry'   => isset( $_POST['s4wc-card-expiry'] ) ? $_POST['s4wc-card-expiry'] : null,
+            'card-cvc'      => isset( $_POST['s4wc-card-cvc'] ) ? $_POST['s4wc-card-cvc'] : null,
+        );
+
+        if ( $form['card-number'] ) {
+            $field = __( 'Credit Card Number', 'stripe-for-woocommerce' );
+
+            wc_add_notice( $this->get_form_error_message( $field, $form['card-number'] ), 'error' );
+        }
+        if ( $form['card-expiry'] ) {
+            $field = __( 'Credit Card Expiration', 'stripe-for-woocommerce' );
+
+            wc_add_notice( $this->get_form_error_message( $field, $form['card-expiry'] ), 'error' );
+        }
+        if ( $form['card-cvc'] ) {
+            $field = __( 'Credit Card CVC', 'stripe-for-woocommerce' );
+
+            wc_add_notice( $this->get_form_error_message( $field, $form['card-cvc'] ), 'error' );
+        }
+    }
+
+    /**
+     * Get error message for form validator given field name and type of error
+     *
+     * @access      protected
+     * @param       string $field
+     * @param       string $type
+     * @return      string
+     */
+    protected function get_form_error_message( $field, $type = 'undefined' ) {
+
+        if ( $type === 'invalid' ) {
+            return sprintf( __( 'Please enter a valid %s.', 'stripe-for-woocommerce' ), "<strong>$field</strong>" );
+        } else {
+            return sprintf( __( '%s is a required field.', 'stripe-for-woocommerce' ), "<strong>$field</strong>" );
+        }
+    }
 }
 
 $GLOBALS['s4wc'] = new S4WC();
-
-/**
- * Process the captured payment when changing order status to completed
- *
- * @param       int $order_id
- * @return      mixed
- */
-function s4wc_order_status_completed( $order_id = null ) {
-
-    if ( ! $order_id ) {
-        $order_id = $_POST['order_id'];
-    }
-
-    if ( get_post_meta( $order_id, 'capture', true ) ) {
-
-        $params = array();
-        if ( isset( $_POST['amount'] )  ) {
-            $params['amount'] = round( $_POST['amount'] );
-        }
-
-        $transaction_id = get_post_meta( $order_id, '_transaction_id', true );
-
-        $charge = S4WC_API::capture_charge( $transaction_id, $params );
-
-        return $charge;
-    }
-}
-add_action( 'woocommerce_order_status_processing_to_completed', 's4wc_order_status_completed' );
-
-/**
- * Get error message for form validator given field name and type of error
- *
- * @param       string $field
- * @param       string $type
- * @return      string
- */
-function s4wc_get_form_error_message( $field, $type = 'undefined' ) {
-
-    if ( $type === 'invalid' ) {
-        return sprintf( __( 'Please enter a valid %s.', 'stripe-for-woocommerce' ), "<strong>$field</strong>" );
-    } else {
-        return sprintf( __( '%s is a required field.', 'stripe-for-woocommerce' ), "<strong>$field</strong>" );
-    }
-}
-
-/**
- * Validate credit card form fields
- *
- * @return      void
- */
-function s4wc_validate_form() {
-    $form = array(
-        'card-number'   => isset( $_POST['s4wc-card-number'] ) ? $_POST['s4wc-card-number'] : null,
-        'card-expiry'   => isset( $_POST['s4wc-card-expiry'] ) ? $_POST['s4wc-card-expiry'] : null,
-        'card-cvc'      => isset( $_POST['s4wc-card-cvc'] ) ? $_POST['s4wc-card-cvc'] : null,
-    );
-
-    if ( $form['card-number'] ) {
-        $field = __( 'Credit Card Number', 'stripe-for-woocommerce' );
-
-        wc_add_notice( s4wc_get_form_error_message( $field, $form['card-number'] ), 'error' );
-    }
-    if ( $form['card-expiry'] ) {
-        $field = __( 'Credit Card Expiration', 'stripe-for-woocommerce' );
-
-        wc_add_notice( s4wc_get_form_error_message( $field, $form['card-expiry'] ), 'error' );
-    }
-    if ( $form['card-cvc'] ) {
-        $field = __( 'Credit Card CVC', 'stripe-for-woocommerce' );
-
-        wc_add_notice( s4wc_get_form_error_message( $field, $form['card-cvc'] ), 'error' );
-    }
-}
-add_action( 'woocommerce_after_checkout_validation', 's4wc_validate_form' );
 
 /**
  * Wrapper of wc_get_template to relate directly to s4wc
