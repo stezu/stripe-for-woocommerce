@@ -57,6 +57,7 @@ class S4WC_Gateway extends WC_Payment_Gateway {
         add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array( $this, 'process_admin_options' ) );
         add_action( 'admin_notices', array( $this, 'admin_notices' ) );
         add_action( 'wp_enqueue_scripts', array( $this, 'load_scripts' ) );
+        add_action( 'woocommerce_credit_card_form_start', array( $this, 'before_cc_form' ) );
     }
 
     /**
@@ -314,44 +315,50 @@ class S4WC_Gateway extends WC_Payment_Gateway {
     }
 
     /**
+     * Add additional fields just above the credit card form
+     *
+     * @access      public
+     * @param       string $gateway_id
+     * @return      void
+     */
+    public function before_cc_form( $gateway_id ) {
+        global $s4wc;
+
+        // Ensure that we're only outputting this for the s4wc gateway
+        if ( $gateway_id === $this->id && $s4wc->settings['additional_fields'] == 'yes' ) {
+            woocommerce_form_field( 'billing-name', array(
+                'label'             => __( 'Name on Card', 'stripe-for-woocommerce' ),
+                'required'          => true,
+                'class'             => array( 'form-row-first' ),
+                'input_class'       => array( 's4wc-billing-name' ),
+                'custom_attributes' => array(
+                    'autocomplete'  => 'off'
+                )
+            ) );
+
+            woocommerce_form_field( 'billing-zip', array(
+                'label'             => __( 'Billing Zip', 'stripe-for-woocommerce' ),
+                'required'          => true,
+                'class'             => array( 'form-row-last' ),
+                'input_class'       => array( 's4wc-billing-zip' ),
+                'clear'             => true,
+                'custom_attributes' => array(
+                    'autocomplete'  => 'off'
+                )
+            ) );
+        }
+    }
+
+    /**
      * Output payment fields, optional additional fields and woocommerce cc form
      *
      * @access      public
      * @return      void
      */
     public function payment_fields() {
-        global $s4wc;
 
+        // Output the saved card data
         s4wc_get_template( 'payment-fields.php' );
-
-        if ( $s4wc->settings['additional_fields'] == 'yes' ) : 
-
-            $billing_name = woocommerce_form_field( 'billing-name', array(
-                'label'             => __( 'Name on Card', 'stripe-for-woocommerce' ),
-                'required'          => true,
-                'class'             => array( 'form-row-first' ),
-                'input_class'       => array( 's4wc-billing-name' ),
-                'return'            => true,
-                'custom_attributes' => array(
-                    'autocomplete'  => 'off'
-                )
-            ) );
-            echo $billing_name;
-
-            $billing_zip = woocommerce_form_field( 'billing-zip', array(
-                'label'             => __( 'Billing Zip', 'stripe-for-woocommerce' ),
-                'required'          => true,
-                'class'             => array( 'form-row-last' ),
-                'input_class'       => array( 's4wc-billing-zip' ),
-                'return'            => true,
-                'clear'             => true,
-                'custom_attributes' => array(
-                    'autocomplete'  => 'off'
-                )
-            ) );
-            echo $billing_zip;
-
-        endif;
 
         // Output WooCommerce 2.1+ cc form
         $this->credit_card_form( array(
