@@ -535,14 +535,10 @@ class S4WC_Gateway extends WC_Payment_Gateway {
 
             // If the user doesn't have cards or is adding a new one
             if ( ! count( $this->stripe_customer_info['cards'] ) || $form_data['chosen_card'] == 'new' ) {
-                // Add new card on stripe servers
+
+                // Add new card on stripe servers and make default
                 $card = S4WC_API::update_customer( $this->stripe_customer_info['customer_id'] . '/cards', array(
                     'card' => $form_data['token']
-                ) );
-
-                // Make new card the default
-                $customer = S4WC_API::update_customer( $this->stripe_customer_info['customer_id'], array(
-                    'default_card' => $card->id
                 ) );
 
                 // Add new customer details to database
