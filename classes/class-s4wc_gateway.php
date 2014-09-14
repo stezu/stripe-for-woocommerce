@@ -47,14 +47,6 @@ class S4WC_Gateway extends WC_Payment_Gateway {
         $this->init_form_fields();
         $this->init_settings();
 
-        // Get settings
-        $this->enabled                  = $this->settings['enabled'];
-        $this->title                    = $this->settings['title'];
-        $this->description              = $this->settings['description'];
-        $this->testmode                 = $this->settings['testmode'];
-        $this->charge_type              = $this->settings['charge_type'];
-        $this->additional_fields        = $this->settings['additional_fields'];
-
         // Get current user information
         $this->current_user             = wp_get_current_user();
         $this->current_user_id          = get_current_user_id();
@@ -87,7 +79,7 @@ class S4WC_Gateway extends WC_Payment_Gateway {
         }
 
         // Disable plugin if we don't use ssl
-        if ( ! is_ssl() && $this->testmode == 'no' ) {
+        if ( ! is_ssl() && $this->settings['testmode'] == 'no' ) {
             return false;
         }
 
@@ -103,7 +95,7 @@ class S4WC_Gateway extends WC_Payment_Gateway {
     public function admin_notices() {
         global $s4wc, $pagenow, $wpdb;
 
-        if ( $this->enabled == 'no') {
+        if ( $this->settings['enabled'] == 'no') {
             return false;
         }
 
@@ -114,7 +106,7 @@ class S4WC_Gateway extends WC_Payment_Gateway {
         }
 
         // Force SSL on production
-        if ( $this->testmode == 'no' && get_option( 'woocommerce_force_ssl_checkout' ) == 'no' ) {
+        if ( $this->settings['testmode'] == 'no' && get_option( 'woocommerce_force_ssl_checkout' ) == 'no' ) {
             echo '<div class="error"><p>' . __( 'Stripe needs SSL in order to be secure. Read mode about forcing SSL on checkout in <a href="http://docs.woothemes.com/document/ssl-and-https/" target="_blank">the WooCommerce docs</a>.', 'stripe-for-woocommerce' ) . '</p></div>';
             return false;
         }
@@ -368,6 +360,36 @@ class S4WC_Gateway extends WC_Payment_Gateway {
     }
 
     /**
+     * Process the payment and return the result
+     *
+     * @access      public
+     * @param       int $order_id
+     * @return      array
+     */
+    public function process_payment( $order_id ) {
+
+        $this->order = new WC_Order( $order_id );
+
+        if ( $this->send_to_stripe() ) {
+            $this->order_complete();
+
+            $result = array(
+                'result' => 'success',
+                'redirect' => $this->get_return_url( $this->order )
+            );
+
+            return $result;
+        } else {
+            $this->payment_failed();
+
+            // Add a generic error message if we don't currently have any others
+            if ( wc_notice_count( 'error' ) == 0 ) {
+                wc_add_notice( __( 'Transaction Error: Could not complete your payment.', 'stripe-for-woocommerce' ), 'error' );
+            }
+        }
+    }
+
+    /**
      * Send form data to Stripe
      * Handles sending the charge to an existing customer, a new customer (that's logged in), or a guest
      *
@@ -392,7 +414,7 @@ class S4WC_Gateway extends WC_Payment_Gateway {
             $stripe_charge_data = array(
                 'amount'        => $form_data['amount'], // amount in cents
                 'currency'      => $form_data['currency'],
-                'capture'       => ( $this->charge_type == 'capture' ) ? 'true' : 'false'
+                'capture'       => ( $this->settings['charge_type'] == 'capture' ) ? 'true' : 'false'
             );
 
             // Make sure we only create customers if a user is logged in
@@ -445,7 +467,7 @@ class S4WC_Gateway extends WC_Payment_Gateway {
 
             // Save data for the "Capture"
             update_post_meta( $this->order->id, '_transaction_id', $this->transaction_id );
-            update_post_meta( $this->order->id, 'capture', strcmp( $this->charge_type, 'authorize' ) == 0 );
+            update_post_meta( $this->order->id, 'capture', strcmp( $this->settings['charge_type'], 'authorize' ) == 0 );
 
             // Save data for cross-reference between Stripe Dashboard and WooCommerce
             update_post_meta( $this->order->id, 'customer_id', $customer['customer_id'] );
@@ -466,63 +488,16 @@ class S4WC_Gateway extends WC_Payment_Gateway {
     }
 
     /**
-     * Localize Stripe error messages
-     *
-     * @access      public
-     * @param       Exception $e
-     * @return      string
-     */
-    public function get_stripe_error_message( $e ) {
-        $error  = $e->getCode();
-
-        switch ( $error ) {
-            case 'incorrect_number':
-                $message = __( 'Your card number is incorrect.', 'stripe-for-woocommerce' );
-                break;
-            case 'invalid_number':
-                $message = __( 'Your card number is not a valid credit card number.', 'stripe-for-woocommerce' );
-                break;
-            case 'invalid_expiry_month':
-                $message = __( 'Your card\'s expiration month is invalid.', 'stripe-for-woocommerce' );
-                break;
-            case 'invalid_expiry_year':
-                $message = __( 'Your card\'s expiration year is invalid.', 'stripe-for-woocommerce' );
-                break;
-            case 'invalid_cvc':
-                $message = __( 'Your card\'s security code is invalid.', 'stripe-for-woocommerce' );
-                break;
-            case 'expired_card':
-                $message = __( 'Your card has expired.', 'stripe-for-woocommerce' );
-                break;
-            case 'incorrect_cvc':
-                $message = __( 'Your card\'s security code is incorrect.', 'stripe-for-woocommerce' );
-                break;
-            case 'incorrect_zip':
-                $message = __( 'Your zip code failed validation.', 'stripe-for-woocommerce' );
-                break;
-            case 'card_declined':
-                $message = __( 'Your card was declined.', 'stripe-for-woocommerce' );
-                break;
-            default:
-                $message = __( 'Failed to process the order, please try again later.', 'stripe-for-woocommerce' );
-        }
-
-        $this->transaction_error_message = $message;
-
-        return $message;
-    }
-
-    /**
      * Create a customer if the current user isn't already one
      * Retrieve a customer if one already exists
      * Add a card to a customer if necessary
      *
-     * @access      public
+     * @access      protected
      * @param       string $description
      * @param       array $form_data
      * @return      array
      */
-    public function get_customer( $description, $form_data ) {
+    protected function get_customer( $description, $form_data ) {
         $output = array();
 
         if ( ! $this->stripe_customer_info ) {
@@ -564,36 +539,6 @@ class S4WC_Gateway extends WC_Payment_Gateway {
         $output['customer_id'] = $customer->id;
 
         return $output;
-    }
-
-    /**
-     * Process the payment and return the result
-     *
-     * @access      public
-     * @param       int $order_id
-     * @return      array
-     */
-    public function process_payment( $order_id ) {
-
-        $this->order = new WC_Order( $order_id );
-
-        if ( $this->send_to_stripe() ) {
-            $this->order_complete();
-
-            $result = array(
-                'result' => 'success',
-                'redirect' => $this->get_return_url( $this->order )
-            );
-
-            return $result;
-        } else {
-            $this->payment_failed();
-
-            // Add a generic error message if we don't currently have any others
-            if ( wc_notice_count( 'error' ) == 0 ) {
-                wc_add_notice( __( 'Transaction Error: Could not complete your payment.', 'stripe-for-woocommerce' ), 'error' );
-            }
-        }
     }
 
     /**
@@ -667,5 +612,52 @@ class S4WC_Gateway extends WC_Payment_Gateway {
         }
 
         return false;
+    }
+
+    /**
+     * Localize Stripe error messages
+     *
+     * @access      protected
+     * @param       Exception $e
+     * @return      string
+     */
+    protected function get_stripe_error_message( $e ) {
+        $error  = $e->getCode();
+
+        switch ( $error ) {
+            case 'incorrect_number':
+                $message = __( 'Your card number is incorrect.', 'stripe-for-woocommerce' );
+                break;
+            case 'invalid_number':
+                $message = __( 'Your card number is not a valid credit card number.', 'stripe-for-woocommerce' );
+                break;
+            case 'invalid_expiry_month':
+                $message = __( 'Your card\'s expiration month is invalid.', 'stripe-for-woocommerce' );
+                break;
+            case 'invalid_expiry_year':
+                $message = __( 'Your card\'s expiration year is invalid.', 'stripe-for-woocommerce' );
+                break;
+            case 'invalid_cvc':
+                $message = __( 'Your card\'s security code is invalid.', 'stripe-for-woocommerce' );
+                break;
+            case 'expired_card':
+                $message = __( 'Your card has expired.', 'stripe-for-woocommerce' );
+                break;
+            case 'incorrect_cvc':
+                $message = __( 'Your card\'s security code is incorrect.', 'stripe-for-woocommerce' );
+                break;
+            case 'incorrect_zip':
+                $message = __( 'Your zip code failed validation.', 'stripe-for-woocommerce' );
+                break;
+            case 'card_declined':
+                $message = __( 'Your card was declined.', 'stripe-for-woocommerce' );
+                break;
+            default:
+                $message = __( 'Failed to process the order, please try again later.', 'stripe-for-woocommerce' );
+        }
+
+        $this->transaction_error_message = $message;
+
+        return $message;
     }
 }
