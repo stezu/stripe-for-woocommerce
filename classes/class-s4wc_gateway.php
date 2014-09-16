@@ -434,7 +434,7 @@ class S4WC_Gateway extends WC_Payment_Gateway {
 
                 // Update default card
                 if ( $form_data['chosen_card'] !== 'new' ) {
-                    $default_card = $this->stripe_customer_info['cards'][ $form_data['chosen_card'] ]['id'];
+                    $default_card = $this->stripe_customer_info['cards'][ (int)$form_data['chosen_card'] ]['id'];
                     S4WC_DB::update_customer( $this->current_user_id, array( 'default_card' => $default_card ) );
                 }
 
@@ -535,7 +535,7 @@ class S4WC_Gateway extends WC_Payment_Gateway {
 
                 $output['card'] = $card->id;
             } else {
-                $output['card'] = $this->stripe_customer_info['cards'][ $form_data['chosen_card'] ]['id'];
+                $output['card'] = $this->stripe_customer_info['cards'][ (int)$form_data['chosen_card'] ]['id'];
             }
         }
         // Set up charging data to include customer information
