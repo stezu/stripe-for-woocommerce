@@ -201,9 +201,15 @@ class S4WC_Gateway extends WC_Payment_Gateway {
                 'label'         => __( 'Use Additional Fields', 'stripe-for-woocommerce' ),
                 'default'       => 'no'
             ),
+            'saved_cards' => array(
+                'type'          => 'checkbox',
+                'title'         => __( 'Saved Cards', 'stripe-for-woocommerce' ),
+                'description'   => __( 'Allow customers to use saved cards for future purchases.', 'stripe-for-woocommerce' ),
+                'default'       => 'yes',
+            ),
             'testmode' => array(
                 'type'          => 'checkbox',
-                'title'         => __( 'Testing', 'stripe-for-woocommerce' ),
+                'title'         => __( 'Test Mode', 'stripe-for-woocommerce' ),
                 'description'   => __( 'Use the test mode on Stripe\'s dashboard to verify everything works before going live.', 'stripe-for-woocommerce' ),
                 'label'         => __( 'Turn on testing', 'stripe-for-woocommerce' ),
                 'default'       => 'no'
@@ -227,12 +233,6 @@ class S4WC_Gateway extends WC_Payment_Gateway {
                 'type'          => 'text',
                 'title'         => __( 'Stripe API Live Publishable key', 'stripe-for-woocommerce' ),
                 'default'       => '',
-            ),
-            'saved_cards' => array(
-                'type'          => 'checkbox',
-                'title'         => __( 'Saved Cards', 'stripe-for-woocommerce' ),
-                'description'   => __( 'Allow customers to use saved cards for future purchases.', 'stripe-for-woocommerce' ),
-                'default'       => 'yes',
             ),
         );
     }
