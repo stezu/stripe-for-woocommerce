@@ -117,6 +117,16 @@ class S4WC_API {
     }
 
     /**
+     * Create refund on stripe servers
+     * @param  string $transaction_id 
+     * @param  array $refund_data    
+     * @return array                 
+     */
+    public static function create_refund( $transaction_id, $refund_data ) {
+        return S4WC_API::post_data( $refund_data, 'charges/' . $transaction_id . '/refunds' );
+    }
+
+    /**
      * Get data from Stripe's servers by passing an API endpoint
      *
      * @access      public
