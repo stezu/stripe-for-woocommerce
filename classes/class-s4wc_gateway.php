@@ -669,6 +669,43 @@ class S4WC_Gateway extends WC_Payment_Gateway {
      * @return  boolean True or false based on success, or a WP_Error object
      */
     public function process_refund( $order_id, $amount = null, $reason = '' ) {
+
+        $this->order = new WC_Order( $order_id );
+
+        $this->transaction_id = $this->order->transaction_id;
+
+        if ( $this->transaction_id ) {
+
+            try {
+
+                $refund_data = array();
+
+                if ( $amount !== null ) {
+                    $refund_data['amount'] = (float) $amount * 100 ;
+                }
+
+                if ( $reason !== '' ) {
+                    $refund_data['metadata'] = array(
+                        'reason' => $reason
+                    );
+                }
+
+                S4WC_API::create_refund( $this->transaction_id, $refund_data );
+
+                return true;
+
+            } catch ( Exception $e ) {
+
+                $message = $this->get_stripe_error_message( $e );
+                return WP_Error( 'stripe-for-woocommerce', __( $message ) );
+
+            }
+        } else {
+
+            return WP_Error( 'stripe-for-woocommerce', __( 'Refund failed because the transaction ID is missing.' ) );
+
+        }
+
         return false;
     }
 }
