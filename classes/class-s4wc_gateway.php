@@ -24,6 +24,7 @@ class S4WC_Gateway extends WC_Payment_Gateway {
 
         $this->id                       = 's4wc';
         $this->method_title             = 'Stripe for WooCommerce';
+        $this->title                    = $this->get_option( 'title' );
         $this->has_fields               = true;
         $this->supports                 = array(
             'default_credit_card_form',
