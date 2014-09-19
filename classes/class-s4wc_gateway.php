@@ -657,4 +657,18 @@ class S4WC_Gateway extends WC_Payment_Gateway {
 
         return $message;
     }
+
+    /**
+     * Process refund
+     *
+     * Overriding refund method
+     *
+     * @param  int $order_id
+     * @param  float $amount
+     * @param  string $reason
+     * @return  boolean True or false based on success, or a WP_Error object
+     */
+    public function process_refund( $order_id, $amount = null, $reason = '' ) {
+        return false;
+    }
 }
