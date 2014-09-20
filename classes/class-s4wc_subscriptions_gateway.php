@@ -89,21 +89,23 @@ class S4WC_Subscriptions_Gateway extends S4WC_Gateway {
             }
         }
 
-        // Charge description
+        // Default charge description
         $charge_description = sprintf(
             __( 'Payment for %s (Order: %s)', 'stripe-for-woocommerce' ),
             $product_name,
             $order->get_order_number()
         );
 
+        // Allow options to be set without modifying sensitive data like amount, currency, etc.
+        $charge_data = apply_filters( 's4wc_subscription_charge_data', array(), $order );
+
         // Set up basics for charging
-        $charge_data = array(
-            'amount'        => $amount * 100, // amount in cents
-            'currency'      => strtolower( get_woocommerce_currency() ),
-            'description'   => apply_filters( 's4wc_subscription_charge_description', $charge_description, $order ),
-            'customer'      => $customer['customer_id'],
-            'card'          => $customer['default_card']
-        );
+        $charge_data['amount']      = $amount * 100, // amount in cents
+        $charge_data['currency']    = strtolower( get_woocommerce_currency() );
+        $charge_data['description'] = apply_filters( 's4wc_subscription_charge_description', $charge_description, $order );
+        $charge_data['customer']    = $customer['customer_id'];
+        $charge_data['card']        = $customer['default_card'];
+
         $charge = S4WC_API::create_charge( $charge_data );
 
         if ( isset( $charge->id ) ) {
