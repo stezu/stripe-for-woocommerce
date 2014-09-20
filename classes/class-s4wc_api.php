@@ -16,19 +16,13 @@ class S4WC_API {
      * Create customer on stripe servers
      *
      * @access      public
-     * @param       array $form_data
-     * @param       string $customer_description
+     * @param       array $customer_data
      * @return      array
      */
-    public static function create_customer( $form_data, $customer_description ) {
+    public static function create_customer( $customer_data ) {
 
-        $post_body = array(
-            'description'   => $customer_description,
-            'email'         => $form_data['customer']['billing_email'],
-            'card'          => $form_data['token'],
-        );
-
-        $customer = S4WC_API::post_data( $post_body, 'customers' );
+        // Create a customer on Stripe servers
+        $customer = S4WC_API::post_data( $customer_data, 'customers' );
 
         $active_card = $customer->cards->data[ array_search( $customer->default_card, $customer->cards->data ) ];
 

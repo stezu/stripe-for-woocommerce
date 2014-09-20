@@ -565,7 +565,21 @@ class S4WC_Gateway extends WC_Payment_Gateway {
         $output = array();
 
         if ( ! $this->stripe_customer_info ) {
-            $customer = S4WC_API::create_customer( $form_data, $description );
+
+            $customer_data = array(
+                'description'   => $description,
+                'email'         => $form_data['customer']['billing_email'],
+                'card'          => $form_data['token'],
+            );
+
+            // Customer metadata
+            $customer_metadata = apply_filters( 's4wc_customer_metadata', false, $form_data, $this->order );
+
+            if ( $customer_metadata ) {
+                $customer_data['metadata'] = $customer_metadata;
+            }
+
+            $customer = S4WC_API::create_customer( $customer_data );
 
             $output['card'] = $customer->default_card;
         } else {
