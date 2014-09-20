@@ -477,12 +477,9 @@ class S4WC_Gateway extends WC_Payment_Gateway {
 
             // Make sure we only create customers if a user is logged in
             if ( is_user_logged_in() && $s4wc->settings['saved_cards'] === 'yes' ) {
-                $customer_description = $this->current_user->user_login . ' (#' . $this->current_user_id . ' - ' . $this->current_user->user_email . ') ' . $form_data['customer']['name']; // username (user_id - user_email) Full Name
-
-                $customer_description = apply_filters( 's4wc_customer_description', $customer_description, $form_data, $this->order );
 
                 // Add a customer or retrieve an existing one
-                $customer = $this->get_customer( $customer_description, $form_data );
+                $customer = $this->get_customer( $form_data );
 
                 $stripe_charge_data['card'] = $customer['card'];
                 $stripe_charge_data['customer'] = $customer['customer_id'];
@@ -551,28 +548,26 @@ class S4WC_Gateway extends WC_Payment_Gateway {
      * Add a card to a customer if necessary
      *
      * @access      protected
-     * @param       string $description
      * @param       array $form_data
      * @return      array
      */
-    protected function get_customer( $description, $form_data ) {
+    protected function get_customer( $form_data ) {
         $output = array();
 
         if ( ! $this->stripe_customer_info ) {
 
-            $customer_data = array(
-                'description'   => $description,
-                'email'         => $form_data['customer']['billing_email'],
-                'card'          => $form_data['token'],
-            );
+            // Allow options to be set without modifying sensitive data like token, email, etc
+            $customer_data = apply_filters( 's4wc_customer_data', array(), $form_data, $this->order );
 
-            // Customer metadata
-            $customer_metadata = apply_filters( 's4wc_customer_metadata', false, $form_data, $this->order );
+            // Set default customer description
+            $customer_description = $this->current_user->user_login . ' (#' . $this->current_user_id . ' - ' . $this->current_user->user_email . ') ' . $form_data['customer']['name']; // username (user_id - user_email) Full Name
 
-            if ( $customer_metadata ) {
-                $customer_data['metadata'] = $customer_metadata;
-            }
+            // Set up basics for customer
+            $customer_data['description'] = apply_filters( 's4wc_customer_description', $customer_description, $form_data, $this->order );
+            $customer_data['email']       = $form_data['customer']['billing_email'];
+            $customer_data['card']        = $form_data['token'];
 
+            // Create the customer in the api with the above data
             $customer = S4WC_API::create_customer( $customer_data );
 
             $output['card'] = $customer->default_card;
