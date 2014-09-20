@@ -467,12 +467,13 @@ class S4WC_Gateway extends WC_Payment_Gateway {
         // Set up the charge for Stripe's servers
         try {
 
+            // Allow options to be set without modifying sensitive data like amount, currency, etc.
+            $stripe_charge_data = apply_filters( 's4wc_charge_data', array(), $form_data, $this->order );
+
             // Set up basics for charging
-            $stripe_charge_data = array(
-                'amount'        => $form_data['amount'], // amount in cents
-                'currency'      => $form_data['currency'],
-                'capture'       => ( $this->settings['charge_type'] == 'capture' ) ? 'true' : 'false'
-            );
+            $stripe_charge_data['amount']   = $form_data['amount']; // amount in cents
+            $stripe_charge_data['currency'] = $form_data['currency'];
+            $stripe_charge_data['capture']  = ( $this->settings['charge_type'] == 'capture' ) ? 'true' : 'false';
 
             // Make sure we only create customers if a user is logged in
             if ( is_user_logged_in() && $s4wc->settings['saved_cards'] === 'yes' ) {
@@ -516,13 +517,6 @@ class S4WC_Gateway extends WC_Payment_Gateway {
             );
 
             $stripe_charge_data['description'] = apply_filters( 's4wc_charge_description', $charge_description, $form_data, $this->order );
-
-            // Charge metadata
-            $charge_metadata = apply_filters( 's4wc_charge_metadata', false, $form_data, $this->order );
-
-            if ( $charge_metadata ) {
-                $stripe_charge_data['metadata'] = $charge_metadata;
-            }
 
             // Create the charge on Stripe's servers - this will charge the user's card
             $charge = S4WC_API::create_charge( $stripe_charge_data );
