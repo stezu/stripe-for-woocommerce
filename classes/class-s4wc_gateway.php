@@ -102,7 +102,7 @@ class S4WC_Gateway extends WC_Payment_Gateway {
     public function admin_notices() {
         global $s4wc, $pagenow, $wpdb;
 
-        if ( $this->settings['enabled'] == 'no') {
+        if ( $this->enabled == 'no') {
             return false;
         }
 
