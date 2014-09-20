@@ -667,15 +667,15 @@ class S4WC_Gateway extends WC_Payment_Gateway {
      *
      * Overriding refund method
      *
-     * @param  int $order_id
-     * @param  float $amount
-     * @param  string $reason
-     * @return  boolean True or false based on success, or a WP_Error object
+     * @access      public
+     * @param       int $order_id
+     * @param       float $amount
+     * @param       string $reason
+     * @return      mixed True or False based on success, or WP_Error
      */
     public function process_refund( $order_id, $amount = null, $reason = '' ) {
 
         $this->order = new WC_Order( $order_id );
-
         $this->transaction_id = $this->order->transaction_id;
 
         if ( $this->transaction_id ) {
@@ -684,30 +684,44 @@ class S4WC_Gateway extends WC_Payment_Gateway {
 
                 $refund_data = array();
 
-                if ( $amount !== null ) {
-                    $refund_data['amount'] = (float) $amount * 100 ;
+                // If the amount is set, refund that amount, otherwise the entire amount is refunded
+                if ( $amount ) {
+                    $refund_data['amount'] = $amount * 100;
                 }
 
-                if ( $reason !== '' ) {
+                // If a reason is provided, add it to the Stripe metadata for the refund
+                if ( $reason ) {
                     $refund_data['metadata'] = array(
                         'reason' => $reason
                     );
                 }
 
+                // Send the refund to the Stripe API
                 S4WC_API::create_refund( $this->transaction_id, $refund_data );
 
+                // The refund was processed successfully
                 return true;
-
             } catch ( Exception $e ) {
 
-                $message = $this->get_stripe_error_message( $e );
-                return WP_Error( 'stripe-for-woocommerce', __( $message ) );
+                $this->order->add_order_note(
+                    sprintf(
+                        __( '%s Credit Card Refund Failed with message: "%s"', 'stripe-for-woocommerce' ),
+                        get_class( $this ),
+                        $this->transaction_error_message
+                    )
+                );
 
+                // Something failed somewhere, send a message.
+                return new WP_Error( 'refund-failed', $this->get_stripe_error_message( $e ) );
             }
         } else {
 
-            return WP_Error( 'stripe-for-woocommerce', __( 'Refund failed because the transaction ID is missing.' ) );
-
+            return new WP_Error( 'refund-failed',
+                sprintf(
+                    __( '%s Credit Card Refund failed because the Transaction ID is missing.', 'stripe-for-woocommerce' ),
+                    get_class( $this )
+                )
+            );
         }
 
         return false;

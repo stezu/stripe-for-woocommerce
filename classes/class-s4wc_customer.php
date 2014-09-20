@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 class S4WC_Customer {
 
     public function __construct() {
-        
+
         // Hooks
         add_action( 'woocommerce_after_my_account', array( $this, 'account_saved_cards' ) );
         add_action( 'show_user_profile', array( $this, 'add_customer_profile' ), 20 );

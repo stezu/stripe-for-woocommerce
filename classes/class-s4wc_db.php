@@ -111,7 +111,7 @@ class S4WC_DB {
         global $s4wc;
 
         // Sample structure of $customer_data
-        // $customer_data = array( 
+        // $customer_data = array(
         //  'card' => 'card_104FP72XTgyB3Fd3Pw9jM2Xh'
         // );
 
