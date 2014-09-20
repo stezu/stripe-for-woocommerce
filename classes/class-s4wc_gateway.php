@@ -368,6 +368,54 @@ class S4WC_Gateway extends WC_Payment_Gateway {
     }
 
     /**
+     * Validate credit card form fields
+     *
+     * @access      public
+     * @return      void
+     */
+    public function validate_fields() {
+
+        $form = array(
+            'card-number'   => isset( $_POST['s4wc-card-number'] ) ? $_POST['s4wc-card-number'] : null,
+            'card-expiry'   => isset( $_POST['s4wc-card-expiry'] ) ? $_POST['s4wc-card-expiry'] : null,
+            'card-cvc'      => isset( $_POST['s4wc-card-cvc'] ) ? $_POST['s4wc-card-cvc'] : null,
+        );
+
+        if ( $form['card-number'] ) {
+            $field = __( 'Credit Card Number', 'stripe-for-woocommerce' );
+
+            wc_add_notice( $this->get_form_error_message( $field, $form['card-number'] ), 'error' );
+        }
+        if ( $form['card-expiry'] ) {
+            $field = __( 'Credit Card Expiration', 'stripe-for-woocommerce' );
+
+            wc_add_notice( $this->get_form_error_message( $field, $form['card-expiry'] ), 'error' );
+        }
+        if ( $form['card-cvc'] ) {
+            $field = __( 'Credit Card CVC', 'stripe-for-woocommerce' );
+
+            wc_add_notice( $this->get_form_error_message( $field, $form['card-cvc'] ), 'error' );
+        }
+    }
+
+    /**
+     * Get error message for form validator given field name and type of error
+     *
+     * @access      protected
+     * @param       string $field
+     * @param       string $type
+     * @return      string
+     */
+    protected function get_form_error_message( $field, $type = 'undefined' ) {
+
+        if ( $type === 'invalid' ) {
+            return sprintf( __( 'Please enter a valid %s.', 'stripe-for-woocommerce' ), "<strong>$field</strong>" );
+        } else {
+            return sprintf( __( '%s is a required field.', 'stripe-for-woocommerce' ), "<strong>$field</strong>" );
+        }
+    }
+
+    /**
      * Process the payment and return the result
      *
      * @access      public
