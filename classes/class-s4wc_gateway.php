@@ -51,6 +51,7 @@ class S4WC_Gateway extends WC_Payment_Gateway {
         // Use settings
         $this->enabled                  = $this->settings['enabled'];
         $this->title                    = $this->settings['title'];
+        $this->description              = $this->settings['description'];
 
         // Get current user information
         $this->current_user             = wp_get_current_user();
@@ -724,7 +725,7 @@ class S4WC_Gateway extends WC_Payment_Gateway {
     public function process_refund( $order_id, $amount = null, $reason = '' ) {
 
         $this->order = new WC_Order( $order_id );
-        $this->transaction_id = $this->order->transaction_id;
+        $this->transaction_id = $this->order->get_transaction_id();
 
         if ( $this->transaction_id ) {
 
@@ -745,10 +746,8 @@ class S4WC_Gateway extends WC_Payment_Gateway {
                 }
 
                 // Send the refund to the Stripe API
-                S4WC_API::create_refund( $this->transaction_id, $refund_data );
+                return S4WC_API::create_refund( $this->transaction_id, $refund_data );
 
-                // The refund was processed successfully
-                return true;
             } catch ( Exception $e ) {
 
                 $this->order->add_order_note(
@@ -760,11 +759,11 @@ class S4WC_Gateway extends WC_Payment_Gateway {
                 );
 
                 // Something failed somewhere, send a message.
-                return new WP_Error( 'refund-failed', $this->get_stripe_error_message( $e ) );
+                return new WP_Error( 's4wc_refund_error', $this->get_stripe_error_message( $e ) );
             }
         } else {
 
-            return new WP_Error( 'refund-failed',
+            return new WP_Error( 's4wc_refund_error',
                 sprintf(
                     __( '%s Credit Card Refund failed because the Transaction ID is missing.', 'stripe-for-woocommerce' ),
                     get_class( $this )
