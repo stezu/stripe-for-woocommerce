@@ -91,7 +91,7 @@ Not yet. I've been meaning to go through the code and develop some solid documen
 
 == Changelog ==
 
-= 1.3.0 =
+= 1.30 =
 * Feature: Refunds! With WC 2.2, refunds were introduced and rclai on GitHub added them to this plugin
 * Feature: This plugin is now a few hundred lines lighter, and will hopefully break less often
 * Tweak: The transaction id is now implemented using the built-in WC 2.2 field instead of a custom field
@@ -159,5 +159,5 @@ Not yet. I've been meaning to go through the code and develop some solid documen
 
 == Upgrade Notice ==
 
-= 1.3.0 =
-1.3 is a major refactor of the code base. If you took advantage and tweaked the templates by saving a copy in your theme, those templates will now be bad and have to be redone. This plugin no longer includes it's own styles, and uses the built-in WC credit card form, so if you styled the form before, those styles won't work now.
+= 1.30 =
+1.30 is a major refactor of the code base. If you took advantage and tweaked the templates by saving a copy in your theme, those templates will now be bad and have to be redone. This plugin no longer includes it's own styles, and uses the built-in WC credit card form, so if you styled the form before, those styles won't work now.
