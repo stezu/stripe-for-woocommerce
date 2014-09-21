@@ -8,7 +8,7 @@ Stable tag: trunk
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
-A Payment Gateway for WooCommerce allowing you to take credit card payments using Stripe. Including Subscription, the ability to save customer credit cards for future purchases and an easy-to-use interface for both you and your customers.
+A Payment Gateway for WooCommerce allowing you to take credit card payments using Stripe.
 
 
 == Description ==
