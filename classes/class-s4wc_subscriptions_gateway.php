@@ -102,9 +102,9 @@ class S4WC_Subscriptions_Gateway extends S4WC_Gateway {
         // Set up basics for charging
         $charge_data['amount']      = $amount * 100; // amount in cents
         $charge_data['currency']    = strtolower( get_woocommerce_currency() );
-        $charge_data['description'] = apply_filters( 's4wc_subscription_charge_description', $charge_description, $order );
         $charge_data['customer']    = $customer['customer_id'];
         $charge_data['card']        = $customer['default_card'];
+        $charge_data['description'] = apply_filters( 's4wc_subscription_charge_description', $charge_description, $order );
 
         $charge = S4WC_API::create_charge( $charge_data );
 
