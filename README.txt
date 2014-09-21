@@ -8,18 +8,17 @@ Stable tag: trunk
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
-A Stripe Payment Gateway for WooCommerce featuring subscriptions, saved cards, and a simple interface.
+A Payment Gateway for WooCommerce allowing you to take credit card payments using Stripe. Including Subscription, the ability to save customer credit cards for future purchases and an easy-to-use interface for both you and your customers.
 
 
 == Description ==
 
-= What is Stripe? =
-[Stripe](https://stripe.com/) allows you to take credit card payments on your site without having sensitive credit card information hit your servers. This works by having your customers input their credit card information on your web page which is then sent to Stripe's servers via JavaScript and a unique "token" is created which you can then use to charge your customers one time. This process keeps you from having to be [PCI compliant](https://www.pcisecuritystandards.org/), and allows you to quickly process credit card payments that makes your store look more legitimate than one that only supports PayPal.
+[Stripe](https://stripe.com/) allows you to take credit card payments on your site without having sensitive credit card information hit your servers. The problem is, it's marketed towards developers so many people don't believe they can use it, or even know how. This plugin aims to show anyone that they can use Stripe to take credit card payments in their WooCommerce store without having to write a single line of code. All you have to do is copy 2 API keys to a settings page and you're done.
 
-= Why does this plugin exist? =
-In reality, there aren't a lot of methods you can use that provide PayPal-like convenience (and prices) for processing credit card payments directly on your site. Stripe is in the right neighborhood for developers and tech-savvy people but perhaps not for the layman, and this plugin hopes to fix that. In the Stripe interface, you have access to all kinds of information on charges, customers, and logs.
+= Why Stripe? =
+Without getting too technical, Stripe allows you to take credit card payments without having to put a lot of effort into securing your site. Normally you would have to save a customers sensitive credit card information on a seperate server than your site, using different usernames, passwords and limiting access to the point that it's nearly impossible to hack from the outside. It's a process that helps ensure security, but is not easy to do, and if done improperly leaves you open to fines and possibly lawsuits.
 
-This plugin exists because the current solutions for Stripe on WooCommerce are incomplete or expensive. WooThemes made a [Stripe plugin](http://www.woothemes.com/products/stripe/) but it costs $79. [Striper](https://wordpress.org/plugins/striper/) is the plugin that I used to initally start this plugin process and while free, was lacking a few features that I thought were necessary. It also appears to have dropped out of development recently and I hope that this plugin will fill in where it left off.
+If you use this plugin, all you have to do is include an SSL certificate on your site and the hard work is done for you. Credit card breaches are serious, and with this plugin and an SSL certificate, you're protected. Your customers credit card information never hits your servers, it goes from your customers computer straight to Stripes servers keeping their information safe.
 
 = Contributing =
 If you'd like to contribute, feel free to tackle a feature or fix a bug on [Github](https://github.com/stezu/stripe-for-woocommerce/) and when you're ready, send a pull request. If you'd like to get more involved than that, please e-mail me at [hello@stephenzuniga.com](mailto:hello@stephenzuniga.com).
@@ -39,6 +38,12 @@ In the search field type “Stripe for WooCommerce” and click Search Plugins. 
 = Manual installation =
 
 The manual installation method involves downloading our eCommerce plugin and uploading it to your webserver via your favourite FTP application. The WordPress codex contains [instructions on how to do this here](http://codex.wordpress.org/Managing_Plugins#Manual_Plugin_Installation).
+
+= What now? =
+
+Once the plugin is installed on your server, notices at the top of the screen should tell you where to go next. But just in case that doesn't work, the process is really simple to enable credit card payments on your WooCommerce store. Go to the WooCommerce settings, click the checkout tab, then click the Stripe for WooCommerce link at the top of the page. Once there, you should make sure the enable checkbox is checked, and then you just need to fill in your API key settings which can be found on your [Stripe account page](https://dashboard.stripe.com/account/apikeys). That's it.
+
+Once you're ready to take live payments, make sure the test mode checkbox is unchecked. You'll also need to force SSL on checkout in the WooCommerce settings and of course have an SSL certificate. As long as the Live API Keys are saved, your store will be ready to process credit card payments.
 
 = Updating =
 
@@ -85,6 +90,16 @@ Not yet. I've been meaning to go through the code and develop some solid documen
 
 
 == Changelog ==
+
+= 1.3.0 =
+* Feature: Refunds! With WC 2.2, refunds were introduced and rclai on GitHub added them to this plugin
+* Feature: This plugin is now a few hundred lines lighter, and will hopefully break less often
+* Tweak: The transaction id is now implemented using the built-in WC 2.2 field instead of a custom field
+* Tweak: Templates were reworked completely, if you were using a template before, you should revert and tweak the new one (sorry)
+* Tweak: The built-in WC credit card form is being used now instead of the custom one
+* Tweak: Form validation should now be better
+* Dev: New filters for charge data to allow for metadata and other Stripe features
+* Dev: Documentation added here: https://github.com/stezu/stripe-for-woocommerce/wiki
 
 = 1.25 =
 * Feature: Error messages are now localized for translations
@@ -141,3 +156,8 @@ Not yet. I've been meaning to go through the code and develop some solid documen
 * Feature: Add a card to a customer
 * Feature: Delete cards from customers
 * Feature: Authorize & Capture or Authorize only
+
+== Upgrade Notice ==
+
+= 1.3.0 =
+1.3 is a major refactor of the code base. If you took advantage and tweaked the templates by saving a copy in your theme, those templates will now be bad and have to be redone. This plugin no longer includes it's own styles, and uses the built-in WC credit card form, so if you styled the form before, those styles won't work now.

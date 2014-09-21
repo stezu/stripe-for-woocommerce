@@ -6,7 +6,7 @@
  *
  * @class       S4WC_Subscriptions_Gateway
  * @extends     S4WC_Gateway
- * @version     1.25
+ * @version     1.3.0
  * @package     WooCommerce/Classes/Payment
  * @author      Stephen Zuniga
  */

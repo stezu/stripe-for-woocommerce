@@ -3,7 +3,7 @@
  * Plugin Name: Stripe for WooCommerce
  * Plugin URI: https://wordpress.org/plugins/stripe-for-woocommerce
  * Description: Use Stripe for collecting credit card payments on WooCommerce.
- * Version: 1.25
+ * Version: 1.3.0
  * Author: Stephen Zuniga
  * Author URI: http://stephenzuniga.com
  *

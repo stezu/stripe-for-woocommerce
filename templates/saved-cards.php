@@ -5,7 +5,7 @@
  * Override this template by copying it to yourtheme/woocommerce/s4wc/saved-cards.php
  *
  * @author      Stephen Zuniga
- * @version     1.25
+ * @version     1.3.0
  */
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly

@@ -1,17 +1,16 @@
 # Stripe for WooCommerce
-Plugin version: 1.24
+Plugin version: 1.3.0
 
 Requires at least:
 - WordPress 3.8.0
 - WooCommerce 2.1.0
 
-## What is Stripe?
-[Stripe](https://stripe.com/) allows you to take credit card payments on your site without having sensitive credit card information hit your servers. This works by having your customers input their credit card information on your web page which is then sent to Stripe's servers via JavaScript and a unique "token" is created which you can then use to charge your customers one time. This process keeps you from having to be [PCI compliant](https://www.pcisecuritystandards.org/), and allows you to quickly process credit card payments that makes your store look more legitimate than one that only supports PayPal.
+[Stripe](https://stripe.com/) allows you to take credit card payments on your site without having sensitive credit card information hit your servers. The problem is, it's marketed towards developers so many people don't believe they can use it, or even know how. This plugin aims to show anyone that they can use Stripe to take credit card payments in their WooCommerce store without having to write a single line of code. All you have to do is copy 2 API keys to a settings page and you're done.
 
-## Why does this plugin exist?
-In reality, there aren't a lot of methods you can use that provide PayPal-like convenience (and prices) for processing credit card payments directly on your site. Stripe is in the right neighborhood for developers and tech-savvy people but perhaps not for the layman, and this plugin hopes to fix that. In the Stripe interface, you have access to all kinds of information on charges, customers, and logs.
+## Why Stripe?
+Without getting too technical, Stripe allows you to take credit card payments without having to put a lot of effort into securing your site. Normally you would have to save a customers sensitive credit card information on a seperate server than your site, using different usernames, passwords and limiting access to the point that it's nearly impossible to hack from the outside. It's a process that helps ensure security, but is not easy to do, and if done improperly leaves you open to fines and possibly lawsuits.
 
-This plugin exists because the current solutions for Stripe on WooCommerce are incomplete or expensive. WooThemes made a [Stripe plugin](http://www.woothemes.com/products/stripe/) but it costs $79. [Striper](https://wordpress.org/plugins/striper/) is the plugin that I used to initally start this plugin process and while free, was lacking a few features that I thought were necessary. It also appears to have dropped out of development recently and I hope that this plugin will fill in where it left off.
+If you use this plugin, all you have to do is include an SSL certificate on your site and the hard work is done for you. Credit card breaches are serious, and with this plugin and an SSL certificate, you're protected. Your customers credit card information never hits your servers, it goes from your customers computer straight to Stripes servers keeping their information safe.
 
 ## Contributing
 If you'd like to contribute, feel free to tackle a feature or fix a bug and when you're ready, send a pull request. If you'd like to get more involved than that, please e-mail me at [hello@stephenzuniga.com](mailto:hello@stephenzuniga.com).
