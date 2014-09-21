@@ -152,14 +152,8 @@ $GLOBALS['s4wc'] = new S4WC();
  * @return      string
  */
 function s4wc_get_template( $template_name, $args = array() ) {
-    $template_path = WC()->template_path();
+    $template_path = WC()->template_path() . '/s4wc/';
     $default_path = plugin_dir_path( __FILE__ ) . '/templates/';
-
-    if ( wc_locate_template( $template_name, $template_path . '/s4wc', $default_path ) ) {
-        $template_path .= '/s4wc';
-    } else {
-        $template_path .= '/woocommerce-stripe';
-    }
 
     return wc_get_template( $template_name, $args, $template_path, $default_path );
 }
