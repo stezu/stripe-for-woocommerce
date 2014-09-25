@@ -746,7 +746,7 @@ class S4WC_Gateway extends WC_Payment_Gateway {
      */
     protected function get_stripe_error_message( $e ) {
 
-        switch ( $e->getCode() ) {
+        switch ( $e->getMessage() ) {
             case 'incorrect_number':
                 $message = __( 'Your card number is incorrect.', 'stripe-for-woocommerce' );
                 break;
