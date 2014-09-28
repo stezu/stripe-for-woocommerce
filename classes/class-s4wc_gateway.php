@@ -767,8 +767,7 @@ class S4WC_Gateway extends WC_Payment_Gateway {
                 $message = __( 'Your card was declined.', 'stripe-for-woocommerce' );
                 break;
             default:
-                $message = $e;
-                //__( 'Failed to process the order, please try again later.', 'stripe-for-woocommerce' );
+                $message = __( 'Failed to process the order, please try again later.', 'stripe-for-woocommerce' );
         }
 
         $this->transaction_error_message = $message;
