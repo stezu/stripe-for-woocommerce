@@ -3,7 +3,7 @@
  * Customer related modifications and templates
  *
  * @class       S4WC_Customer
- * @version     1.30
+ * @version     1.31
  * @author      Stephen Zuniga
  */
 
