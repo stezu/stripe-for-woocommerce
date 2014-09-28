@@ -104,6 +104,7 @@ class S4WC_Subscriptions_Gateway extends S4WC_Gateway {
      * @return      bool
      */
     protected function subscription_to_stripe() {
+        $user = get_userdata( $this->order->user_id );
 
         // Get the credit card details submitted by the form
         $form_data = $this->get_form_data();
@@ -117,13 +118,13 @@ class S4WC_Subscriptions_Gateway extends S4WC_Gateway {
         try {
 
             // Add a customer or retrieve an existing one
-            $description = $this->current_user->user_login . ' (#' . $this->current_user_id . ' - ' . $this->current_user->user_email . ') ' . $form_data['customer']['name']; // username (user_id - user_email) Full Name
+            $description = $user->user_login . ' (#' . $this->order->user_id . ' - ' . $user->user_email . ') ' . $form_data['customer']['name']; // username (user_id - user_email) Full Name
             $customer = $this->get_customer( $description, $form_data );
 
             // Update default card
             if ( $form_data['chosen_card'] !== 'new' ) {
                 $default_card = $this->stripe_customer_info['cards'][ (int)$form_data['chosen_card'] ]['id'];
-                S4WC_DB::update_customer( $this->current_user_id, array( 'default_card' => $default_card ) );
+                S4WC_DB::update_customer( $this->order->user_id, array( 'default_card' => $default_card ) );
             }
 
             $initial_payment = WC_Subscriptions_Order::get_total_initial_payment( $this->order );

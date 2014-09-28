@@ -54,9 +54,7 @@ class S4WC_Gateway extends WC_Payment_Gateway {
         $this->description              = $this->settings['description'];
 
         // Get current user information
-        $this->current_user             = wp_get_current_user();
-        $this->current_user_id          = get_current_user_id();
-        $this->stripe_customer_info     = get_user_meta( $this->current_user_id, $s4wc->settings['stripe_db_location'], true );
+        $this->stripe_customer_info     = get_user_meta( get_current_user_id(), $s4wc->settings['stripe_db_location'], true );
 
         // Hooks
         add_action( 'woocommerce_update_options_payment_gateways', array( $this, 'process_admin_options' ) );
@@ -550,7 +548,7 @@ class S4WC_Gateway extends WC_Payment_Gateway {
                 // Update default card
                 if ( count( $this->stripe_customer_info['cards'] ) && $this->form_data['chosen_card'] !== 'new' ) {
                     $default_card = $this->stripe_customer_info['cards'][ (int)$this->form_data['chosen_card'] ]['id'];
-                    S4WC_DB::update_customer( $this->current_user_id, array( 'default_card' => $default_card ) );
+                    S4WC_DB::update_customer( $this->order->user_id, array( 'default_card' => $default_card ) );
                 }
 
             } else {
@@ -599,6 +597,7 @@ class S4WC_Gateway extends WC_Payment_Gateway {
      */
     protected function get_customer() {
         $output = array();
+        $user = get_userdata( $this->order->user_id );
 
         if ( ! $this->stripe_customer_info ) {
 
@@ -606,7 +605,7 @@ class S4WC_Gateway extends WC_Payment_Gateway {
             $customer_data = apply_filters( 's4wc_customer_data', array(), $this->form_data, $this->order );
 
             // Set default customer description
-            $customer_description = $this->current_user->user_login . ' (#' . $this->current_user_id . ' - ' . $this->current_user->user_email . ') ' . $this->form_data['customer']['name']; // username (user_id - user_email) Full Name
+            $customer_description = $user->user_login . ' (#' . $this->order->user_id . ' - ' . $user->user_email . ') ' . $this->form_data['customer']['name']; // username (user_id - user_email) Full Name
 
             // Set up basics for customer
             $customer_data['description'] = apply_filters( 's4wc_customer_description', $customer_description, $this->form_data, $this->order );
@@ -641,7 +640,7 @@ class S4WC_Gateway extends WC_Payment_Gateway {
                     ),
                     'default_card'  => $card->id
                 );
-                S4WC_DB::update_customer( $this->current_user_id, $customerArray );
+                S4WC_DB::update_customer( $this->order->user_id, $customerArray );
 
                 $output['card'] = $card->id;
             } else {
