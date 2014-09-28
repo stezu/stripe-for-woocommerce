@@ -62,11 +62,10 @@ class S4WC_Subscriptions_Gateway extends S4WC_Gateway {
      * Process the subscription payment and return the result
      *
      * @access      public
-     * @param       WC_Order $order
      * @param       int $amount
      * @return      array
      */
-    public function process_subscription_payment( $order, $amount = 0 ) {
+    public function process_subscription_payment( $amount = 0 ) {
         global $s4wc;
 
         // Can't send to stripe without a value, assume it's good to go.
@@ -75,9 +74,10 @@ class S4WC_Subscriptions_Gateway extends S4WC_Gateway {
         }
 
         // Get customer id
+        $customer = get_user_meta( $this->order->user_id, $s4wc->settings['stripe_db_location'], true );
 
         // Allow options to be set without modifying sensitive data like amount, currency, etc.
-        $charge_data = apply_filters( 's4wc_subscription_charge_data', array(), $order );
+        $charge_data = apply_filters( 's4wc_subscription_charge_data', array(), $this->order );
 
         // Set up basics for charging
         $charge_data['amount']      = $amount * 100; // amount in cents
@@ -89,7 +89,7 @@ class S4WC_Subscriptions_Gateway extends S4WC_Gateway {
         $charge = S4WC_API::create_charge( $charge_data );
 
         if ( isset( $charge->id ) ) {
-            $order->add_order_note( sprintf( __( 'Subscription paid (%s)', 'stripe-for-woocommerce' ), $charge->id ) );
+            $this->order->add_order_note( sprintf( __( 'Subscription paid (%s)', 'stripe-for-woocommerce' ), $charge->id ) );
 
             return $charge;
         }
@@ -128,7 +128,7 @@ class S4WC_Subscriptions_Gateway extends S4WC_Gateway {
 
             $initial_payment = WC_Subscriptions_Order::get_total_initial_payment( $this->order );
 
-            $charge = $this->process_subscription_payment( $this->order, $initial_payment );
+            $charge = $this->process_subscription_payment( $initial_payment );
 
             $this->transaction_id = $charge->id;
 
@@ -164,7 +164,9 @@ class S4WC_Subscriptions_Gateway extends S4WC_Gateway {
      * @return      void
      */
     public function scheduled_subscription_payment( $amount_to_charge, $order, $product_id ) {
-        $charge = $this->process_subscription_payment( $order, $amount_to_charge );
+        $this->order = $order;
+
+        $charge = $this->process_subscription_payment( $amount_to_charge );
 
         if ( $charge ) {
             WC_Subscriptions_Manager::process_subscription_payments_on_order( $order );
