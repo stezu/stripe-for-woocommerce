@@ -126,8 +126,7 @@ class S4WC_Subscriptions_Gateway extends S4WC_Gateway {
      */
     private function charge_set_up() {
         // Add a customer or retrieve an existing one
-        $description = $user->user_login . ' (#' . $this->order->user_id . ' - ' . $user->user_email . ') ' . $form_data['customer']['name']; // username (user_id - user_email) Full Name
-        $customer = $this->get_customer( $description, $form_data );
+        $customer = $this->get_customer();
 
         // Update default card
         if ( $form_data['chosen_card'] !== 'new' ) {
