@@ -98,6 +98,27 @@ class S4WC_Subscriptions_Gateway extends S4WC_Gateway {
     }
 
     /**
+     * Process a scheduled payment
+     *
+     * @access      public
+     * @param       float $amount_to_charge
+     * @param       WC_Order $order
+     * @param       int $product_id
+     * @return      void
+     */
+    public function scheduled_subscription_payment( $amount_to_charge, $order, $product_id ) {
+        $this->order = $order;
+
+        $charge = $this->process_subscription_payment( $amount_to_charge );
+
+        if ( $charge ) {
+            WC_Subscriptions_Manager::process_subscription_payments_on_order( $order );
+        } else {
+            WC_Subscriptions_Manager::process_subscription_payment_failure_on_order( $order, $product_id );
+        }
+    }
+
+    /**
      * Set up the charge that will be sent to Stripe
      *
      * @access      private
@@ -119,26 +140,5 @@ class S4WC_Subscriptions_Gateway extends S4WC_Gateway {
         $charge = $this->process_subscription_payment( $initial_payment );
 
         $this->transaction_id = $charge->id;
-    }
-
-    /**
-     * Process a scheduled payment
-     *
-     * @access      public
-     * @param       float $amount_to_charge
-     * @param       WC_Order $order
-     * @param       int $product_id
-     * @return      void
-     */
-    public function scheduled_subscription_payment( $amount_to_charge, $order, $product_id ) {
-        $this->order = $order;
-
-        $charge = $this->process_subscription_payment( $amount_to_charge );
-
-        if ( $charge ) {
-            WC_Subscriptions_Manager::process_subscription_payments_on_order( $order );
-        } else {
-            WC_Subscriptions_Manager::process_subscription_payment_failure_on_order( $order, $product_id );
-        }
     }
 }
