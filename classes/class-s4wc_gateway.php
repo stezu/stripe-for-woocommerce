@@ -558,24 +558,8 @@ class S4WC_Gateway extends WC_Payment_Gateway {
                 $stripe_charge_data['card'] = $form_data['token'];
             }
 
-            // Set a default name, override with a product name if it exists for Stripe's dashboard
-            $product_name = __( 'Purchases', 'stripe-for-woocommerce' );
-            $order_items = $this->order->get_items();
-
-            // Grab first product name and use it
-            foreach ( $order_items as $key => $item ) {
-                $product_name = $item['name'];
-                break;
-            }
-
             // Charge description
-            $charge_description = sprintf(
-                __( 'Payment for %s (Order: %s)', 'stripe-for-woocommerce' ),
-                $product_name,
-                $this->order->get_order_number()
-            );
-
-            $stripe_charge_data['description'] = apply_filters( 's4wc_charge_description', $charge_description, $form_data, $this->order );
+            $stripe_charge_data['description'] = $this->get_charge_description();
 
             // Create the charge on Stripe's servers - this will charge the user's card
             $charge = S4WC_API::create_charge( $stripe_charge_data );
@@ -668,6 +652,54 @@ class S4WC_Gateway extends WC_Payment_Gateway {
         $output['customer_id'] = $customer->id;
 
         return $output;
+    }
+
+    /**
+     * Get the charge's description
+     *
+     * @access      protected
+     * @param       string $type Type of product being bought
+     * @return      string
+     */
+    protected function get_charge_description( $type = 'simple' ) {
+        $form_data = $this->get_form_data();
+        $order_items = $this->order->get_items();
+
+        // Set a default name, override with a product name if it exists for Stripe's dashboard
+        if ( $type === 'subscription' ) {
+            $product_name = __( 'Subscription', 'stripe-for-woocommerce' );
+        } else {
+            $product_name = __( 'Purchases', 'stripe-for-woocommerce' );
+        }
+
+        // Grab first product name and use it
+        foreach ( $order_items as $key => $item ) {
+
+            if ( $type === 'subscription' ) {
+
+                if ( isset( $item['subscription_status'] ) ) {
+                    $product_name = $item['name'];
+                }
+
+            } else {
+                $product_name = $item['name'];
+            }
+
+            break;
+        }
+
+        // Charge description
+        $charge_description = sprintf(
+            __( 'Payment for %s (Order: %s)', 'stripe-for-woocommerce' ),
+            $product_name,
+            $this->order->get_order_number()
+        );
+
+        if ( $type === 'subscription' ) {
+            return apply_filters( 's4wc_subscription_charge_description', $charge_description, $this->order );
+        } else {
+            return apply_filters( 's4wc_charge_description', $charge_description, $form_data, $this->order );
+        }
     }
 
     /**

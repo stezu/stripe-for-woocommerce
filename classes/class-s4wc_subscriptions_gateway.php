@@ -75,26 +75,6 @@ class S4WC_Subscriptions_Gateway extends S4WC_Gateway {
         }
 
         // Get customer id
-        $customer = get_user_meta( $order->user_id, $s4wc->settings['stripe_db_location'], true );
-
-        // Set a default name, override with a product name if it exists for Stripe's dashboard
-        $product_name = __( 'Subscription', 'stripe-for-woocommerce' );
-        $order_items = $order->get_items();
-
-        // Grab first subscription name and use it
-        foreach ( $order_items as $key => $item ) {
-            if ( isset( $item['subscription_status'] ) ) {
-                $product_name = $item['name'];
-                break;
-            }
-        }
-
-        // Default charge description
-        $charge_description = sprintf(
-            __( 'Payment for %s (Order: %s)', 'stripe-for-woocommerce' ),
-            $product_name,
-            $order->get_order_number()
-        );
 
         // Allow options to be set without modifying sensitive data like amount, currency, etc.
         $charge_data = apply_filters( 's4wc_subscription_charge_data', array(), $order );
@@ -104,7 +84,7 @@ class S4WC_Subscriptions_Gateway extends S4WC_Gateway {
         $charge_data['currency']    = strtolower( get_woocommerce_currency() );
         $charge_data['customer']    = $customer['customer_id'];
         $charge_data['card']        = $customer['default_card'];
-        $charge_data['description'] = apply_filters( 's4wc_subscription_charge_description', $charge_description, $order );
+        $charge_data['description'] = $this->get_charge_description( 'subscription' );
 
         $charge = S4WC_API::create_charge( $charge_data );
 
