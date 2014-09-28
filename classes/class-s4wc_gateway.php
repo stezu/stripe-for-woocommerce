@@ -528,42 +528,8 @@ class S4WC_Gateway extends WC_Payment_Gateway {
         // Set up the charge for Stripe's servers
         try {
 
-            // Allow options to be set without modifying sensitive data like amount, currency, etc.
-            $stripe_charge_data = apply_filters( 's4wc_charge_data', array(), $this->form_data, $this->order );
-
-            // Set up basics for charging
-            $stripe_charge_data['amount']   = $this->form_data['amount']; // amount in cents
-            $stripe_charge_data['currency'] = $this->form_data['currency'];
-            $stripe_charge_data['capture']  = ( $this->settings['charge_type'] == 'capture' ) ? 'true' : 'false';
-
-            // Make sure we only create customers if a user is logged in
-            if ( is_user_logged_in() && $s4wc->settings['saved_cards'] === 'yes' ) {
-
-                // Add a customer or retrieve an existing one
-                $customer = $this->get_customer();
-
-                $stripe_charge_data['card'] = $customer['card'];
-                $stripe_charge_data['customer'] = $customer['customer_id'];
-
-                // Update default card
-                if ( count( $this->stripe_customer_info['cards'] ) && $this->form_data['chosen_card'] !== 'new' ) {
-                    $default_card = $this->stripe_customer_info['cards'][ (int)$this->form_data['chosen_card'] ]['id'];
-                    S4WC_DB::update_customer( $this->order->user_id, array( 'default_card' => $default_card ) );
-                }
-
-            } else {
-
-                // Set up one time charge
-                $stripe_charge_data['card'] = $this->form_data['token'];
-            }
-
-            // Charge description
-            $stripe_charge_data['description'] = $this->get_charge_description();
-
-            // Create the charge on Stripe's servers - this will charge the user's card
-            $charge = S4WC_API::create_charge( $stripe_charge_data );
-
-            $this->transaction_id = $charge->id;
+            // Allow for any type of charge to use the same try/catch config
+            $this->charge_set_up();
 
             // Save data for the "Capture"
             update_post_meta( $this->order->id, '_transaction_id', $this->transaction_id );
@@ -805,11 +771,57 @@ class S4WC_Gateway extends WC_Payment_Gateway {
                 $message = __( 'Your card was declined.', 'stripe-for-woocommerce' );
                 break;
             default:
-                $message = __( 'Failed to process the order, please try again later.', 'stripe-for-woocommerce' );
+                $message = $e;
+                //__( 'Failed to process the order, please try again later.', 'stripe-for-woocommerce' );
         }
 
         $this->transaction_error_message = $message;
 
         return $message;
+    }
+
+    /**
+     * Set up the charge that will be sent to Stripe
+     *
+     * @access      private
+     * @return      void
+     */
+    private function charge_set_up() {
+        // Allow options to be set without modifying sensitive data like amount, currency, etc.
+        $stripe_charge_data = apply_filters( 's4wc_charge_data', array(), $this->form_data, $this->order );
+
+        // Set up basics for charging
+        $stripe_charge_data['amount']   = $this->form_data['amount']; // amount in cents
+        $stripe_charge_data['currency'] = $this->form_data['currency'];
+        $stripe_charge_data['capture']  = ( $this->settings['charge_type'] == 'capture' ) ? 'true' : 'false';
+
+        // Make sure we only create customers if a user is logged in
+        if ( is_user_logged_in() && $this->settings['saved_cards'] === 'yes' ) {
+
+            // Add a customer or retrieve an existing one
+            $customer = $this->get_customer();
+
+            $stripe_charge_data['card'] = $customer['card'];
+            $stripe_charge_data['customer'] = $customer['customer_id'];
+
+            // Update default card
+            if ( count( $this->stripe_customer_info['cards'] ) && $this->form_data['chosen_card'] !== 'new' ) {
+                $default_card = $this->stripe_customer_info['cards'][ (int)$this->form_data['chosen_card'] ]['id'];
+                S4WC_DB::update_customer( $this->order->user_id, array( 'default_card' => $default_card ) );
+            }
+
+        } else {
+
+            // Set up one time charge
+            $stripe_charge_data['card'] = $this->form_data['token'];
+        }
+
+        // Charge description
+        $stripe_charge_data['description'] = $this->get_charge_description();
+
+        // Create the charge on Stripe's servers - this will charge the user's card
+        $charge = S4WC_API::create_charge( $stripe_charge_data );
+
+        $this->transaction_id = $charge->id;
     }
 }

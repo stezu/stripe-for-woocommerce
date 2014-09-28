@@ -34,7 +34,7 @@ class S4WC_Subscriptions_Gateway extends S4WC_Gateway {
         if ( WC_Subscriptions_Order::order_contains_subscription( $order_id ) ) {
             $this->order = new WC_Order( $order_id );
 
-            if ( $this->subscription_to_stripe() ) {
+            if ( $this->send_to_stripe() ) {
                 $this->order_complete();
 
                 WC_Subscriptions_Manager::activate_subscriptions_for_order( $this->order );
@@ -93,66 +93,32 @@ class S4WC_Subscriptions_Gateway extends S4WC_Gateway {
 
             return $charge;
         }
+
         return false;
     }
 
     /**
-     * Send subscription form data to Stripe
-     * Handles sending the charge to an existing customer, a new customer (that's logged in), or a guest
+     * Set up the charge that will be sent to Stripe
      *
-     * @access      protected
-     * @return      bool
+     * @access      private
+     * @return      void
      */
-    protected function subscription_to_stripe() {
-        $user = get_userdata( $this->order->user_id );
+    private function charge_set_up() {
+        // Add a customer or retrieve an existing one
+        $description = $user->user_login . ' (#' . $this->order->user_id . ' - ' . $user->user_email . ') ' . $form_data['customer']['name']; // username (user_id - user_email) Full Name
+        $customer = $this->get_customer( $description, $form_data );
 
-        // Get the credit card details submitted by the form
-        $form_data = $this->get_form_data();
-
-        // If there are errors on the form, don't bother sending to Stripe.
-        if ( $form_data['errors'] == 1 ) {
-            return;
+        // Update default card
+        if ( $form_data['chosen_card'] !== 'new' ) {
+            $default_card = $this->stripe_customer_info['cards'][ (int)$form_data['chosen_card'] ]['id'];
+            S4WC_DB::update_customer( $this->order->user_id, array( 'default_card' => $default_card ) );
         }
 
-        // Set up the charge for Stripe's servers
-        try {
+        $initial_payment = WC_Subscriptions_Order::get_total_initial_payment( $this->order );
 
-            // Add a customer or retrieve an existing one
-            $description = $user->user_login . ' (#' . $this->order->user_id . ' - ' . $user->user_email . ') ' . $form_data['customer']['name']; // username (user_id - user_email) Full Name
-            $customer = $this->get_customer( $description, $form_data );
+        $charge = $this->process_subscription_payment( $initial_payment );
 
-            // Update default card
-            if ( $form_data['chosen_card'] !== 'new' ) {
-                $default_card = $this->stripe_customer_info['cards'][ (int)$form_data['chosen_card'] ]['id'];
-                S4WC_DB::update_customer( $this->order->user_id, array( 'default_card' => $default_card ) );
-            }
-
-            $initial_payment = WC_Subscriptions_Order::get_total_initial_payment( $this->order );
-
-            $charge = $this->process_subscription_payment( $initial_payment );
-
-            $this->transaction_id = $charge->id;
-
-            // Save data for the "Capture"
-            update_post_meta( $this->order->id, '_transaction_id', $this->transaction_id );
-            update_post_meta( $this->order->id, 'capture', strcmp( $this->settings['charge_type'], 'authorize' ) == 0 );
-
-            // Save data for cross-reference between Stripe Dashboard and WooCommerce
-            update_post_meta( $this->order->id, 'customer_id', $customer['customer_id'] );
-
-            return true;
-
-        } catch ( Exception $e ) {
-
-            // Stop page reload if we have errors to show
-            unset( WC()->session->reload_checkout );
-
-            $message = $this->get_stripe_error_message( $e );
-
-            wc_add_notice( __( 'Subscription Error:', 'stripe-for-woocommerce' ) . ' ' . $message, 'error' );
-
-            return false;
-        }
+        $this->transaction_id = $charge->id;
     }
 
     /**
