@@ -636,20 +636,16 @@ class S4WC_Gateway extends WC_Payment_Gateway {
             $product_name = __( 'Purchases', 'stripe-for-woocommerce' );
         }
 
-        // Grab first product name and use it
+        // Grab first viable product name and use it
         foreach ( $order_items as $key => $item ) {
 
-            if ( $type === 'subscription' ) {
-
-                if ( isset( $item['subscription_status'] ) ) {
-                    $product_name = $item['name'];
-                }
-
-            } else {
+            if ( $type === 'subscription' && isset( $item['subscription_status'] ) ) {
                 $product_name = $item['name'];
+                break;
+            } elseif ( $type === 'simple' ) {
+                $product_name = $item['name'];
+                break;
             }
-
-            break;
         }
 
         // Charge description
