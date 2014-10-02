@@ -158,7 +158,7 @@ class S4WC_Customer {
 
             // If user requested to delete a card, delete it
             if ( isset( $_POST['delete_card'] ) && wp_verify_nonce( $_POST['_wpnonce'], 's4wc_delete_card' ) ) {
-                S4WC_API::delete_card( get_current_user_id(), $_POST['delete_card'] );
+                S4WC_API::delete_card( get_current_user_id(), intval( $_POST['delete_card'] ) );
             }
 
             $user_meta    = get_user_meta( get_current_user_id(), $s4wc->settings['stripe_db_location'], true );

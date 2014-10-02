@@ -130,7 +130,7 @@ class S4WC_Subscriptions_Gateway extends S4WC_Gateway {
 
         // Update default card
         if ( $form_data['chosen_card'] !== 'new' ) {
-            $default_card = $this->stripe_customer_info['cards'][ (int)$form_data['chosen_card'] ]['id'];
+            $default_card = $this->stripe_customer_info['cards'][ intval( $form_data['chosen_card'] ) ]['id'];
             S4WC_DB::update_customer( $this->order->user_id, array( 'default_card' => $default_card ) );
         }
 
