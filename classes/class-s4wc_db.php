@@ -115,25 +115,26 @@ class S4WC_DB {
         //  'card' => 'card_104FP72XTgyB3Fd3Pw9jM2Xh'
         // );
 
-        if ( isset( $customer_data ) ) {
+        if ( ! isset( $customer_data ) ) {
+            return false;
+        }
 
-            // Grab the current object out of the database and return a useable array
-            $currentObject = maybe_unserialize( get_user_meta( $user_id, $s4wc->settings['stripe_db_location'], true ) );
+        // Grab the current object out of the database and return a useable array
+        $currentObject = maybe_unserialize( get_user_meta( $user_id, $s4wc->settings['stripe_db_location'], true ) );
 
-            // If the object exists already, do work
-            if ( $currentObject ) {
-                $newObject = $currentObject;
+        // If the object exists already, do work
+        if ( $currentObject ) {
+            $newObject = $currentObject;
 
-                // If a card id is passed, delete the card from the database object
-                if ( isset( $customer_data['card'] ) ) {
-                    unset( $newObject['cards'][ recursive_array_search( $customer_data['card'], $newObject['cards'] ) ] );
-                }
-
-                // Add to the database
-                return update_user_meta( $user_id, $s4wc->settings['stripe_db_location'], $newObject );
-            } else {
-                return false;
+            // If a card id is passed, delete the card from the database object
+            if ( isset( $customer_data['card'] ) ) {
+                unset( $newObject['cards'][ recursive_array_search( $customer_data['card'], $newObject['cards'] ) ] );
             }
+
+            // Add to the database
+            return update_user_meta( $user_id, $s4wc->settings['stripe_db_location'], $newObject );
+        } else {
+            return false;
         }
     }
 }
