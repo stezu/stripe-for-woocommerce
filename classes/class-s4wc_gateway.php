@@ -558,10 +558,13 @@ class S4WC_Gateway extends WC_Payment_Gateway {
      * @return      array
      */
     protected function get_customer() {
+        global $s4wc;
+
         $output = array();
         $user = get_userdata( $this->order->user_id );
+        $customer_info = get_user_meta( $this->order->user_id, $s4wc->settings['stripe_db_location'], true );
 
-        if ( ! $this->stripe_customer_info ) {
+        if ( ! $customer_info ) {
 
             // Allow options to be set without modifying sensitive data like token, email, etc
             $customer_data = apply_filters( 's4wc_customer_data', array(), $this->form_data, $this->order );
@@ -580,13 +583,13 @@ class S4WC_Gateway extends WC_Payment_Gateway {
             $output['card'] = $customer->default_card;
         } else {
             // If the user is already registered on the stripe servers, retreive their information
-            $customer = S4WC_API::get_customer( $this->stripe_customer_info['customer_id'] );
+            $customer = S4WC_API::get_customer( $customer_info['customer_id'] );
 
             // If the user doesn't have cards or is adding a new one
-            if ( ! count( $this->stripe_customer_info['cards'] ) || $this->form_data['chosen_card'] == 'new' ) {
+            if ( ! count( $customer_info['cards'] ) || $this->form_data['chosen_card'] == 'new' ) {
 
                 // Add new card on stripe servers and make default
-                $card = S4WC_API::update_customer( $this->stripe_customer_info['customer_id'] . '/cards', array(
+                $card = S4WC_API::update_customer( $customer_info['customer_id'] . '/cards', array(
                     'card' => $this->form_data['token']
                 ) );
 
@@ -606,7 +609,7 @@ class S4WC_Gateway extends WC_Payment_Gateway {
 
                 $output['card'] = $card->id;
             } else {
-                $output['card'] = $this->stripe_customer_info['cards'][ intval( $this->form_data['chosen_card'] ) ]['id'];
+                $output['card'] = $customer_info['cards'][ intval( $this->form_data['chosen_card'] ) ]['id'];
             }
         }
         // Set up charging data to include customer information
@@ -778,6 +781,7 @@ class S4WC_Gateway extends WC_Payment_Gateway {
      * @return      void
      */
     private function charge_set_up() {
+
         // Allow options to be set without modifying sensitive data like amount, currency, etc.
         $stripe_charge_data = apply_filters( 's4wc_charge_data', array(), $this->form_data, $this->order );
 
