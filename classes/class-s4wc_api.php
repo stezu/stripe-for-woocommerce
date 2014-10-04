@@ -16,10 +16,11 @@ class S4WC_API {
      * Create customer on stripe servers
      *
      * @access      public
+     * @param       int $user_id
      * @param       array $customer_data
      * @return      array
      */
-    public static function create_customer( $customer_data ) {
+    public static function create_customer( $user_id, $customer_data ) {
 
         // Create a customer on Stripe servers
         $customer = S4WC_API::post_data( $customer_data, 'customers' );
@@ -38,7 +39,7 @@ class S4WC_API {
             ),
             'default_card'  => $active_card->id
         );
-        S4WC_DB::update_customer( get_current_user_id(), $customerArray );
+        S4WC_DB::update_customer( $user_id, $customerArray );
 
         return $customer;
     }
