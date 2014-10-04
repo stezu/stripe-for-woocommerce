@@ -10,7 +10,7 @@
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class S4WC_API {
-    public static $api_endpoint = 'https://api.stripe.com/';
+    public static $api_endpoint = 'https://api.stripe.com/v1/';
 
     /**
      * Create customer on stripe servers
@@ -129,7 +129,7 @@ class S4WC_API {
     public static function get_data( $get_location ) {
         global $s4wc;
 
-        $response = wp_remote_get( self::$api_endpoint . 'v1/' . $get_location, array(
+        $response = wp_remote_get( self::$api_endpoint . $get_location, array(
             'method'        => 'GET',
             'headers'       => array(
                 'Authorization' => 'Basic ' . base64_encode( $s4wc->settings['secret_key'] . ':' ),
@@ -153,7 +153,7 @@ class S4WC_API {
     public static function post_data( $post_data, $post_location = 'charges' ) {
         global $s4wc;
 
-        $response = wp_remote_post( self::$api_endpoint . 'v1/' . $post_location, array(
+        $response = wp_remote_post( self::$api_endpoint . $post_location, array(
             'method'        => 'POST',
             'headers'       => array(
                 'Authorization' => 'Basic ' . base64_encode( $s4wc->settings['secret_key'] . ':' ),
@@ -177,7 +177,7 @@ class S4WC_API {
     public static function delete_data( $delete_location ) {
         global $s4wc;
 
-        $response = wp_remote_post( self::$api_endpoint . 'v1/' . $delete_location, array(
+        $response = wp_remote_post( self::$api_endpoint . $delete_location, array(
             'method'        => 'DELETE',
             'headers'       => array(
                 'Authorization' => 'Basic ' . base64_encode( $s4wc->settings['secret_key'] . ':' ),
