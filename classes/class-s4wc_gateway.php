@@ -14,18 +14,18 @@
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class S4WC_Gateway extends WC_Payment_Gateway {
-    protected $order                        = null;
-    protected $form_data                    = null;
-    protected $transaction_id               = null;
-    protected $transaction_error_message    = null;
+    protected $order                     = null;
+    protected $form_data                 = null;
+    protected $transaction_id            = null;
+    protected $transaction_error_message = null;
 
     public function __construct() {
         global $s4wc;
 
-        $this->id                       = 's4wc';
-        $this->method_title             = 'Stripe for WooCommerce';
-        $this->has_fields               = true;
-        $this->supports                 = array(
+        $this->id           = 's4wc';
+        $this->method_title = 'Stripe for WooCommerce';
+        $this->has_fields   = true;
+        $this->supports     = array(
             'default_credit_card_form',
             'products',
             'subscriptions',
@@ -38,23 +38,23 @@ class S4WC_Gateway extends WC_Payment_Gateway {
             'refunds'
         );
 
-        // Add an icon with a filter for customization
-        $icon_url = apply_filters( 's4wc_icon_url', plugins_url( 'assets/images/credits.png', dirname(__FILE__) ) );
-        if ( $icon_url ) {
-            $this->icon = $icon_url;
-        }
-
         // Init settings
         $this->init_form_fields();
         $this->init_settings();
 
         // Use settings
-        $this->enabled                  = $this->settings['enabled'];
-        $this->title                    = $this->settings['title'];
-        $this->description              = $this->settings['description'];
+        $this->enabled     = $this->settings['enabled'];
+        $this->title       = $this->settings['title'];
+        $this->description = $this->settings['description'];
 
         // Get current user information
-        $this->stripe_customer_info     = get_user_meta( get_current_user_id(), $s4wc->settings['stripe_db_location'], true );
+        $this->stripe_customer_info = get_user_meta( get_current_user_id(), $s4wc->settings['stripe_db_location'], true );
+
+        // Add an icon with a filter for customization
+        $icon_url = apply_filters( 's4wc_icon_url', plugins_url( 'assets/images/credits.png', dirname(__FILE__) ) );
+        if ( $icon_url ) {
+            $this->icon = $icon_url;
+        }
 
         // Hooks
         add_action( 'woocommerce_update_options_payment_gateways', array( $this, 'process_admin_options' ) );
@@ -296,18 +296,18 @@ class S4WC_Gateway extends WC_Payment_Gateway {
 
         // If we're on the pay page, Stripe needs the address
         if ( is_checkout_pay_page() ) {
-            $order_key  = urldecode( $_GET['key'] );
-            $order_id   = absint( get_query_var( 'order-pay' ) );
-            $order      = new WC_Order( $order_id );
+            $order_key = urldecode( $_GET['key'] );
+            $order_id  = absint( get_query_var( 'order-pay' ) );
+            $order     = new WC_Order( $order_id );
 
             if ( $order->id == $order_id && $order->order_key == $order_key ) {
-                $s4wc_info['billing_name']          = $order->billing_first_name . ' ' . $order->billing_last_name;
-                $s4wc_info['billing_address_1']     = $order->billing_address_1;
-                $s4wc_info['billing_address_2']     = $order->billing_address_2;
-                $s4wc_info['billing_city']          = $order->billing_city;
-                $s4wc_info['billing_state']         = $order->billing_state;
-                $s4wc_info['billing_postcode']      = $order->billing_postcode;
-                $s4wc_info['billing_country']       = $order->billing_country;
+                $s4wc_info['billing_name']      = $order->billing_first_name . ' ' . $order->billing_last_name;
+                $s4wc_info['billing_address_1'] = $order->billing_address_1;
+                $s4wc_info['billing_address_2'] = $order->billing_address_2;
+                $s4wc_info['billing_city']      = $order->billing_city;
+                $s4wc_info['billing_state']     = $order->billing_state;
+                $s4wc_info['billing_postcode']  = $order->billing_postcode;
+                $s4wc_info['billing_country']   = $order->billing_country;
             }
         }
 
