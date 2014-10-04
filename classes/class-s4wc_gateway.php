@@ -564,7 +564,38 @@ class S4WC_Gateway extends WC_Payment_Gateway {
         $user = get_userdata( $this->order->user_id );
         $customer_info = get_user_meta( $this->order->user_id, $s4wc->settings['stripe_db_location'], true );
 
-        if ( ! $customer_info ) {
+        if ( $customer_info ) {
+
+            // If the user is already registered on the stripe servers, retreive their information
+            $customer = S4WC_API::get_customer( $customer_info['customer_id'] );
+
+            // If the user doesn't have cards or is adding a new one
+            if ( ! count( $customer_info['cards'] ) || $this->form_data['chosen_card'] == 'new' ) {
+
+                // Add new card on stripe servers and make default
+                $card = S4WC_API::update_customer( $customer_info['customer_id'] . '/cards', array(
+                    'card' => $this->form_data['token']
+                ) );
+
+                // Add new customer details to database
+                S4WC_DB::update_customer( $this->order->user_id, array(
+                    'customer_id'  => $customer->id,
+                    'card'         => array(
+                        'id'        => $card->id,
+                        'brand'     => $card->type,
+                        'last4'     => $card->last4,
+                        'exp_year'  => $card->exp_year,
+                        'exp_month' => $card->exp_month
+                    ),
+                    'default_card' => $card->id
+                ) );
+
+                $output['card'] = $card->id;
+            } else {
+                $output['card'] = $customer_info['cards'][ intval( $this->form_data['chosen_card'] ) ]['id'];
+            }
+
+        } else {
 
             // Allow options to be set without modifying sensitive data like token, email, etc
             $customer_data = apply_filters( 's4wc_customer_data', array(), $this->form_data, $this->order );
@@ -581,37 +612,8 @@ class S4WC_Gateway extends WC_Payment_Gateway {
             $customer = S4WC_API::create_customer( $customer_data );
 
             $output['card'] = $customer->default_card;
-        } else {
-            // If the user is already registered on the stripe servers, retreive their information
-            $customer = S4WC_API::get_customer( $customer_info['customer_id'] );
-
-            // If the user doesn't have cards or is adding a new one
-            if ( ! count( $customer_info['cards'] ) || $this->form_data['chosen_card'] == 'new' ) {
-
-                // Add new card on stripe servers and make default
-                $card = S4WC_API::update_customer( $customer_info['customer_id'] . '/cards', array(
-                    'card' => $this->form_data['token']
-                ) );
-
-                // Add new customer details to database
-                $customerArray = array(
-                    'customer_id'   => $customer->id,
-                    'card'          => array(
-                        'id'            => $card->id,
-                        'brand'         => $card->type,
-                        'last4'         => $card->last4,
-                        'exp_year'      => $card->exp_year,
-                        'exp_month'     => $card->exp_month
-                    ),
-                    'default_card'  => $card->id
-                );
-                S4WC_DB::update_customer( $this->order->user_id, $customerArray );
-
-                $output['card'] = $card->id;
-            } else {
-                $output['card'] = $customer_info['cards'][ intval( $this->form_data['chosen_card'] ) ]['id'];
-            }
         }
+
         // Set up charging data to include customer information
         $output['customer_id'] = $customer->id;
 
@@ -670,7 +672,7 @@ class S4WC_Gateway extends WC_Payment_Gateway {
     protected function payment_failed() {
         $this->order->add_order_note(
             sprintf(
-                __( '%s Credit Card Payment Failed with message: "%s"', 'stripe-for-woocommerce' ),
+                __( '%s payment failed with message: "%s"', 'stripe-for-woocommerce' ),
                 get_class( $this ),
                 $this->transaction_error_message
             )
