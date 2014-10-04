@@ -460,48 +460,44 @@ class S4WC_Gateway extends WC_Payment_Gateway {
         $this->order = new WC_Order( $order_id );
         $this->transaction_id = $this->order->get_transaction_id();
 
-        if ( $this->transaction_id ) {
-
-            try {
-
-                $refund_data = array();
-
-                // If the amount is set, refund that amount, otherwise the entire amount is refunded
-                if ( $amount ) {
-                    $refund_data['amount'] = $amount * 100;
-                }
-
-                // If a reason is provided, add it to the Stripe metadata for the refund
-                if ( $reason ) {
-                    $refund_data['metadata'] = array(
-                        'reason' => $reason
-                    );
-                }
-
-                // Send the refund to the Stripe API
-                return S4WC_API::create_refund( $this->transaction_id, $refund_data );
-
-            } catch ( Exception $e ) {
-
-                $this->order->add_order_note(
-                    sprintf(
-                        __( '%s Credit Card Refund Failed with message: "%s"', 'stripe-for-woocommerce' ),
-                        get_class( $this ),
-                        $this->transaction_error_message
-                    )
-                );
-
-                // Something failed somewhere, send a message.
-                return new WP_Error( 's4wc_refund_error', $this->get_stripe_error_message( $e ) );
-            }
-        } else {
-
+        if ( ! $this->transaction_id ) {
             return new WP_Error( 's4wc_refund_error',
                 sprintf(
                     __( '%s Credit Card Refund failed because the Transaction ID is missing.', 'stripe-for-woocommerce' ),
                     get_class( $this )
                 )
             );
+        }
+
+        try {
+
+            $refund_data = array();
+
+            // If the amount is set, refund that amount, otherwise the entire amount is refunded
+            if ( $amount ) {
+                $refund_data['amount'] = $amount * 100;
+            }
+
+            // If a reason is provided, add it to the Stripe metadata for the refund
+            if ( $reason ) {
+                $refund_data['metadata']['reason'] = $reason;
+            }
+
+            // Send the refund to the Stripe API
+            return S4WC_API::create_refund( $this->transaction_id, $refund_data );
+
+        } catch ( Exception $e ) {
+
+            $this->order->add_order_note(
+                sprintf(
+                    __( '%s Credit Card Refund Failed with message: "%s"', 'stripe-for-woocommerce' ),
+                    get_class( $this ),
+                    $this->transaction_error_message
+                )
+            );
+
+            // Something failed somewhere, send a message.
+            return new WP_Error( 's4wc_refund_error', $this->get_stripe_error_message( $e ) );
         }
 
         return false;
