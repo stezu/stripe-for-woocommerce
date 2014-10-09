@@ -252,7 +252,7 @@ class S4WC_Gateway extends WC_Payment_Gateway {
 
         $options_base = 'admin.php?page=wc-settings&tab=checkout&section=' . strtolower( get_class( $this ) );
         ?>
-        <h3>Stripe Payment</h3>
+        <h3><?php echo ( ! empty( $this->method_title ) ) ? $this->method_title : __( 'Settings', 'woocommerce' ) ; ?></h3>
         <p><?php _e( 'Allows Credit Card payments through <a href="https://stripe.com/">Stripe</a>. You can find your API Keys in your <a href="https://dashboard.stripe.com/account/apikeys">Stripe Account Settings</a>.', 'stripe-for-woocommerce' ); ?></p>
         <table class="form-table">
             <?php $this->generate_settings_html(); ?>
