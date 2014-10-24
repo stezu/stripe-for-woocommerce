@@ -23,10 +23,10 @@ class S4WC_Gateway extends Abstract_S4WC_Gateway {
     /**
      * Set up the charge that will be sent to Stripe
      *
-     * @access      private
+     * @access      public
      * @return      void
      */
-    private function charge_set_up() {
+    public function charge_set_up() {
 
         // Allow options to be set without modifying sensitive data like amount, currency, etc.
         $stripe_charge_data = apply_filters( 's4wc_charge_data', array(), $this->form_data, $this->order );
