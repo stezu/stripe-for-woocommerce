@@ -121,10 +121,10 @@ class S4WC_Subscriptions_Gateway extends S4WC_Gateway {
     /**
      * Set up the charge that will be sent to Stripe
      *
-     * @access      public
+     * @access      private
      * @return      void
      */
-    public function charge_set_up() {
+    private function charge_set_up() {
         // Add a customer or retrieve an existing one
         $customer = $this->get_customer();
 
