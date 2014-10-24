@@ -718,7 +718,7 @@ class S4WC_Gateway extends WC_Payment_Gateway {
                 'amount'        => (float) $this->order->get_total() * 100,
                 'currency'      => strtolower( get_woocommerce_currency() ),
                 'token'         => isset( $_POST['stripe_token'] ) ? $_POST['stripe_token'] : '',
-                'chosen_card'   => isset( $_POST['s4wc_card'] ) ? $_POST['s4wc_card'] : 0,
+                'chosen_card'   => isset( $_POST['s4wc_card'] ) ? $_POST['s4wc_card'] : 'new',
                 'customer'      => array(
                     'name'              => $this->order->billing_first_name . ' ' . $this->order->billing_last_name,
                     'billing_email'     => $this->order->billing_email,
