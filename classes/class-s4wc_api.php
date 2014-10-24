@@ -203,7 +203,7 @@ class S4WC_API {
             throw new Exception( 's4wc_problem_connecting' );
         }
 
-        if ( empty( $response['body'] ) ) {
+        if( empty( $response['body'] ) ) {
             throw new Exception( 's4wc_empty_response' );
         }
 

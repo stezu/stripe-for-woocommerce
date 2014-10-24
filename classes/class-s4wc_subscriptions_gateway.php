@@ -5,7 +5,7 @@
  * Provides a Stripe Payment Gateway for Subscriptions.
  *
  * @class       S4WC_Subscriptions_Gateway
- * @extends     Abstract_S4WC_Gateway
+ * @extends     S4WC_Gateway
  * @version     1.31
  * @package     WooCommerce/Classes/Payment
  * @author      Stephen Zuniga
@@ -13,7 +13,7 @@
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
-class S4WC_Subscriptions_Gateway extends Abstract_S4WC_Gateway {
+class S4WC_Subscriptions_Gateway extends S4WC_Gateway {
 
     public function __construct() {
         parent::__construct();
