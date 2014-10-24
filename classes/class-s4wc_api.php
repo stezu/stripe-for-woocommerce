@@ -200,11 +200,11 @@ class S4WC_API {
      */
     public static function parse_response( $response ) {
         if ( is_wp_error( $response ) ) {
-            throw new Exception( __( 'There was a problem connecting to the payment gateway.', 'stripe-for-woocommerce' ) );
+            throw new Exception( 's4wc_problem_connecting' );
         }
 
         if( empty( $response['body'] ) ) {
-            throw new Exception( __( 'Empty response.', 'stripe-for-woocommerce' ) );
+            throw new Exception( 's4wc_empty_response' );
         }
 
         $parsed_response = json_decode( $response['body'] );
@@ -213,7 +213,7 @@ class S4WC_API {
         if ( ! empty( $parsed_response->error ) ) {
             throw new Exception( $parsed_response->error->code );
         } elseif ( empty( $parsed_response->id ) ) {
-            throw new Exception( __( 'Invalid response.', 'stripe-for-woocommerce' ) );
+            throw new Exception( 's4wc_invalid_response' );
         }
 
         return $parsed_response;

@@ -740,6 +740,7 @@ class S4WC_Gateway extends WC_Payment_Gateway {
     protected function get_stripe_error_message( $e ) {
 
         switch ( $e->getMessage() ) {
+            // Messages from Stripe API
             case 'incorrect_number':
                 $message = __( 'Your card number is incorrect.', 'stripe-for-woocommerce' );
                 break;
@@ -767,6 +768,19 @@ class S4WC_Gateway extends WC_Payment_Gateway {
             case 'card_declined':
                 $message = __( 'Your card was declined.', 'stripe-for-woocommerce' );
                 break;
+
+            // Messages from S4WC
+            case 's4wc_problem_connecting':
+                $message = __( 'There was a problem connecting to the payment gateway.', 'stripe-for-woocommerce' );
+                break;
+            case 's4wc_empty_response':
+                $message = __( 'Empty response.', 'stripe-for-woocommerce' );
+                break;
+            case 's4wc_invalid_response':
+                $message = __( 'Invalid response.', 'stripe-for-woocommerce' );
+                break;
+
+            // Generic failed order
             default:
                 $message = __( 'Failed to process the order, please try again later.', 'stripe-for-woocommerce' );
         }
