@@ -29,38 +29,6 @@ class S4WC {
         // Include Customer Profile Methods
         include_once( 'classes/class-s4wc_customer.php' );
 
-        // Transition to new namespace
-        if ( ! get_option( 'woocommerce_s4wc_settings' ) ) {
-
-            // Update settings
-            update_option( 'woocommerce_s4wc_settings', get_option( 'woocommerce_wc_stripe_settings', array() ) );
-            delete_option( 'woocommerce_wc_stripe_settings' );
-
-            // Update saved payment methods
-            $wpdb->query(
-                "
-                UPDATE $wpdb->postmeta
-                    SET `meta_value` = 's4wc'
-                    WHERE `meta_value` = 'wc_stripe'
-                "
-            );
-        }
-
-        // Update transaction id's to new version so we don't break capturing
-        if ( ! get_option( 'woocommerce_s4wc_update_transaction_id' ) ) {
-
-            $wpdb->query(
-                "
-                UPDATE $wpdb->postmeta
-                    SET `meta_key` = '_transaction_id'
-                    WHERE `meta_key` = 'transaction_id'
-                "
-            );
-
-            // Make sure we only do this once
-            update_option( 'woocommerce_s4wc_update_transaction_id', true );
-        }
-
         // Grab settings
         $this->settings = get_option( 'woocommerce_s4wc_settings', array() );
 
@@ -99,14 +67,16 @@ class S4WC {
             return;
         }
 
-        // Include payment gateway
-        include_once( 'classes/class-s4wc_gateway.php' );
+        // Include payment gateway abstract
+        include_once( 'classes/abstracts/class-abstract_s4wc_gateway.php' );
 
         if ( class_exists( 'WC_Subscriptions_Order' ) ) {
             include_once( 'classes/class-s4wc_subscriptions_gateway.php' );
 
             $methods[] = 'S4WC_Subscriptions_Gateway';
         } else {
+            include_once( 'classes/class-s4wc_gateway.php' );
+
             $methods[] = 'S4WC_Gateway';
         }
 
