@@ -125,12 +125,16 @@ class S4WC_Subscriptions_Gateway extends S4WC_Gateway {
      * @return      void
      */
     private function charge_set_up() {
+        global $s4wc;
+
         // Add a customer or retrieve an existing one
         $customer = $this->get_customer();
 
+        $customer_info = get_user_meta( $this->order->user_id, $s4wc->settings['stripe_db_location'], true );
+
         // Update default card
-        if ( $form_data['chosen_card'] !== 'new' ) {
-            $default_card = $this->stripe_customer_info['cards'][ intval( $form_data['chosen_card'] ) ]['id'];
+        if ( $this->form_data['chosen_card'] !== 'new' ) {
+            $default_card = $customer_info['cards'][ intval( $this->form_data['chosen_card'] ) ]['id'];
             S4WC_DB::update_customer( $this->order->user_id, array( 'default_card' => $default_card ) );
         }
 

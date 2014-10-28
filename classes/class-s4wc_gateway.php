@@ -797,6 +797,9 @@ class S4WC_Gateway extends WC_Payment_Gateway {
      * @return      void
      */
     private function charge_set_up() {
+        global $s4wc;
+
+        $customer_info = get_user_meta( $this->order->user_id, $s4wc->settings['stripe_db_location'], true );
 
         // Allow options to be set without modifying sensitive data like amount, currency, etc.
         $stripe_charge_data = apply_filters( 's4wc_charge_data', array(), $this->form_data, $this->order );
@@ -816,8 +819,8 @@ class S4WC_Gateway extends WC_Payment_Gateway {
             $stripe_charge_data['customer'] = $customer['customer_id'];
 
             // Update default card
-            if ( count( $this->stripe_customer_info['cards'] ) && $this->form_data['chosen_card'] !== 'new' ) {
-                $default_card = $this->stripe_customer_info['cards'][ intval( $this->form_data['chosen_card'] ) ]['id'];
+            if ( count( $customer_info['cards'] ) && $this->form_data['chosen_card'] !== 'new' ) {
+                $default_card = $customer_info['cards'][ intval( $this->form_data['chosen_card'] ) ]['id'];
                 S4WC_DB::update_customer( $this->order->user_id, array( 'default_card' => $default_card ) );
             }
 
