@@ -423,9 +423,7 @@ class S4WC_Gateway extends WC_Payment_Gateway {
      */
     public function process_payment( $order_id ) {
 
-        $this->order = new WC_Order( $order_id );
-
-        if ( $this->send_to_stripe() ) {
+        if ( $this->send_to_stripe( $order_id ) ) {
             $this->order_complete();
 
             $result = array(
@@ -508,10 +506,14 @@ class S4WC_Gateway extends WC_Payment_Gateway {
      * Handles sending the charge to an existing customer, a new customer (that's logged in), or a guest
      *
      * @access      protected
+     * @param       int $order_id
      * @return      bool
      */
-    protected function send_to_stripe() {
+    protected function send_to_stripe( $order_id ) {
         global $s4wc;
+
+        // Get the order based on order_id
+        $this->order = new WC_Order( $order_id );
 
         // Get the credit card details submitted by the form
         $this->form_data = $this->get_form_data();

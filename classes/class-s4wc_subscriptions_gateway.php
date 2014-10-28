@@ -32,9 +32,8 @@ class S4WC_Subscriptions_Gateway extends S4WC_Gateway {
     public function process_payment( $order_id ) {
 
         if ( WC_Subscriptions_Order::order_contains_subscription( $order_id ) ) {
-            $this->order = new WC_Order( $order_id );
 
-            if ( $this->send_to_stripe() ) {
+            if ( $this->send_to_stripe( $order_id ) ) {
                 $this->order_complete();
 
                 WC_Subscriptions_Manager::activate_subscriptions_for_order( $this->order );
