@@ -563,7 +563,6 @@ class S4WC_Gateway extends WC_Payment_Gateway {
         global $s4wc;
 
         $output = array();
-        $user = get_userdata( $this->order->user_id );
         $customer_info = get_user_meta( $this->order->user_id, $s4wc->settings['stripe_db_location'], true );
 
         if ( $customer_info ) {
@@ -598,6 +597,8 @@ class S4WC_Gateway extends WC_Payment_Gateway {
             }
 
         } else {
+
+            $user = get_userdata( $this->order->user_id );
 
             // Allow options to be set without modifying sensitive data like token, email, etc
             $customer_data = apply_filters( 's4wc_customer_data', array(), $this->form_data, $this->order );
