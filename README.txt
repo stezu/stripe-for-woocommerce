@@ -91,6 +91,10 @@ Not yet. I've been meaning to go through the code and develop some solid documen
 
 == Changelog ==
 
+= 1.33 =
+* Fix: No payments processing
+* Fix: New customer payments not processing
+
 = 1.32 =
 * Fix: Fatal error string offset bug
 * Tweak: User id is pulled from the order instead of the logged in user now
@@ -165,8 +169,3 @@ Not yet. I've been meaning to go through the code and develop some solid documen
 * Feature: Add a card to a customer
 * Feature: Delete cards from customers
 * Feature: Authorize & Capture or Authorize only
-
-== Upgrade Notice ==
-
-= 1.32 =
-1.30 is a major refactor of the code base. If you took advantage and tweaked the templates by saving a copy in your theme, those templates will now be bad and have to be redone. This plugin no longer includes it's own styles, and uses the built-in WC credit card form, so if you styled the form before, those styles won't work now.
