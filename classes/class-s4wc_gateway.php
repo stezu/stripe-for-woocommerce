@@ -74,7 +74,7 @@ class S4WC_Gateway extends WC_Payment_Gateway {
     public function is_available() {
         global $s4wc;
 
-        if ( $this->enabled == 'no' ) {
+        if ( $this->enabled === 'no' ) {
             return false;
         }
 
@@ -84,7 +84,12 @@ class S4WC_Gateway extends WC_Payment_Gateway {
         }
 
         // Disable plugin if we don't use ssl
-        if ( ! is_ssl() && $this->settings['testmode'] == 'no' ) {
+        if ( ! is_ssl() && $this->settings['testmode'] === 'no' ) {
+            return false;
+        }
+
+        // Stripe will only process orders of at least 50 cents
+        if ( WC()->cart->total * 100 < 50 ) {
             return false;
         }
 
