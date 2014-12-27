@@ -541,6 +541,12 @@ class S4WC_Gateway extends WC_Payment_Gateway {
             // Save data for cross-reference between Stripe Dashboard and WooCommerce
             update_post_meta( $this->order->id, 'customer_id', $customer['customer_id'] );
 
+            // Save Stripe fee
+            if ( isset( $this->charge->balance_transaction ) && isset( $this->charge->balance_transaction->fee ) ) {
+                $stripe_fee = number_format( $this->charge->balance_transaction->fee / 100, 2, '.', '' );
+                update_post_meta( $this->order->id, 'Stripe Fee', $stripe_fee );
+            }
+
             return true;
 
         } catch ( Exception $e ) {
@@ -816,6 +822,7 @@ class S4WC_Gateway extends WC_Payment_Gateway {
         $stripe_charge_data['amount']   = $this->form_data['amount']; // amount in cents
         $stripe_charge_data['currency'] = $this->form_data['currency'];
         $stripe_charge_data['capture']  = ( $this->settings['charge_type'] == 'capture' ) ? 'true' : 'false';
+        $stripe_charge_data['expand[]'] = 'balance_transaction';
 
         // Make sure we only create customers if a user is logged in
         if ( is_user_logged_in() && $this->settings['saved_cards'] === 'yes' ) {
@@ -844,6 +851,7 @@ class S4WC_Gateway extends WC_Payment_Gateway {
         // Create the charge on Stripe's servers - this will charge the user's card
         $charge = S4WC_API::create_charge( $stripe_charge_data );
 
+        $this->charge = $charge;
         $this->transaction_id = $charge->id;
     }
 }

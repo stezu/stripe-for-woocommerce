@@ -76,16 +76,17 @@ class S4WC_Subscriptions_Gateway extends S4WC_Gateway {
         $customer = get_user_meta( $this->order->user_id, $s4wc->settings['stripe_db_location'], true );
 
         // Allow options to be set without modifying sensitive data like amount, currency, etc.
-        $charge_data = apply_filters( 's4wc_subscription_charge_data', array(), $this->order );
+        $stripe_charge_data = apply_filters( 's4wc_subscription_charge_data', array(), $this->order );
 
         // Set up basics for charging
-        $charge_data['amount']      = $amount * 100; // amount in cents
-        $charge_data['currency']    = strtolower( get_woocommerce_currency() );
-        $charge_data['customer']    = $customer['customer_id'];
-        $charge_data['card']        = $customer['default_card'];
-        $charge_data['description'] = $this->get_charge_description( 'subscription' );
+        $stripe_charge_data['amount']      = $amount * 100; // amount in cents
+        $stripe_charge_data['currency']    = strtolower( get_woocommerce_currency() );
+        $stripe_charge_data['customer']    = $customer['customer_id'];
+        $stripe_charge_data['card']        = $customer['default_card'];
+        $stripe_charge_data['description'] = $this->get_charge_description( 'subscription' );
+        $stripe_charge_data['expand[]']    = 'balance_transaction';
 
-        $charge = S4WC_API::create_charge( $charge_data );
+        $charge = S4WC_API::create_charge( $stripe_charge_data );
 
         if ( isset( $charge->id ) ) {
             $this->order->add_order_note( sprintf( __( 'Subscription paid (%s)', 'stripe-for-woocommerce' ), $charge->id ) );
@@ -141,6 +142,7 @@ class S4WC_Subscriptions_Gateway extends S4WC_Gateway {
 
         $charge = $this->process_subscription_payment( $initial_payment );
 
+        $this->charge = $charge;
         $this->transaction_id = $charge->id;
     }
 }
