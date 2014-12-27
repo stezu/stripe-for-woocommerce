@@ -100,7 +100,7 @@ jQuery( function ( $ ) {
                     cvc             : $ccCvc.val() || '',
                     exp_month       : cardExpiry.month || '',
                     exp_year        : cardExpiry.year || '',
-                    name            : $( '.s4wc-billing-name' ).val() || name,
+                    name            : $( '.s4wc-billing-name' ).val() || name || '',
                     address_line1   : $( '#billing_address_1' ).val() || s4wc_info.billing_address_1 || '',
                     address_line2   : $( '#billing_address_2' ).val() || s4wc_info.billing_address_2 || '',
                     address_city    : $( '#billing_city' ).val() || s4wc_info.billing_city || '',
