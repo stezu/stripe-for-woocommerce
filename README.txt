@@ -3,7 +3,7 @@ Contributors: stephen.zuniga001
 Tags: woocommerce, stripe, payment gateway, subscriptions, credit card, ecommerce, e-commerce, commerce, cart, checkout
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=3489V46ZRBQMC&lc=US&item_name=Thank%20You%20Coffee%20for%20Stripe%20for%20WooCommerce&currency_code=USD
 Requires at least: 3.8.0
-Tested up to: 4.0.0
+Tested up to: 4.1.0
 Stable tag: trunk
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
