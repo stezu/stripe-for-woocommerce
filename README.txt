@@ -91,6 +91,11 @@ Not yet. I've been meaning to go through the code and develop some solid documen
 
 == Changelog ==
 
+= 1.34 =
+* Feature: Stripe fee is added to order details
+* Tweak: Payment gateway disabled if cart is less than 50 cents
+* Tested up to 4.1
+
 = 1.33 =
 * Fix: No payments processing
 * Fix: New customer payments not processing
