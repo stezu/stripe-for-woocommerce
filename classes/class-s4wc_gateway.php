@@ -590,10 +590,10 @@ class S4WC_Gateway extends WC_Payment_Gateway {
                     'customer_id'  => $customer->id,
                     'card'         => array(
                         'id'        => $card->id,
-                        'brand'     => $card->type,
+                        'brand'     => $card->brand,
                         'last4'     => $card->last4,
+                        'exp_month' => $card->exp_month,
                         'exp_year'  => $card->exp_year,
-                        'exp_month' => $card->exp_month
                     ),
                     'default_card' => $card->id
                 ) );
