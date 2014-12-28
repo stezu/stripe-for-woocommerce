@@ -535,7 +535,6 @@ class S4WC_Gateway extends WC_Payment_Gateway {
             $this->charge_set_up();
 
             // Save data for the "Capture"
-            update_post_meta( $this->order->id, '_transaction_id', $this->transaction_id );
             update_post_meta( $this->order->id, 'capture', strcmp( $this->settings['charge_type'], 'authorize' ) == 0 );
 
             // Save Stripe fee
@@ -705,8 +704,7 @@ class S4WC_Gateway extends WC_Payment_Gateway {
             return;
         }
 
-        $this->order->payment_complete();
-        WC()->cart->empty_cart();
+        $this->order->payment_complete( $this->transaction_id );
 
         $this->order->add_order_note(
             sprintf(
@@ -715,8 +713,6 @@ class S4WC_Gateway extends WC_Payment_Gateway {
                 $this->transaction_id
             )
         );
-
-        unset( $_SESSION['order_awaiting_payment'] );
     }
 
     /**
