@@ -538,9 +538,6 @@ class S4WC_Gateway extends WC_Payment_Gateway {
             update_post_meta( $this->order->id, '_transaction_id', $this->transaction_id );
             update_post_meta( $this->order->id, 'capture', strcmp( $this->settings['charge_type'], 'authorize' ) == 0 );
 
-            // Save data for cross-reference between Stripe Dashboard and WooCommerce
-            update_post_meta( $this->order->id, 'customer_id', $customer['customer_id'] );
-
             // Save Stripe fee
             if ( isset( $this->charge->balance_transaction ) && isset( $this->charge->balance_transaction->fee ) ) {
                 $stripe_fee = number_format( $this->charge->balance_transaction->fee / 100, 2, '.', '' );
@@ -630,6 +627,9 @@ class S4WC_Gateway extends WC_Payment_Gateway {
 
         // Set up charging data to include customer information
         $output['customer_id'] = $customer->id;
+
+        // Save data for cross-reference between Stripe Dashboard and WooCommerce
+        update_post_meta( $this->order->id, 'Stripe Customer Id', $customer->id );
 
         return $output;
     }
