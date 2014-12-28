@@ -96,16 +96,23 @@ class S4WC {
 
         if ( get_post_meta( $order_id, 'capture', true ) ) {
 
+            $order = new WC_Order( $order_id );
             $params = array();
+
             if ( isset( $_POST['amount'] )  ) {
                 $params['amount'] = round( $_POST['amount'] );
             }
 
-            $transaction_id = get_post_meta( $order_id, '_transaction_id', true );
+            $charge = S4WC_API::capture_charge( $order->transaction_id, $params );
 
-            $charge = S4WC_API::capture_charge( $transaction_id, $params );
-
-            return $charge;
+            if ( $charge ) {
+                $order->add_order_note(
+                    sprintf(
+                        __( '%s payment captured.', 'stripe-for-woocommerce' ),
+                        get_class( $this )
+                    )
+                );
+            }
         }
     }
 }
