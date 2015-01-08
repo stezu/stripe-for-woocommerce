@@ -158,7 +158,8 @@ class S4WC {
 
             $order = new WC_Order( $order_id );
             $params = array(
-                'amount' => isset( $_POST['amount'] ) ? $_POST['amount'] : $order->order_total * 100
+                'amount' => isset( $_POST['amount'] ) ? $_POST['amount'] : $order->order_total * 100,
+                'expand[]' => 'balance_transaction',
             );
 
             try {
@@ -171,6 +172,12 @@ class S4WC {
                             get_class( $this )
                         )
                     );
+
+                    // Save Stripe fee
+                    if ( isset( $charge->balance_transaction ) && isset( $charge->balance_transaction->fee ) ) {
+                        $stripe_fee = number_format( $charge->balance_transaction->fee / 100, 2, '.', '' );
+                        update_post_meta( $order_id, 'Stripe Fee', $stripe_fee );
+                    }
                 }
             } catch ( Exception $e ) {
                 $order->add_order_note(
