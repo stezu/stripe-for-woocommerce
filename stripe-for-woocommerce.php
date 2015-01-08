@@ -82,6 +82,65 @@ class S4WC {
     }
 
     /**
+     * Localize Stripe error messages
+     *
+     * @access      protected
+     * @param       Exception $e
+     * @return      string
+     */
+    public function get_error_message( $e ) {
+
+        switch ( $e->getMessage() ) {
+
+            // Messages from Stripe API
+            case 'incorrect_number':
+                $message = __( 'Your card number is incorrect.', 'stripe-for-woocommerce' );
+                break;
+            case 'invalid_number':
+                $message = __( 'Your card number is not a valid credit card number.', 'stripe-for-woocommerce' );
+                break;
+            case 'invalid_expiry_month':
+                $message = __( 'Your card\'s expiration month is invalid.', 'stripe-for-woocommerce' );
+                break;
+            case 'invalid_expiry_year':
+                $message = __( 'Your card\'s expiration year is invalid.', 'stripe-for-woocommerce' );
+                break;
+            case 'invalid_cvc':
+                $message = __( 'Your card\'s security code is invalid.', 'stripe-for-woocommerce' );
+                break;
+            case 'expired_card':
+                $message = __( 'Your card has expired.', 'stripe-for-woocommerce' );
+                break;
+            case 'incorrect_cvc':
+                $message = __( 'Your card\'s security code is incorrect.', 'stripe-for-woocommerce' );
+                break;
+            case 'incorrect_zip':
+                $message = __( 'Your zip code failed validation.', 'stripe-for-woocommerce' );
+                break;
+            case 'card_declined':
+                $message = __( 'Your card was declined.', 'stripe-for-woocommerce' );
+                break;
+
+            // Messages from S4WC
+            case 's4wc_problem_connecting':
+                $message = __( 'There was a problem connecting to the payment gateway.', 'stripe-for-woocommerce' );
+                break;
+            case 's4wc_empty_response':
+                $message = __( 'Empty response.', 'stripe-for-woocommerce' );
+                break;
+            case 's4wc_invalid_response':
+                $message = __( 'Invalid response.', 'stripe-for-woocommerce' );
+                break;
+
+            // Generic failed order
+            default:
+                $message = __( 'Failed to process the order, please try again later.', 'stripe-for-woocommerce' );
+        }
+
+        return $message;
+    }
+
+    /**
      * Process the captured payment when changing order status to completed
      *
      * @access      public
@@ -94,22 +153,31 @@ class S4WC {
             $order_id = $_POST['order_id'];
         }
 
-        if ( get_post_meta( $order_id, 'capture', true ) ) {
+        // `_s4wc_capture` added in 1.35, let `capture` last for a few more updates before removing
+        if ( get_post_meta( $order_id, '_s4wc_capture', true ) || get_post_meta( $order_id, 'capture', true ) ) {
 
             $order = new WC_Order( $order_id );
-            $params = array();
+            $params = array(
+                'amount' => isset( $_POST['amount'] ) ? $_POST['amount'] : $order->order_total * 100
+            );
 
-            if ( isset( $_POST['amount'] )  ) {
-                $params['amount'] = round( $_POST['amount'] );
-            }
+            try {
+                $charge = S4WC_API::capture_charge( $order->transaction_id, $params );
 
-            $charge = S4WC_API::capture_charge( $order->transaction_id, $params );
-
-            if ( $charge ) {
+                if ( $charge ) {
+                    $order->add_order_note(
+                        sprintf(
+                            __( '%s payment captured.', 'stripe-for-woocommerce' ),
+                            get_class( $this )
+                        )
+                    );
+                }
+            } catch ( Exception $e ) {
                 $order->add_order_note(
                     sprintf(
-                        __( '%s payment captured.', 'stripe-for-woocommerce' ),
-                        get_class( $this )
+                        __( '%s payment failed to capture. %s', 'stripe-for-woocommerce' ),
+                        get_class( $this ),
+                        $this->get_error_message( $e )
                     )
                 );
             }

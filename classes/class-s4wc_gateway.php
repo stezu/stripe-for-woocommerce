@@ -490,6 +490,7 @@ class S4WC_Gateway extends WC_Payment_Gateway {
             return S4WC_API::create_refund( $this->transaction_id, $refund_data );
 
         } catch ( Exception $e ) {
+            $this->transaction_error_message = $s4wc->get_error_message( $e );
 
             $this->order->add_order_note(
                 sprintf(
@@ -500,7 +501,7 @@ class S4WC_Gateway extends WC_Payment_Gateway {
             );
 
             // Something failed somewhere, send a message.
-            return new WP_Error( 's4wc_refund_error', $this->get_stripe_error_message( $e ) );
+            return new WP_Error( 's4wc_refund_error', $this->transaction_error_message );
         }
 
         return false;
@@ -535,7 +536,7 @@ class S4WC_Gateway extends WC_Payment_Gateway {
             $this->charge_set_up();
 
             // Save data for the "Capture"
-            update_post_meta( $this->order->id, 'capture', strcmp( $this->settings['charge_type'], 'authorize' ) == 0 );
+            update_post_meta( $this->order->id, '_s4wc_capture', strcmp( $this->settings['charge_type'], 'authorize' ) == 0 );
 
             // Save Stripe fee
             if ( isset( $this->charge->balance_transaction ) && isset( $this->charge->balance_transaction->fee ) ) {
@@ -550,9 +551,9 @@ class S4WC_Gateway extends WC_Payment_Gateway {
             // Stop page reload if we have errors to show
             unset( WC()->session->reload_checkout );
 
-            $message = $this->get_stripe_error_message( $e );
+            $this->transaction_error_message = $s4wc->get_error_message( $e );
 
-            wc_add_notice( __( 'Error:', 'stripe-for-woocommerce' ) . ' ' . $message, 'error' );
+            wc_add_notice( __( 'Error:', 'stripe-for-woocommerce' ) . ' ' . $this->transaction_error_message, 'error' );
 
             return false;
         }
@@ -738,66 +739,6 @@ class S4WC_Gateway extends WC_Payment_Gateway {
         }
 
         return false;
-    }
-
-    /**
-     * Localize Stripe error messages
-     *
-     * @access      protected
-     * @param       Exception $e
-     * @return      string
-     */
-    protected function get_stripe_error_message( $e ) {
-
-        switch ( $e->getMessage() ) {
-            // Messages from Stripe API
-            case 'incorrect_number':
-                $message = __( 'Your card number is incorrect.', 'stripe-for-woocommerce' );
-                break;
-            case 'invalid_number':
-                $message = __( 'Your card number is not a valid credit card number.', 'stripe-for-woocommerce' );
-                break;
-            case 'invalid_expiry_month':
-                $message = __( 'Your card\'s expiration month is invalid.', 'stripe-for-woocommerce' );
-                break;
-            case 'invalid_expiry_year':
-                $message = __( 'Your card\'s expiration year is invalid.', 'stripe-for-woocommerce' );
-                break;
-            case 'invalid_cvc':
-                $message = __( 'Your card\'s security code is invalid.', 'stripe-for-woocommerce' );
-                break;
-            case 'expired_card':
-                $message = __( 'Your card has expired.', 'stripe-for-woocommerce' );
-                break;
-            case 'incorrect_cvc':
-                $message = __( 'Your card\'s security code is incorrect.', 'stripe-for-woocommerce' );
-                break;
-            case 'incorrect_zip':
-                $message = __( 'Your zip code failed validation.', 'stripe-for-woocommerce' );
-                break;
-            case 'card_declined':
-                $message = __( 'Your card was declined.', 'stripe-for-woocommerce' );
-                break;
-
-            // Messages from S4WC
-            case 's4wc_problem_connecting':
-                $message = __( 'There was a problem connecting to the payment gateway.', 'stripe-for-woocommerce' );
-                break;
-            case 's4wc_empty_response':
-                $message = __( 'Empty response.', 'stripe-for-woocommerce' );
-                break;
-            case 's4wc_invalid_response':
-                $message = __( 'Invalid response.', 'stripe-for-woocommerce' );
-                break;
-
-            // Generic failed order
-            default:
-                $message = __( 'Failed to process the order, please try again later.', 'stripe-for-woocommerce' );
-        }
-
-        $this->transaction_error_message = $message;
-
-        return $message;
     }
 
     /**
