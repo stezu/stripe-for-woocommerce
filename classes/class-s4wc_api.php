@@ -210,7 +210,7 @@ class S4WC_API {
         $parsed_response = json_decode( $response['body'] );
 
         // Handle response
-        if ( ! empty( $parsed_response->error ) ) {
+        if ( ! empty( $parsed_response->error ) && ! empty( $parsed_response->error->code ) ) {
             throw new Exception( $parsed_response->error->code );
         } elseif ( empty( $parsed_response->id ) ) {
             throw new Exception( 's4wc_invalid_response' );
