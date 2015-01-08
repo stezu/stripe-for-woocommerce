@@ -91,6 +91,12 @@ Not yet. I've been meaning to go through the code and develop some solid documen
 
 == Changelog ==
 
+= 1.35 =
+* Fix: WooCommerce Bookings plugin now works again
+* Fix: Partial captures now allowed, don't go over the authorized amount though
+* Fix: Stripe Fee wasn't showing up on captured charges
+* Tweak: 'Capture' field removed from custom fields
+
 = 1.34 =
 * Feature: Stripe fee is added to order details
 * Tweak: Payment gateway disabled if cart is less than 50 cents
