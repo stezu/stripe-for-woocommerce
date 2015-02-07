@@ -5,13 +5,9 @@
 Stripe.setPublishableKey( s4wc_info.publishableKey );
 
 jQuery( function ( $ ) {
-    var $body = $( 'body' ),
-        $form = $( 'form.checkout, form#order_review' ),
+    var $form = $( 'form.checkout, form#order_review' ),
         savedFieldValues = {},
         $ccForm, $ccNumber, $ccExpiry, $ccCvc;
-
-    // Make sure the form doesn't use html validation
-    $form.attr( 'novalidate', 'novalidate' );
 
     function initCCForm () {
         $ccForm   = $( '#s4wc-cc-form' );
@@ -44,11 +40,6 @@ jQuery( function ( $ ) {
         if ( savedFieldValues.cvc ) {
             $ccCvc.val( savedFieldValues.cvc.val );
         }
-
-        // Format fields
-        // $ccNumber.attr( 'pattern', '\\d*' );
-        // $ccExpiry.attr( 'pattern', '\\d*' );
-        // $ccCvc.attr( 'pattern', '\\d*' );
     }
 
     function stripeFormHandler () {
@@ -186,7 +177,7 @@ jQuery( function ( $ ) {
     }
 
     // Make sure the credit card form exists before we try working with it
-    $body.on( 'updated_checkout.s4wc', initCCForm ).trigger( 'updated_checkout.s4wc' );
+    $( 'body' ).on( 'updated_checkout.s4wc', initCCForm ).trigger( 'updated_checkout.s4wc' );
 
     // Checkout Form
     $( 'form.checkout' ).on( 'checkout_place_order', stripeFormHandler );
