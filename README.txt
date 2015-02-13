@@ -91,6 +91,9 @@ Not yet. I've been meaning to go through the code and develop some solid documen
 
 == Changelog ==
 
+= 1.36 =
+* Fix: JavaScript should be more compatible on checkout pages
+
 = 1.35 =
 * Fix: WooCommerce Bookings plugin now works again
 * Fix: Partial captures now allowed, don't go over the authorized amount though

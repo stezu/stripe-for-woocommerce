@@ -6,7 +6,7 @@
  *
  * @class       S4WC_Gateway
  * @extends     WC_Payment_Gateway
- * @version     1.35
+ * @version     1.36
  * @package     WooCommerce/Classes/Payment
  * @author      Stephen Zuniga
  */
@@ -301,7 +301,7 @@ class S4WC_Gateway extends WC_Payment_Gateway {
         wp_enqueue_script( 'stripe', 'https://js.stripe.com/v2/', false, '2.0', true );
 
         // Plugin js
-        wp_enqueue_script( 's4wc_js', plugins_url( 'assets/js/s4wc.min.js', dirname( __FILE__ ) ), array( 'stripe', 'wc-credit-card-form' ), '1.35', true );
+        wp_enqueue_script( 's4wc_js', plugins_url( 'assets/js/s4wc.min.js', dirname( __FILE__ ) ), array( 'stripe', 'wc-credit-card-form' ), '1.36', true );
 
         // Add data that s4wc.js needs
         $s4wc_info = array(
