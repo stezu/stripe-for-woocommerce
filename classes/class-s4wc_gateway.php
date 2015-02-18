@@ -94,13 +94,13 @@ class S4WC_Gateway extends WC_Payment_Gateway {
             $order_id  = absint( get_query_var( 'order-pay' ) );
             $order     = new WC_Order( $order_id );
 
-            if ( $order->id == $order_id && $order->order_key == $order_key && $order->get_total() * 100 < 50) {
+            if ( $order->id == $order_id && $order->order_key == $order_key && $this->get_order_total() * 100 < 50) {
                 return false;
             }
         }
 
         // Stripe will only process orders of at least 50 cents otherwise
-        elseif ( WC()->cart->total * 100 < 50 ) {
+        elseif ( $this->get_order_total() * 100 < 50 ) {
             return false;
         }
 
@@ -737,7 +737,7 @@ class S4WC_Gateway extends WC_Payment_Gateway {
 
         if ( $this->order && $this->order != null ) {
             return array(
-                'amount'      => $this->order->order_total * 100,
+                'amount'      => $this->get_order_total() * 100,
                 'currency'    => strtolower( $this->order->order_currency ),
                 'token'       => isset( $_POST['stripe_token'] ) ? $_POST['stripe_token'] : '',
                 'chosen_card' => isset( $_POST['s4wc_card'] ) ? $_POST['s4wc_card'] : 'new',
