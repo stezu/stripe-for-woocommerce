@@ -62,6 +62,9 @@ class S4WC_Gateway extends WC_Payment_Gateway {
         add_action( 'admin_notices', array( $this, 'admin_notices' ) );
         add_action( 'wp_enqueue_scripts', array( $this, 'load_scripts' ) );
         add_action( 'woocommerce_credit_card_form_start', array( $this, 'before_cc_form' ) );
+
+        add_filter( 'woocommerce_credit_card_form_fields', array( $this, 'save_card_option' ), 10, 2 );
+
     }
 
     /**
@@ -380,6 +383,25 @@ class S4WC_Gateway extends WC_Payment_Gateway {
         $this->credit_card_form( array(
             'fields_have_names' => false,
         ) );
+    }
+
+    /**
+     * add option to choose whether to save card details
+     *
+     * @access public
+     * @param  array            $default_fields
+     * @param  integer          $id             
+     * @return void
+     */
+    
+    public function save_card_option($default_fields, $id) {
+        $default_fields['card-save'] = '<p class="form-row form-row-wide">
+                 <label for="' . esc_attr( $id ) . '-save-card">
+                    <input id="' . esc_attr( $id ) . '-save-card" class="wc-credit-card-form-save-card" type="checkbox" checked>
+                    ' . __( 'Save Card Details For Later', 'woocommerce' ) . '
+                 </label>
+             </p>';
+        return $default_fields;
     }
 
     /**
@@ -741,6 +763,7 @@ class S4WC_Gateway extends WC_Payment_Gateway {
                 'currency'    => strtolower( $this->order->order_currency ),
                 'token'       => isset( $_POST['stripe_token'] ) ? $_POST['stripe_token'] : '',
                 'chosen_card' => isset( $_POST['s4wc_card'] ) ? $_POST['s4wc_card'] : 'new',
+                'save_card'   => isset( $_POST['save_card'] ) && $_POST['save_card'] === 'true' ? true : false,
                 'customer'    => array(
                     'name'          => $this->order->billing_first_name . ' ' . $this->order->billing_last_name,
                     'billing_email' => $this->order->billing_email,
@@ -773,7 +796,7 @@ class S4WC_Gateway extends WC_Payment_Gateway {
         $stripe_charge_data['expand[]'] = 'balance_transaction';
 
         // Make sure we only create customers if a user is logged in
-        if ( is_user_logged_in() && $this->settings['saved_cards'] === 'yes' ) {
+        if ( is_user_logged_in() && $this->settings['saved_cards'] === 'yes' && $this->form_data['save_card'] ) {
 
             // Add a customer or retrieve an existing one
             $customer = $this->get_customer();
