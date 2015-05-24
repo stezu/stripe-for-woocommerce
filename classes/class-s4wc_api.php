@@ -25,14 +25,14 @@ class S4WC_API {
         // Create a customer on Stripe servers
         $customer = S4WC_API::post_data( $customer_data, 'customers' );
 
-        $active_card = $customer->cards->data[ array_search( $customer->default_card, $customer->cards->data ) ];
+        $active_card = $customer->sources->data[ array_search( $customer->default_source, $customer->sources->data ) ];
 
         // Save users customer information for later use
         $customerArray = array(
             'customer_id'   => $customer->id,
             'card'          => array(
                 'id'            => $active_card->id,
-                'brand'         => $active_card->type,
+                'brand'         => $active_card->brand,
                 'last4'         => $active_card->last4,
                 'exp_year'      => $active_card->exp_year,
                 'exp_month'     => $active_card->exp_month

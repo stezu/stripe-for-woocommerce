@@ -633,7 +633,7 @@ class S4WC_Gateway extends WC_Payment_Gateway {
             // Create the customer in the api with the above data
             $customer = S4WC_API::create_customer( $this->order->user_id, $customer_data );
 
-            $output['card'] = $customer->default_card;
+            $output['card'] = $customer->default_source;
         }
 
         // Set up charging data to include customer information
