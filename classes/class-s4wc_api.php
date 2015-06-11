@@ -25,23 +25,28 @@ class S4WC_API {
         // Create a customer on Stripe servers
         $customer = S4WC_API::post_data( $customer_data, 'customers' );
 
-        $active_card = $customer->sources->data[ array_search( $customer->default_source, $customer->sources->data ) ];
+        $key = S4WC_API::find_card_index($customer->sources->data, 'id', $customer->default_source);
+        if($key != -1) {
+            $active_card = $customer->sources->data[$key];
 
-        // Save users customer information for later use
-        $customerArray = array(
-            'customer_id'   => $customer->id,
-            'card'          => array(
-                'id'            => $active_card->id,
-                'brand'         => $active_card->brand,
-                'last4'         => $active_card->last4,
-                'exp_year'      => $active_card->exp_year,
-                'exp_month'     => $active_card->exp_month
-            ),
-            'default_card'  => $active_card->id
-        );
-        S4WC_DB::update_customer( $user_id, $customerArray );
+            // Save users customer information for later use
+            $customerArray = array(
+                'customer_id'   => $customer->id,
+                'card'          => array(
+                    'id'            => $active_card->id,
+                    'brand'         => $active_card->type,
+                    'last4'         => $active_card->last4,
+                    'exp_year'      => $active_card->exp_year,
+                    'exp_month'     => $active_card->exp_month
+                ),
+                'default_card'  => $active_card->id
+            );
+            S4WC_DB::update_customer( $user_id, $customerArray );
 
-        return $customer;
+            return $customer;
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -218,4 +223,27 @@ class S4WC_API {
 
         return $parsed_response;
     }
+
+    /**
+     * Finds the index of the default card in the returned data array of objects
+     *
+     * @access      public
+     * @param       array $haystack
+     * @param       string $name
+     * @param       string $needle
+     * @return      int
+     */
+    public static function find_card_index( $haystack, $name, $needle ) { 
+        foreach( $haystack as $index => $element ) {
+            if( isset($element->$name) ) {
+                if( $element->$name == $needle ) {
+                    return $index;
+                } else {
+                    return -1;
+                }
+            } else {
+                return -1;
+            }
+        }
+    } 
 }
