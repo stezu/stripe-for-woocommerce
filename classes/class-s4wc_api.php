@@ -238,12 +238,11 @@ class S4WC_API {
             if( isset($element->$name) ) {
                 if( $element->$name == $needle ) {
                     return $index;
-                } else {
-                    return -1;
-                }
+                } 
             } else {
                 return -1;
             }
         }
+        return -1;
     } 
 }
