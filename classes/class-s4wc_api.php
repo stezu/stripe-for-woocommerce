@@ -3,7 +3,6 @@
  * Functions for interfacing with Stripe's API
  *
  * @class       S4WC_API
- * @version     1.36
  * @author      Stephen Zuniga
  */
 

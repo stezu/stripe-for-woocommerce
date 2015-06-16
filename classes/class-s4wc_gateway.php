@@ -6,7 +6,6 @@
  *
  * @class       S4WC_Gateway
  * @extends     WC_Payment_Gateway
- * @version     1.36
  * @package     WooCommerce/Classes/Payment
  * @author      Stephen Zuniga
  */
@@ -390,10 +389,10 @@ class S4WC_Gateway extends WC_Payment_Gateway {
      *
      * @access public
      * @param  array            $default_fields
-     * @param  integer          $id             
+     * @param  integer          $id
      * @return void
      */
-    
+
     public function save_card_option($default_fields, $id) {
         $default_fields['card-save'] = '<p class="form-row form-row-wide">
                  <label for="' . esc_attr( $id ) . '-save-card">

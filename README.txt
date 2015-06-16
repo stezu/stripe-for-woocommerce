@@ -3,7 +3,7 @@ Contributors: stephen.zuniga001
 Tags: woocommerce, stripe, payment gateway, subscriptions, credit card, ecommerce, e-commerce, commerce, cart, checkout
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=3489V46ZRBQMC&lc=US&item_name=Thank%20You%20Coffee%20for%20Stripe%20for%20WooCommerce&currency_code=USD
 Requires at least: 3.8.0
-Tested up to: 4.1.0
+Tested up to: 4.2.2
 Stable tag: trunk
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
@@ -90,6 +90,9 @@ Not yet. I've been meaning to go through the code and develop some solid documen
 
 
 == Changelog ==
+
+= 1.37 =
+* Fix: First saved card was not working properly (Fix by HarriBellThomas)
 
 = 1.36 =
 * Fix: JavaScript should be more compatible on checkout pages

@@ -1,4 +1,3 @@
-// Let jsHint know about the globals that it should stop pestering me about
 /* global Stripe, s4wc_info, woocommerce_params */
 
 // Set API key

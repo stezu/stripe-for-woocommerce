@@ -5,7 +5,6 @@
  * Override this template by copying it to yourtheme/woocommerce/s4wc/payment-fields.php
  *
  * @author      Stephen Zuniga
- * @version     1.36
  */
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
