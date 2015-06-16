@@ -25,9 +25,10 @@ class S4WC_API {
         // Create a customer on Stripe servers
         $customer = S4WC_API::post_data( $customer_data, 'customers' );
 
-        $key = S4WC_API::find_card_index($customer->sources->data, 'id', $customer->default_source);
-        if($key != -1) {
-            $active_card = $customer->sources->data[$key];
+        $key = S4WC_API::find_card_index( $customer->sources->data, 'id', $customer->default_source );
+
+        if ( $key > -1 ) {
+            $active_card = $customer->sources->data[ $key ];
 
             // Save users customer information for later use
             $customerArray = array(
@@ -233,16 +234,20 @@ class S4WC_API {
      * @param       string $needle
      * @return      int
      */
-    public static function find_card_index( $haystack, $name, $needle ) { 
-        foreach( $haystack as $index => $element ) {
-            if( isset($element->$name) ) {
-                if( $element->$name == $needle ) {
+    public static function find_card_index( $haystack, $name, $needle ) {
+
+        foreach ( $haystack as $index => $element ) {
+
+            if ( isset( $element->$name ) ) {
+
+                if ( $element->$name == $needle ) {
                     return $index;
-                } 
+                }
             } else {
                 return -1;
             }
         }
+
         return -1;
-    } 
+    }
 }
