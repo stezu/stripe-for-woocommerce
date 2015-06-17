@@ -797,7 +797,7 @@ class S4WC_Gateway extends WC_Payment_Gateway {
         $new_card = FALSE;
         if($this->form_data['chosen_card'] === 'new') { $new_card = TRUE;}
         // Make sure we only create customers if a user is logged in
-        if (is_user_logged_in() && $this->settings['saved_cards'] === 'yes' && (($this->form_data['chosen_card'] === 'new' && $this->form_data['save_card'] === TRUE) || $this->form_data['chosen_card'] !== 'new')) {
+        if (is_user_logged_in() && $this->settings['saved_cards'] === 'yes' && (($new_card === TRUE && $this->form_data['save_card'] === TRUE) || $this->form_data['chosen_card'] !== 'new')) {
 
             // Add a customer or retrieve an existing one
             $customer = $this->get_customer();
