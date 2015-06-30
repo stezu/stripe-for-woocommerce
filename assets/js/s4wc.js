@@ -1,4 +1,4 @@
-/* global Stripe, s4wc_info, woocommerce_params */
+/* global Stripe, s4wc_info */
 
 // Set API key
 Stripe.setPublishableKey( s4wc_info.publishableKey );
@@ -61,14 +61,6 @@ jQuery( function ( $ ) {
                     address_zip     : $( '.s4wc-billing-zip' ).val() || $( '#billing_postcode' ).val() || s4wc_info.billing_postcode || '',
                     address_country : $( '#billing_country' ).val() || s4wc_info.billing_country || ''
                 };
-
-                $form.block({
-                    message: null,
-                    overlayCSS: {
-                        background: '#fff url(' + woocommerce_params.ajax_loader_url + ') no-repeat center',
-                        opacity: 0.6
-                    }
-                });
 
                 // Validate form fields, create token if form is valid
                 if ( stripeFormValidator( stripeData ) ) {

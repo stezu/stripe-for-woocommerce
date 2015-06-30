@@ -394,12 +394,18 @@ class S4WC_Gateway extends WC_Payment_Gateway {
      */
 
     public function save_card_option($default_fields, $id) {
-        $default_fields['card-save'] = '<p class="form-row form-row-wide">
+	    global $s4wc;
+
+	    if ( $s4wc->settings['saved_cards'] == 'yes' ) {
+		    $default_fields['card-save'] = '<p class="form-row form-row-wide">
                  <label for="' . esc_attr( $id ) . '-save-card">
                     <input id="' . esc_attr( $id ) . '-save-card" class="wc-credit-card-form-save-card" type="checkbox" checked>
                     ' . __( 'Save Card Details For Later', 'woocommerce' ) . '
                  </label>
              </p>';
+	    }
+
+
         return $default_fields;
     }
 
