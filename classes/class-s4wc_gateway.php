@@ -61,9 +61,7 @@ class S4WC_Gateway extends WC_Payment_Gateway {
         add_action( 'admin_notices', array( $this, 'admin_notices' ) );
         add_action( 'wp_enqueue_scripts', array( $this, 'load_scripts' ) );
         add_action( 'woocommerce_credit_card_form_start', array( $this, 'before_cc_form' ) );
-
-        add_filter( 'woocommerce_credit_card_form_fields', array( $this, 'save_card_option' ), 10, 2 );
-
+        add_action( 'woocommerce_credit_card_form_end', array( $this, 'after_cc_form' ) );
     }
 
     /**
@@ -343,28 +341,66 @@ class S4WC_Gateway extends WC_Payment_Gateway {
         global $s4wc;
 
         // Ensure that we're only outputting this for the s4wc gateway
-        if ( $gateway_id === $this->id && $s4wc->settings['additional_fields'] == 'yes' ) {
-            woocommerce_form_field( 'billing-name', array(
-                'label'             => __( 'Name on Card', 'stripe-for-woocommerce' ),
-                'required'          => true,
-                'class'             => array( 'form-row-first' ),
-                'input_class'       => array( 's4wc-billing-name' ),
-                'custom_attributes' => array(
-                    'autocomplete'  => 'off'
-                )
-            ) );
-
-            woocommerce_form_field( 'billing-zip', array(
-                'label'             => __( 'Billing Zip', 'stripe-for-woocommerce' ),
-                'required'          => true,
-                'class'             => array( 'form-row-last' ),
-                'input_class'       => array( 's4wc-billing-zip' ),
-                'clear'             => true,
-                'custom_attributes' => array(
-                    'autocomplete'  => 'off'
-                )
-            ) );
+        if ( $gateway_id !== $this->id ) {
+            return;
         }
+
+        // These form fields are optional, so we should respect that
+        if ( $s4wc->settings['additional_fields'] !== 'yes' ) {
+            return;
+        }
+
+        woocommerce_form_field( 'billing-name', array(
+            'label'             => __( 'Name on Card', 'stripe-for-woocommerce' ),
+            'required'          => true,
+            'class'             => array( 'form-row-first' ),
+            'input_class'       => array( 's4wc-billing-name' ),
+            'custom_attributes' => array(
+                'autocomplete'  => 'off',
+            ),
+        ) );
+
+        woocommerce_form_field( 'billing-zip', array(
+            'label'             => __( 'Billing Zip', 'stripe-for-woocommerce' ),
+            'required'          => true,
+            'class'             => array( 'form-row-last' ),
+            'input_class'       => array( 's4wc-billing-zip' ),
+            'clear'             => true,
+            'custom_attributes' => array(
+                'autocomplete'  => 'off',
+            ),
+        ) );
+    }
+
+    /**
+     * Add an option to save card details after the form
+     *
+     * @access      public
+     * @param       string $gateway_id
+     * @return      void
+     */
+    public function after_cc_form( $gateway_id ) {
+        global $s4wc;
+
+        // Ensure that we're only outputting this for the s4wc gateway
+        if ( $gateway_id !== $this->id ) {
+            return;
+        }
+
+        // This form field is optional, so we should respect that
+        if ( $s4wc->settings['saved_cards'] !== 'yes' ) {
+            return;
+        }
+
+        woocommerce_form_field( 's4wc_save_card', array(
+            'type'              => 'checkbox',
+            'label'             => __( 'Save Card Details For Later', 'stripe-for-woocommerce' ),
+            'class'             => array( 'form-row-wide' ),
+            'input_class'       => array( 's4wc-save-card' ),
+            'custom_attributes' => array(
+                'autocomplete'  => 'off'
+            ),
+        ) );
     }
 
     /**
@@ -385,31 +421,6 @@ class S4WC_Gateway extends WC_Payment_Gateway {
     }
 
     /**
-     * add option to choose whether to save card details
-     *
-     * @access public
-     * @param  array            $default_fields
-     * @param  integer          $id
-     * @return void
-     */
-
-    public function save_card_option($default_fields, $id) {
-	    global $s4wc;
-
-	    if ( $s4wc->settings['saved_cards'] == 'yes' ) {
-		    $default_fields['card-save'] = '<p class="form-row form-row-wide">
-                 <label for="' . esc_attr( $id ) . '-save-card">
-                    <input id="' . esc_attr( $id ) . '-save-card" class="wc-credit-card-form-save-card" type="checkbox" checked>
-                    ' . __( 'Save Card Details For Later', 'woocommerce' ) . '
-                 </label>
-             </p>';
-	    }
-
-
-        return $default_fields;
-    }
-
-    /**
      * Validate credit card form fields
      *
      * @access      public
@@ -417,26 +428,26 @@ class S4WC_Gateway extends WC_Payment_Gateway {
      */
     public function validate_fields() {
 
-        $form = array(
-            'card-number'   => isset( $_POST['s4wc-card-number'] ) ? $_POST['s4wc-card-number'] : null,
-            'card-expiry'   => isset( $_POST['s4wc-card-expiry'] ) ? $_POST['s4wc-card-expiry'] : null,
-            'card-cvc'      => isset( $_POST['s4wc-card-cvc'] ) ? $_POST['s4wc-card-cvc'] : null,
+        $form_fields = array(
+            'card-number' => array(
+                'name'       => __( 'Credit Card Number', 'stripe-for-woocommerce' ),
+                'error_type' => isset( $_POST['s4wc-card-number'] ) ? $_POST['s4wc-card-number'] : null,
+            ),
+            'card-expiry' => array(
+                'name'       => __( 'Credit Card Expiration', 'stripe-for-woocommerce' ),
+                'error_type' => isset( $_POST['s4wc-card-expiry'] ) ? $_POST['s4wc-card-expiry'] : null,
+            ),
+            'card-cvc'    => array(
+                'name'       => __( 'Credit Card CVC', 'stripe-for-woocommerce' ),
+                'error_type' => isset( $_POST['s4wc-card-cvc'] ) ? $_POST['s4wc-card-cvc'] : null,
+            ),
         );
 
-        if ( $form['card-number'] ) {
-            $field = __( 'Credit Card Number', 'stripe-for-woocommerce' );
+        foreach ( $form_fields as $form_field ) {
 
-            wc_add_notice( $this->get_form_error_message( $field, $form['card-number'] ), 'error' );
-        }
-        if ( $form['card-expiry'] ) {
-            $field = __( 'Credit Card Expiration', 'stripe-for-woocommerce' );
-
-            wc_add_notice( $this->get_form_error_message( $field, $form['card-expiry'] ), 'error' );
-        }
-        if ( $form['card-cvc'] ) {
-            $field = __( 'Credit Card CVC', 'stripe-for-woocommerce' );
-
-            wc_add_notice( $this->get_form_error_message( $field, $form['card-cvc'] ), 'error' );
+            if ( ! empty( $form_field['value'] ) ) {
+                wc_add_notice( $this->get_form_error_message( $form_field['name'], $form_field['value'] ), 'error' );
+            }
         }
     }
 
@@ -444,16 +455,16 @@ class S4WC_Gateway extends WC_Payment_Gateway {
      * Get error message for form validator given field name and type of error
      *
      * @access      protected
-     * @param       string $field
-     * @param       string $type
+     * @param       string $field_name
+     * @param       string $error_type
      * @return      string
      */
-    protected function get_form_error_message( $field, $type = 'undefined' ) {
+    protected function get_form_error_message( $field_name, $error_type = 'undefined' ) {
 
-        if ( $type === 'invalid' ) {
-            return sprintf( __( 'Please enter a valid %s.', 'stripe-for-woocommerce' ), "<strong>$field</strong>" );
+        if ( $error_type === 'invalid' ) {
+            return sprintf( __( 'Please enter a valid %s.', 'stripe-for-woocommerce' ), "<strong>$field_name</strong>" );
         } else {
-            return sprintf( __( '%s is a required field.', 'stripe-for-woocommerce' ), "<strong>$field</strong>" );
+            return sprintf( __( '%s is a required field.', 'stripe-for-woocommerce' ), "<strong>$field_name</strong>" );
         }
     }
 
@@ -768,12 +779,12 @@ class S4WC_Gateway extends WC_Payment_Gateway {
                 'currency'    => strtolower( $this->order->order_currency ),
                 'token'       => isset( $_POST['stripe_token'] ) ? $_POST['stripe_token'] : '',
                 'chosen_card' => isset( $_POST['s4wc_card'] ) ? $_POST['s4wc_card'] : 'new',
-                'save_card'   => isset( $_POST['save_card'] ) && $_POST['save_card'] === 'true' ? true : false,
+                'save_card'   => isset( $_POST['s4wc_save_card'] ) && $_POST['s4wc_save_card'] === 'true',
                 'customer'    => array(
                     'name'          => $this->order->billing_first_name . ' ' . $this->order->billing_last_name,
                     'billing_email' => $this->order->billing_email,
                 ),
-                'errors'      => isset( $_POST['form_errors'] ) ? $_POST['form_errors'] : ''
+                'errors'      => isset( $_POST['form_errors'] ) ? $_POST['form_errors'] : '',
             );
         }
 
@@ -800,9 +811,12 @@ class S4WC_Gateway extends WC_Payment_Gateway {
         $stripe_charge_data['capture']  = ( $this->settings['charge_type'] == 'capture' ) ? 'true' : 'false';
         $stripe_charge_data['expand[]'] = 'balance_transaction';
 
-        // Make sure we only create customers if a user is logged in
-        if (is_user_logged_in() && $this->settings['saved_cards'] === 'yes' && (($this->form_data['chosen_card'] === 'new' && $this->form_data['save_card'] === TRUE) || $this->form_data['chosen_card'] !== 'new')) {
-
+        // Make sure we only create customers if a user is logged in and wants to save their card
+        if (
+            is_user_logged_in() &&
+            $this->settings['saved_cards'] === 'yes' &&
+            ( $this->form_data['save_card'] || $this->form_data['chosen_card'] !== 'new' )
+        ) {
             // Add a customer or retrieve an existing one
             $customer = $this->get_customer();
 

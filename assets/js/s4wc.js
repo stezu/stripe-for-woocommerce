@@ -33,9 +33,11 @@ jQuery( function ( $ ) {
         if ( savedFieldValues.number ) {
             $ccNumber.val( savedFieldValues.number.val ).attr( 'class', savedFieldValues.number.classes );
         }
+
         if ( savedFieldValues.expiry ) {
             $ccExpiry.val( savedFieldValues.expiry.val );
         }
+
         if ( savedFieldValues.cvc ) {
             $ccCvc.val( savedFieldValues.cvc.val );
         }
