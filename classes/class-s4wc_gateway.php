@@ -445,8 +445,8 @@ class S4WC_Gateway extends WC_Payment_Gateway {
 
         foreach ( $form_fields as $form_field ) {
 
-            if ( ! empty( $form_field['value'] ) ) {
-                wc_add_notice( $this->get_form_error_message( $form_field['name'], $form_field['value'] ), 'error' );
+            if ( ! empty( $form_field['error_type'] ) ) {
+                wc_add_notice( $this->get_form_error_message( $form_field['name'], $form_field['error_type'] ), 'error' );
             }
         }
     }

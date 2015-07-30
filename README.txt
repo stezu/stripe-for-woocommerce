@@ -91,6 +91,11 @@ Not yet. I've been meaning to go through the code and develop some solid documen
 
 == Changelog ==
 
+= 1.38 =
+* Fix: Saved card behaves better now
+* Fix: No more console errors when submitting the checkout form
+* Dev: Switched to a gulp build so it's easier for people to contribute
+
 = 1.37 =
 * Fix: First saved card was not working properly (Fix by HarriBellThomas)
 

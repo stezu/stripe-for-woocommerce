@@ -1,6 +1,6 @@
 {
   "name": "stripe-for-woocommerce",
-  "version": "1.3.7",
+  "version": "1.3.8",
   "description": "A Payment Gateway for WooCommerce allowing you to take credit card payments using Stripe.",
   "main": "gulpfile.js",
   "scripts": {

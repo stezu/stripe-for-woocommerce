@@ -81,7 +81,6 @@ jQuery( function ( $ ) {
             // show the errors on the form
             $( '.payment-errors, .stripe_token, .form_errors' ).remove();
             $ccForm.before( '<span class="payment-errors required">' + response.error.message + '</span>' );
-            $form.unblock();
 
         } else {
             // insert the token into the form so it gets submitted to the server
@@ -112,8 +111,6 @@ jQuery( function ( $ ) {
             }
 
             $form.append( '<input type="hidden" class="form_errors" name="form_errors" value="1">' );
-
-            $form.unblock();
 
             return false;
         }
