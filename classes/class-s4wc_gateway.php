@@ -776,7 +776,7 @@ class S4WC_Gateway extends WC_Payment_Gateway {
         if ( $this->order && $this->order != null ) {
             return array(
                 'amount'      => $this->get_order_total() * 100,
-                'currency'    => strtolower( $this->order->order_currency ),
+                'currency'    => strtolower( $this->order->get_order_currency() ),
                 'token'       => isset( $_POST['stripe_token'] ) ? $_POST['stripe_token'] : '',
                 'chosen_card' => isset( $_POST['s4wc_card'] ) ? $_POST['s4wc_card'] : 'new',
                 'save_card'   => isset( $_POST['s4wc_save_card'] ) && $_POST['s4wc_save_card'] === 'true',
