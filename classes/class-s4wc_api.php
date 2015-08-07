@@ -204,10 +204,6 @@ class S4WC_API {
      * @return      array
      */
     public static function parse_response( $response ) {
-        if ( is_wp_error( $response ) ) {
-            throw new Exception( 's4wc_problem_connecting' );
-        }
-
         if ( empty( $response['body'] ) ) {
             throw new Exception( 's4wc_empty_response' );
         }
