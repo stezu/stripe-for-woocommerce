@@ -100,7 +100,7 @@ class S4WC_Gateway extends WC_Payment_Gateway {
         }
 
         // Stripe will only process orders of at least 50 cents otherwise
-        elseif ( $this->get_order_total() * 100 < 50 ) {
+        elseif ( WC()->cart && $this->get_order_total() > 0 && $this->get_order_total() * 100 < 50 ) {
             return false;
         }
 
