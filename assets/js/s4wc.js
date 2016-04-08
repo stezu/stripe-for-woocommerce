@@ -87,8 +87,8 @@ jQuery( function ( $ ) {
             $form.append( '<input type="hidden" class="stripe_token" name="stripe_token" value="' + response.id + '"/>' );
 
             // tell the server if we want to save the card
-            var $ccSave = $( '#s4wc-cc-form #s4wc-save-card' ).prop('checked');
-            $form.append( '<input type="hidden" class="save_card" name="save_card" value="' + $ccSave + '"/>' );
+            var $ccSave = ($( '#s4wc-cc-form #s4wc_save_card' ).prop('checked')) ? 'true' : 'false';
+            $form.append( '<input type="hidden" class="save_card" name="s4wc_save_card" value="' + $ccSave + '"/>' );
             $form.submit();
         }
     }
