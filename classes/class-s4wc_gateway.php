@@ -508,6 +508,7 @@ class S4WC_Gateway extends WC_Payment_Gateway {
      * @return      mixed True or False based on success, or WP_Error
      */
     public function process_refund( $order_id, $amount = null, $reason = '' ) {
+        global $s4wc;
 
         $this->order = new WC_Order( $order_id );
         $this->transaction_id = $this->order->get_transaction_id();
